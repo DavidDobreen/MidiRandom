@@ -11,11 +11,14 @@
 #pragma once
 #include "comps.h"
 
-
+ 
+ 
 class DropArea : public childComp, public juce::ChangeBroadcaster, private juce::DragAndDropTarget, public juce::FileDragAndDropTarget
 {
 public:
-	juce::String fileName;	 
+	juce::String fileName;	
+	int colorPick = 1;
+	juce::Colour textColor;
 	double sampleRate;
 	int numSamples;
 	int start;
@@ -30,6 +33,7 @@ public:
 	void paint(juce::Graphics& g) override;
 	void mouseDown(const juce::MouseEvent& event) override;
 	void readFileFromXML(juce::URL url);
+	void updateTextColor(int i);
 private:
 
 	bool isInterestedInDragSource(const SourceDetails& dragSourceDetails) override;

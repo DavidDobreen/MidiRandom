@@ -20,7 +20,8 @@ ThumbnailComp::~ThumbnailComp()
 
 void ThumbnailComp::paint(juce::Graphics& g)
 {
-	g.setColour(juce::Colours::red); thumbnail.drawChannels(g, drawArea, visibleRange.getStart(), visibleRange.getEnd(), 1.0f);
+	g.setColour(channelColor); 
+	thumbnail.drawChannels(g, drawArea, visibleRange.getStart(), visibleRange.getEnd(), 1.0f);
 }
 
 void ThumbnailComp::resized()
@@ -83,6 +84,7 @@ void ThumbnailComp::changeListenerCallback(juce::ChangeBroadcaster* source)
 	if (LAC->droppedFile.size() > 0)
 	{
 		ActiveChannel = LAC->chNumber;
+		channelColor = LAC->area.textColor;
 		setRange(juce::Range<double>(0, 200));
 		showAudioResource(LAC->droppedFile.back());
 		area->toFront(false);		
@@ -98,7 +100,7 @@ void ThumbnailComp::changeListenerCallback(juce::ChangeBroadcaster* source)
 ThumbBkgd::ThumbBkgd(int x, int y, int w, int h, juce::AudioFormatManager& FormatManager, juce::Component* parent, pngHandler& handler) 
 	: formatManager(FormatManager), childComp(x, y, w, h), handled(handler, parent, this) { 
 
-	thumbnail.reset(new ThumbnailComp{ 9, 15, 480, 60, ActiveChannel, formatManager });
+	thumbnail.reset(new ThumbnailComp{ 9, 17, 480, 58, ActiveChannel, formatManager });
 	thumbnail.get()->area = &SelectionArea;
 	handler.compRszr_push(this, thumbnail.get());
 	 
@@ -190,4 +192,25 @@ void ThumbSelectionArea::SelctionLine::mouseUp(const juce::MouseEvent& event)
 	
 }
 
+void ThumbTopPanel::paintOverChildren(juce::Graphics& g)
+{
+	g.setColour(channelColor);
+	g.drawFittedText(sampleName, 7, 0, 150, 15, juce::Justification::centredLeft, 1);
+}
 
+void ThumbTopPanel::changeListenerCallback(juce::ChangeBroadcaster* source)
+{
+	LoadAudioComponent* LAC = dynamic_cast<LoadAudioComponent*>(source);
+	if (LAC->droppedFile.size() > 0)
+	{
+		sampleName = LAC->area.fileName;
+		channelColor = LAC->area.textColor;		
+	}
+	else
+	{
+		sampleName = "";
+		//setRange(juce::Range<double>(0, 0));
+
+	}
+	repaint();
+}

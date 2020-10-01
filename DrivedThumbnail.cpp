@@ -14,6 +14,8 @@ DrivedThumb::DrivedThumb(int x, int y, int w, int h, juce::Component* parent, dr
 : ThumbBkgd(x, y, w, h, driver.formatManager, parent, driver.handler) , drived (driver,parent,this)
 {
     driver.LAClisteners.push_back(thumbBkgd.thumbnail.get());
+	driver.LAClisteners.push_back(&thumbBkgd.TopPanel);
+	 
 	random.addChangeListener(this);
 	thumbBkgd.SelectionArea.addChangeListener(this);
 }

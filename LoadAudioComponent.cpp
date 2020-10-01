@@ -124,13 +124,51 @@ void DropArea::readFileFromXML(juce::URL url)
 	repaint();
 }
 
-DropArea::DropArea(int x, int y, int w, int h) : childComp(x, y, w, h){}
+void DropArea::updateTextColor(int i)
+{
+	colorPick = i;
+	switch (colorPick)
+	{
+	case 0:
+	{
+		textColor = juce::Colours::red;
+		break;
+	}
+	case 1:
+	{
+		textColor = juce::Colours::blue;
+		break;
+	}
+	case 2:
+	{
+		textColor = juce::Colours::green;
+		break;
+	}
+	case 3:
+	{
+		textColor = juce::Colours::purple;
+		break;
+	}
+	case 4:
+	{
+		textColor = juce::Colours::yellow;
+		break;
+	}
+	default:
+		break;
+	}
+}
+
+DropArea::DropArea(int x, int y, int w, int h) : childComp(x, y, w, h) {
+	updateTextColor(3);
+}
 DropArea::~DropArea(){removeAllChangeListeners();}
 
 void DropArea::paint(juce::Graphics& g)
 {
+	g.setColour(textColor);
 	g.setFont(juce::Font::fromString("Roboto").withHeight(15.0));
-	g.setColour(juce::Colours::red);
+	
 	g.drawFittedText(fileName, getLocalBounds(), juce::Justification::centred, 1);
 	if (static_cast<LoadAudioComponent*>(getParentComponent())->bkgdPNG == "")
 	{
