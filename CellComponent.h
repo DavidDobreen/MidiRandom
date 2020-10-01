@@ -10,7 +10,7 @@
 
 #pragma once
  
-#include "Thumbnail.h"
+#include "DrivedThumbnail.h"
 #include "Filter.h"
 #include "Delay.h"
 #include "CustomComps.h"
@@ -82,7 +82,7 @@ public:
 
     int ActiveChannel;
     chBgComp bkgd{ "SAMPLE GRAY PANEL2.png",this,Driver.handler };
-    ThumbBkgd thumbnail{ 17,22,498,83,this,Driver };
+    DrivedThumb thumbnail{ 17,22,498,83,this,Driver };
     ThumbAreaListenenr ThumbListener{ ActiveChannel,Driver };
     SliderComp pan{ "pan",0, 100, 1,500,100,39,41 ,this, Driver.handler };
     CenterComponent& CentComp;

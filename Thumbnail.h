@@ -9,7 +9,7 @@
 */
 
 #pragma once
-#include "BasicRandom.h"
+#include "Comps.h"
 
 class ThumbnailComp : public childComp, public juce::ChangeListener
 {
@@ -38,21 +38,16 @@ private:
 };
 
 
-class ThumbBkgd : public juce::ChangeListener, public childComp, public drived
+class ThumbBkgd :   public childComp, public handled
 {
 public:
 	int ActiveChannel;
-	chBgComp bkgd{ "wave main box and frame2.png",this,Driver.handler };
+	chBgComp bkgd{ "wave main box and frame2.png",this,handler };
 	std::unique_ptr<ThumbnailComp> thumbnail;
-	ThumbSelectionArea SelectionArea{ 9, 15, 480, 60,this,Driver.handler };
-
-	BasicWindow BasicRandom{ "radomize" , juce::Colours::black,4 };
-	SamplePositionRandomComp RandomGUI{ 0, 0, 200, 200, this, Driver };
-	SelectionList::option random{ 0,0,150,30, 0,"RANDOM",  this, Driver.handler };
-
-	ThumbBkgd(int x, int y, int w, int h, juce::Component* parent, driver& driver);
+	ThumbSelectionArea SelectionArea{ 9, 15, 480, 60,this,handler };
+	ThumbBkgd(int x, int y, int w, int h, juce::AudioFormatManager&  FormatManager, juce::Component* parent, pngHandler& handler);
 	
-	void changeListenerCallback(juce::ChangeBroadcaster* source);
+	 
 private:
-
+	juce::AudioFormatManager& formatManager;
 };

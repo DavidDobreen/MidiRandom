@@ -9,6 +9,7 @@
 */
 #pragma once
 #include <JuceHeader.h>
+#include "LoadAudioComponent.h"
 #include "Thumbnail.h"
 ThumbnailComp::ThumbnailComp(int x, int y, int w, int h, int& channel, juce::AudioFormatManager& FormatManager) : formatManager(FormatManager), thumbnail(512, formatManager, thumbnailCache), childComp(x, y, w, h), ActiveChannel(channel)
 {	}
@@ -94,43 +95,20 @@ void ThumbnailComp::changeListenerCallback(juce::ChangeBroadcaster* source)
 }
 
 
-ThumbBkgd::ThumbBkgd(int x, int y, int w, int h, juce::Component* parent, driver& driver) : drived(driver, parent, this), childComp(x, y, w, h) {
+ThumbBkgd::ThumbBkgd(int x, int y, int w, int h, juce::AudioFormatManager& FormatManager, juce::Component* parent, pngHandler& handler) 
+	: formatManager(FormatManager), childComp(x, y, w, h), handled(handler, parent, this) { 
 
-	thumbnail.reset(new ThumbnailComp{ 9, 15, 480, 60, ActiveChannel, Driver.formatManager });
+	thumbnail.reset(new ThumbnailComp{ 9, 15, 480, 60, ActiveChannel, formatManager });
 	thumbnail.get()->area = &SelectionArea;
-	driver.handler.compRszr_push(this, thumbnail.get());
-	driver.LAClisteners.push_back(thumbnail.get());
-
-	SelectionArea.addChangeListener(this);
-	random.addChangeListener(this);
-
-}
-
-void ThumbBkgd::changeListenerCallback(juce::ChangeBroadcaster* source)
-{
-	if (dynamic_cast<ThumbSelectionArea*>(source) != nullptr)
-	{	
-		random.setTopLeftPosition(this->getMouseXYRelative());
-		random.setVisible(true);
-		random.toFront(true);
-		return;
-	}
-
-	if (dynamic_cast<SelectionList::option*>(source) != nullptr)
-	{
-		random.setVisible(false);
-		RandomGUI.start.channel = ActiveChannel;
-		RandomGUI.length.channel = ActiveChannel;
-		 
-		 
-		BasicRandom.setVisible(true);
-		 
-
-		return;
-	}
-
+	handler.compRszr_push(this, thumbnail.get());
 	 
+
+	
+	
+
 }
+
+ 
 
 ThumbSelectionArea::ThumbSelectionArea(int x, int y, int w, int h, juce::Component* parent, pngHandler& Handler)
 	: childComp(x,y,w,h), handled(Handler, parent, this)

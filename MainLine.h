@@ -10,6 +10,7 @@
 
 #pragma once
 #include "LoadAudioComponent.h"
+#include "driver.h"
 
 class MainLineStep : public chButton
 {

@@ -97,7 +97,7 @@ public:
     juce::String s = "";
     
 
-    LoadAudioComponent LAC{ 0, 0, 152, 30 ,s,this, Driver };
+    LoadAudioComponent LAC{ 0, 0, 152, 30 ,s,this, Driver.handler };
     Seq_16_step_line line{ 152,0 ,1100,30, this, Driver };
     LAC_Drop_File_Handler _LAC_Drop_File_Handler{ LAC,Driver };
 
