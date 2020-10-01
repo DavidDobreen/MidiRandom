@@ -140,8 +140,8 @@ void DropArea::paint(juce::Graphics& g)
 	
 }
 
-LoadAudioComponent::LoadAudioComponent(int x, int y, int w, int h, juce::String& s, juce::Component* parent, driver& driver)
-	: bkgdPNG(s),  childComp(x,y,w,h), drived(driver,parent,this) {
+LoadAudioComponent::LoadAudioComponent(int x, int y, int w, int h, juce::String& s, juce::Component* parent, pngHandler& handler)
+	: bkgdPNG(s),  childComp(x,y,w,h), handled(handler,parent,this) {
 	droppedFile.clear();
 }
 
@@ -162,9 +162,9 @@ void DropArea::mouseDown(const juce::MouseEvent&  )
 	static_cast<LoadAudioComponent*>(getParentComponent())->sendSynchronousChangeMessage();
 }
 
-chDropArea::chDropArea(int x, int y, int w, int h, juce::Component* parent, driver& Driver) : DropArea(x, y, w, h), drived(Driver,parent,this)
+chDropArea::chDropArea(int x, int y, int w, int h, juce::Component* parent, pngHandler& Handler) : DropArea(x, y, w, h), handled(Handler,parent,this)
 {
-	//handler.compRszr_push(parent, this);
+	 
 }
 
 chDropArea::~chDropArea()

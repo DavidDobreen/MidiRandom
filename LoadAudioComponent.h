@@ -9,7 +9,7 @@
 */
 
 #pragma once
-#include "driver.h"
+#include "comps.h"
 
 
 class DropArea : public childComp, public juce::ChangeBroadcaster, private juce::DragAndDropTarget, public juce::FileDragAndDropTarget
@@ -43,22 +43,22 @@ private:
 
 };
 
-class chDropArea : public DropArea, public drived
+class chDropArea : public DropArea, public handled
 {
 public:
-	chDropArea(int x, int y, int w, int h, juce::Component* parent, driver& Driver);
+	chDropArea(int x, int y, int w, int h, juce::Component* parent, pngHandler& Handler);
 	~chDropArea();
 private:
 };
 
-class LoadAudioComponent : public childComp, public drived, public juce::ChangeBroadcaster, public juce::DragAndDropContainer
+class LoadAudioComponent : public childComp, public handled, public juce::ChangeBroadcaster, public juce::DragAndDropContainer
 {
 	
 public:
 	juce::String& bkgdPNG;
 	//bkgdComp bkgd{ "bottom pads name frame2.png" };
-	chBgComp bkgd { bkgdPNG ,this, Driver.handler };
-	chDropArea area{ 0,0 ,dims[2] ,dims[3],this,Driver };
+	chBgComp bkgd { bkgdPNG ,this, handler };
+	chDropArea area{ 0,0 ,dims[2] ,dims[3],this,handler };
 	juce::AudioFormatManager* pFormatManager = nullptr;
 	std::vector<juce::URL> droppedFile;
 	juce::OwnedArray<juce::AudioBuffer<float>>* fileBuffers; //Pointer to AudioOutEngine's fileBuffers
@@ -66,7 +66,7 @@ public:
 
 	bool NewLoadMessage = false;
 
-	LoadAudioComponent(int x, int y, int w, int h, juce::String& s, juce::Component* parent, driver& driver);
+	LoadAudioComponent(int x, int y, int w, int h, juce::String& s, juce::Component* parent, pngHandler& handler);
 	~LoadAudioComponent();
 	void resized();
 
