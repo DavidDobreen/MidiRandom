@@ -95,3 +95,12 @@ public:
 	void LoadPreset(juce::XmlElement* step);
 };
 
+class FXhandler
+{
+public:
+	FXhandler() {};
+	virtual void add_audio_set_params(CellParameters& params) {};
+	virtual void respond_to_midi_set_params() {};
+	virtual void ApplyEffects() {};
+};
+

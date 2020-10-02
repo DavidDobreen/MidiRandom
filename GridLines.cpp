@@ -387,11 +387,7 @@
 //  !___________________________________________________!
 */
 Seq_16_step_line::Seq_16_step_line(int x, int y, int w, int h, juce::Component* parent, driver& driver) : childComp(x, y, w, h), drived(driver, parent, this)
-{
-    //addAndMakeVisible(line);
-    //line.setSeqLineParameters(16, 1, 800, 30, 45, 30);
-    //line.setTopLeftPosition(0, 0);
-    //setBounds(x,y,800, 30);    
+{ 
     auto engine = new AudioOutEngine{ Driver.formatManager };
     
     Driver.engines.add(engine);
@@ -406,8 +402,9 @@ Seq_16_step_line::Seq_16_step_line(int x, int y, int w, int h, juce::Component* 
 
     for (auto& q : engine->fileQue)
     {
-        q->delays[0].bpm = Driver.clockTimer.BPM;
-        q->delays[1].bpm = Driver.clockTimer.BPM;
+        // TODO:  ADD THIS BACK
+        /*q->delays[0].bpm = Driver.clockTimer.BPM;
+        q->delays[1].bpm = Driver.clockTimer.BPM;*/
         q->FilterDryWet = &Driver.generalBuffer.channels.back()->RandomFilterDryWet;
     }
     //Seq Line configs
@@ -528,5 +525,54 @@ void  SeqLineVelocityHandler::changeListenerCallback(juce::ChangeBroadcaster* ) 
         //line.items[x]->dragMessage = true;
         line.items[x]->stepDragMessage.sendSynchronousChangeMessage();
         line.items[x]->repaint();
+    }
+}
+
+GridLines::AddLineButton::AddLineButton(int x, int y, int w, int h, juce::Component* parent, pngHandler& Handler) : childComp(x, y, w, h), handled(Handler, parent, this) {}
+void GridLines::AddLineButton::mouseDown(const juce::MouseEvent&) { sendSynchronousChangeMessage(); }
+void GridLines::AddLineButton::paint(juce::Graphics& g)
+{
+    g.setColour(juce::Colours::white); g.drawFittedText("+", getLocalBounds(), juce::Justification::centred, 1);
+    g.drawRect(getLocalBounds());
+}
+
+void GridLines::LAClistener::changeListenerCallback(juce::ChangeBroadcaster* source)
+{
+    LoadAudioComponent* src = dynamic_cast<LoadAudioComponent*>(source);
+    int index = src->chNumber;
+    //GridLine LAC source
+    if (index >= 0)
+    {
+        for (int i = 0; i < lines.size(); i++)
+        {
+            if (i != index)
+            {
+                lines[i]->LAC.area.selected = false;
+                Driver.engines[i]->UseFFT = false;
+            }
+
+            //Driver.engines[index]->UseFFT = true;
+            lines[i]->LAC.area.repaint();
+        }
+
+        vels[index]->toFront(false);
+    }
+    //MainLine LAC source
+    else
+    {
+        for (int i = 0; i < lines.size(); i++)
+        {
+            if (lines[i]->LAC.area.selected)
+            {
+                lines[i]->LAC.droppedFile.push_back(src->droppedFile.back());
+                lines[i]->LAC.fileBuffers->add(src->fileBuffers->getLast());
+                src->fileBuffers->removeLast(1, false);
+                lines[i]->LAC.area.fileName = src->area.fileName;
+                lines[i]->LAC.area.repaint();
+                lines[i]->LAC.sendSynchronousChangeMessage();
+            }
+        }
+        src->droppedFile.clear();
+
     }
 }

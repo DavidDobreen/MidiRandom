@@ -130,6 +130,47 @@ void BiQuad::reset()
 		freqResponse[i] = 0;
 }
 
+void BiQuad::add_audio_set_params(CellParameters& params)
+{
+
+	/*if (cellParameters.CHANNEL_FILTER)
+			{*/
+				if (params.filterSelection > 0)
+				{
+					flushDelays();					
+					selectionChanged(params.filterSelection, float(params.FilterCutoff), params.FilterQ);
+					 
+					if (AllowRandom)
+					{
+						if (params.RandomFilterSelection > 0)
+						{
+							//update the random side of the filter
+							UpdateMainFilter = false;
+							
+							if (params.RandomFilterCutoff == -1)
+								params.RandomFilterCutoff = params.FilterCutoff;
+							if (params.RandomFilterQ == -1)
+								params.RandomFilterQ = params.FilterQ;
+							if (params.RandomFilterSelection == -1)
+								params.RandomFilterSelection = params.filterSelection;
+
+							selectionChanged(params.RandomFilterSelection, float(params.RandomFilterCutoff), params.RandomFilterQ);
+							 
+							//return to working on the main side
+							que->biQuad[0].UpdateMainFilter = true;
+							que->biQuad[1].UpdateMainFilter = true;
+						}
+					}
+					
+					que->effects[0] = 1;
+				}
+			/*}
+			else
+			{
+				que->effects[0] = 0;
+			}*/
+}
+
 
 void BiQuad::doBiQuad(float& f_xn, float DryWet)
 {	

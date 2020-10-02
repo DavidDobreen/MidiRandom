@@ -132,48 +132,9 @@ void GridLines::MainLineUpdater::changeListenerCallback(juce::ChangeBroadcaster*
  
 
 
-GridLines::LAClistener::~LAClistener(){}
+ 
 
-void GridLines::LAClistener::changeListenerCallback(juce::ChangeBroadcaster* source)
-{
-    LoadAudioComponent* src = dynamic_cast<LoadAudioComponent*>(source);
-    int index = src->chNumber;
-    //GridLine LAC source
-    if (index >= 0)
-    {
-        for (int i = 0; i < lines.size(); i++)
-        {
-            if (i != index)
-            {
-                lines[i]->LAC.area.selected = false;
-                Driver.engines[i]->UseFFT = false;
-            }
 
-            //Driver.engines[index]->UseFFT = true;
-            lines[i]->LAC.area.repaint();
-        }
-
-        vels[index]->toFront(false);
-    }
-    //MainLine LAC source
-    else
-    {
-        for (int i = 0; i < lines.size(); i++)
-        {
-            if (lines[i]->LAC.area.selected)
-            {
-                lines[i]->LAC.droppedFile.push_back(src->droppedFile.back());
-                lines[i]->LAC.fileBuffers->add(src->fileBuffers->getLast());
-                src->fileBuffers->removeLast(1, false);
-                lines[i]->LAC.area.fileName = src->area.fileName;
-                lines[i]->LAC.area.repaint();
-                lines[i]->LAC.sendSynchronousChangeMessage();
-            }                      
-        }    
-        src->droppedFile.clear();
-         
-    }
-}
 
 UpperBar::UpperBar(int x, int y, int w, int h, juce::Component* parent, driver& driver) : childComp(x, y, w, h), drived(driver, parent, this) {
     addAndMakeVisible(save);
@@ -225,14 +186,7 @@ BPMComponent::BPMComponent(int x, int y, int w, int h, float Min, float Max, flo
 BPMComponent::~BPMComponent(){}
   
  
-GridLines::AddLineButton::AddLineButton(int x, int y, int w, int h, juce::Component* parent, pngHandler& Handler) : childComp(x, y, w, h), handled(Handler, parent, this) {}
-void GridLines::changeListenerCallback(juce::ChangeBroadcaster* ) { /*AddLine();*/ }
-void GridLines::AddLineButton::mouseDown(const juce::MouseEvent& ) {sendSynchronousChangeMessage();}
-void GridLines::AddLineButton::paint(juce::Graphics& g) 
-{ 
-    g.setColour(juce::Colours::white); g.drawFittedText("+", getLocalBounds(), juce::Justification::centred, 1); 
-    g.drawRect(getLocalBounds());
-} 
+
 
 
 MasterMeterBox::MasterMeterBox(int x, int y, int w, int h, juce::Component* parent, driver& driver)

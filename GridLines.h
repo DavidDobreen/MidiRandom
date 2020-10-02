@@ -144,7 +144,7 @@ private:
 
 };
 
-class GridLines : public juce::ChangeListener, public childComp, public driven
+class GridLines :   public childComp, public driven
 {
 public:
     class AddLineButton : public childComp, public handled, public juce::ChangeBroadcaster
@@ -158,7 +158,7 @@ public:
     class LAClistener : public juce::ChangeListener, public driven {
     public:
         LAClistener(juce::OwnedArray< Seq_16_And_LAC>& Lines, juce::OwnedArray< VELcomp>& Vels, driver& Driver);
-        ~LAClistener();
+  
         void changeListenerCallback(juce::ChangeBroadcaster* source);
     private:
         juce::OwnedArray< Seq_16_And_LAC>& lines;
@@ -197,7 +197,7 @@ public:
     ~GridLines() {}
 
     void AddLine();
-    void changeListenerCallback(juce::ChangeBroadcaster* source);
+    
 
 
 private:

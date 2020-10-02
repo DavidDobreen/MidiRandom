@@ -17,7 +17,7 @@ enum FilterSelections
 	None = 0, LPF, HPF, LPR, HPR, BPF, BSF, ButterworthBPF, ButterworthBSF, Low_Shelve, High_Shelve, Peak, Notch
 };
 
-class BiQuad : public juce::ChangeListener
+class BiQuad : public juce::ChangeListener, public FXhandler
 {
 	//If the user wants to randomize the filter, the newly created random parameters will be stored in this simple struct.
 	//This is needed in order to allow dry-wet behavior between the original and random filters.
@@ -98,5 +98,10 @@ public:
 
 	void changeListenerCallback(juce::ChangeBroadcaster* source);
 	void reset();
+
+
+	void add_audio_set_params(CellParameters& params) override;
+	void respond_to_midi_set_params() override;
+	void ApplyEffects() override;
 private:
 };

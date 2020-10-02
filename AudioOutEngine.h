@@ -10,10 +10,10 @@
 
 #pragma once
 #include <JuceHeader.h>
-#include "FFTworkerOPT.h"
+//#include "FFTworkerOPT.h"
 #include "InternalStep.h"
-#include "BiQuad.h"
-#include "DDL.h"
+//#include "BiQuad.h"
+//#include "DDL.h"
 
 class fileToPlay
 {
@@ -25,11 +25,12 @@ public:
 
 	CellParameters CellParam;
 
-	DelayModule delays[2];
+	//DelayModule delays[2];
 	bool ActiveDelay = false;
-	BiQuad biQuad[2];
+	//BiQuad biQuad[2];
 	int* FilterDryWet;
 
+	juce::OwnedArray<FXhandler> EffectLine;
 	int effects[6] = { 0, 0, 0, 0, 0, 0 };
 
 	fileToPlay() { fileBuffer = NULL; } //Construtor
@@ -97,8 +98,8 @@ public:
 	int bufferNumOfChannles;
 
 	bool lock; //MUTEX
-	//FFTworker fftOpt; //For performing FFT.
-	FFTworkerOPT fft; //For performing FFT.
+	 
+	//FFTworkerOPT fft; //For performing FFT.
 	bool UseFFT = false;
 
 	bool solo = false;

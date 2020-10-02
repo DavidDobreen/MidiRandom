@@ -160,7 +160,7 @@ void DropArea::updateTextColor(int i)
 }
 
 DropArea::DropArea(int x, int y, int w, int h) : childComp(x, y, w, h) {
-	updateTextColor(3);
+	updateTextColor(0);
 }
 DropArea::~DropArea(){removeAllChangeListeners();}
 

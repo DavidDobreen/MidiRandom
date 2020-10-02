@@ -26,10 +26,10 @@ AudioOutEngine::AudioOutEngine(juce::AudioFormatManager& _pFormatManager) : pFor
 		fileToPlay* q = new fileToPlay();
 		fileQue.add(q);
 		q->setFileToPlay(NULL);	
-		q->CellParam.addChangeListener(&q->delays[0]);
-		q->CellParam.addChangeListener(&q->delays[1]);
-		q->delays[0].TargetCellParameters = &q->CellParam;
-		q->delays[1].TargetCellParameters = &q->CellParam;
+		//q->CellParam.addChangeListener(&q->delays[0]);
+		//q->CellParam.addChangeListener(&q->delays[1]);
+		//q->delays[0].TargetCellParameters = &q->CellParam;
+		//q->delays[1].TargetCellParameters = &q->CellParam;
 		 
 
 	}
@@ -126,7 +126,7 @@ void AudioOutEngine::sendToOutput(juce::AudioBuffer<float>& buffer, juce::MidiBu
 						for (int sampleIndex = 0; sampleIndex < numOfSamples; ++sampleIndex)
 						{
 							xN = 0;
-							currentFile->delays[_channel].processDelay(xN);							
+							//currentFile->delays[_channel].processDelay(xN);							
 							channelData[sampleIndex] += xN * (!mute * !(otherIsSolo > 0) || solo);
 						}
 					break;
@@ -160,38 +160,38 @@ void AudioOutEngine::sendToOutput(juce::AudioBuffer<float>& buffer, juce::MidiBu
 
 
 
-						switch (UseFFT)
-						{
-						case (1):
+						//switch (UseFFT)
+						//{
+						//case (1):
 
-							//fft.addSampleToBuffer(&sumVoices, _channel);
-							fft.addSampleToBuffer(&channelData[sampleIndex], _channel);
-							sumVoices = float(fft.bufferArray[22529 + _channel * fft.FFT_LEN * 2 + (!_channel) * (fft.fillBufferAleft * fft.windowOverlap + fft.counterLeft) + _channel * (fft.fillBufferAright * fft.windowOverlap + fft.counterRight)] +
-								fft.bufferArray[22529 + _channel * fft.FFT_LEN * 2 + fft.FFT_LEN + (!_channel) * (fft.fillBufferBleft * fft.windowOverlap + fft.counterLeft) + _channel * (fft.fillBufferBright * fft.windowOverlap + fft.counterRight)]);
+						//	//fft.addSampleToBuffer(&sumVoices, _channel);
+						//	fft.addSampleToBuffer(&channelData[sampleIndex], _channel);
+						//	sumVoices = float(fft.bufferArray[22529 + _channel * fft.FFT_LEN * 2 + (!_channel) * (fft.fillBufferAleft * fft.windowOverlap + fft.counterLeft) + _channel * (fft.fillBufferAright * fft.windowOverlap + fft.counterRight)] +
+						//		fft.bufferArray[22529 + _channel * fft.FFT_LEN * 2 + fft.FFT_LEN + (!_channel) * (fft.fillBufferBleft * fft.windowOverlap + fft.counterLeft) + _channel * (fft.fillBufferBright * fft.windowOverlap + fft.counterRight)]);
 
-							fft.counterRight = fft.counterRight + _channel;
-							fft.counterLeft = fft.counterLeft + !_channel;
+						//	fft.counterRight = fft.counterRight + _channel;
+						//	fft.counterLeft = fft.counterLeft + !_channel;
 
-							switch ((fft.counterRight - fft.windowOverlap) * (fft.counterLeft - fft.windowOverlap))
-							{
-							case (0):
-								// pc.start();
-								// Average FFT time is around +500 microseconds
-								fft.performFFT(_channel);
-								// pc.stop(); 
-								fft.counterRight *= bool(!_channel);
-								fft.counterLeft *= bool(_channel);
+						//	switch ((fft.counterRight - fft.windowOverlap) * (fft.counterLeft - fft.windowOverlap))
+						//	{
+						//	case (0):
+						//		// pc.start();
+						//		// Average FFT time is around +500 microseconds
+						//		fft.performFFT(_channel);
+						//		// pc.stop(); 
+						//		fft.counterRight *= bool(!_channel);
+						//		fft.counterLeft *= bool(_channel);
 
-								fft.fillBufferAright ^= bool(_channel);
-								fft.fillBufferBright ^= bool(_channel);
+						//		fft.fillBufferAright ^= bool(_channel);
+						//		fft.fillBufferBright ^= bool(_channel);
 
-								fft.fillBufferAleft ^= bool(!_channel);
-								fft.fillBufferBleft ^= bool(!_channel);
+						//		fft.fillBufferAleft ^= bool(!_channel);
+						//		fft.fillBufferBleft ^= bool(!_channel);
 
 
-								fft.sendChangeMessage();
-							}
-						}
+						//		fft.sendChangeMessage();
+						//	}
+						//}
 					}
 				}
 			}		
@@ -301,90 +301,90 @@ void AudioOutEngine::addAudioToQue(float velocity, internalStep* step)
 			que->CellParam.RandomFilterQ = CELLPARAM(RandomFilterQ);
 
 
+			//////////////////////////////////////////////
+			//if (cellParameters.CHANNEL_FILTER)
+			//{
+			//	if (que->CellParam.filterSelection > 0)
+			//	{
+			//		que->biQuad[0].flushDelays();
+			//		que->biQuad[1].flushDelays();
+			//		que->biQuad[0].selectionChanged(que->CellParam.filterSelection, float(que->CellParam.FilterCutoff), que->CellParam.FilterQ);
+			//		que->biQuad[1].selectionChanged(que->CellParam.filterSelection, float(que->CellParam.FilterCutoff), que->CellParam.FilterQ);
 
-			if (cellParameters.CHANNEL_FILTER)
-			{
-				if (que->CellParam.filterSelection > 0)
-				{
-					que->biQuad[0].flushDelays();
-					que->biQuad[1].flushDelays();
-					que->biQuad[0].selectionChanged(que->CellParam.filterSelection, float(que->CellParam.FilterCutoff), que->CellParam.FilterQ);
-					que->biQuad[1].selectionChanged(que->CellParam.filterSelection, float(que->CellParam.FilterCutoff), que->CellParam.FilterQ);
+			//		if (AllowRandom)
+			//		{
+			//			if (que->CellParam.RandomFilterSelection > 0)
+			//			{
+			//				//update the random side of the filter
+			//				que->biQuad[0].UpdateMainFilter = false;
+			//				que->biQuad[1].UpdateMainFilter = false;
 
-					if (AllowRandom)
-					{
-						if (que->CellParam.RandomFilterSelection > 0)
-						{
-							//update the random side of the filter
-							que->biQuad[0].UpdateMainFilter = false;
-							que->biQuad[1].UpdateMainFilter = false;
-
-							if (que->CellParam.RandomFilterCutoff == -1)
-								que->CellParam.RandomFilterCutoff = que->CellParam.FilterCutoff;
-							if (que->CellParam.RandomFilterQ == -1)
-								que->CellParam.RandomFilterQ = que->CellParam.FilterQ;
-							if (que->CellParam.RandomFilterSelection == -1)
-								que->CellParam.RandomFilterSelection = que->CellParam.filterSelection;
-
-
-							que->biQuad[0].selectionChanged(que->CellParam.RandomFilterSelection, float(que->CellParam.RandomFilterCutoff), que->CellParam.RandomFilterQ);
-							que->biQuad[1].selectionChanged(que->CellParam.RandomFilterSelection, float(que->CellParam.RandomFilterCutoff), que->CellParam.RandomFilterQ);
-
-							//return to working on the main side
-							que->biQuad[0].UpdateMainFilter = true;
-							que->biQuad[1].UpdateMainFilter = true;
-						}
-					}
-					
-					que->effects[0] = 1;
-				}
-			}
-			else
-			{
-				que->effects[0] = 0;
-			}
+			//				if (que->CellParam.RandomFilterCutoff == -1)
+			//					que->CellParam.RandomFilterCutoff = que->CellParam.FilterCutoff;
+			//				if (que->CellParam.RandomFilterQ == -1)
+			//					que->CellParam.RandomFilterQ = que->CellParam.FilterQ;
+			//				if (que->CellParam.RandomFilterSelection == -1)
+			//					que->CellParam.RandomFilterSelection = que->CellParam.filterSelection;
 
 
-			if (cellParameters.CHANNEL_DELAY)
-			{
-				que->CellParam.CHANNEL_DELAY = 0;
-				 
-				if (AllowRandom)
-				{
+			//				que->biQuad[0].selectionChanged(que->CellParam.RandomFilterSelection, float(que->CellParam.RandomFilterCutoff), que->CellParam.RandomFilterQ);
+			//				que->biQuad[1].selectionChanged(que->CellParam.RandomFilterSelection, float(que->CellParam.RandomFilterCutoff), que->CellParam.RandomFilterQ);
 
-					que->CellParam.delayTime = que->delays[0].DelayInMS = que->delays[1].DelayInMS =  CELLPARAM(delayTime);
-					que->CellParam.delayTime = cellParameters.delayTime + (float(*RandomDelayDryWet) / 100.0f) * (que->CellParam.delayTime - cellParameters.delayTime);
+			//				//return to working on the main side
+			//				que->biQuad[0].UpdateMainFilter = true;
+			//				que->biQuad[1].UpdateMainFilter = true;
+			//			}
+			//		}
+			//		
+			//		que->effects[0] = 1;
+			//	}
+			//}
+			//else
+			//{
+			//	que->effects[0] = 0;
+			//}
 
-					que->CellParam.delayVolume = CELLPARAM(delayVolume);
-					que->CellParam.delayVolume = cellParameters.delayVolume + (float(*RandomDelayDryWet) / 100.0f) * (que->CellParam.delayVolume - cellParameters.delayVolume);
 
-					que->CellParam.delayFeedback = que->delays[0].FeedBack = que->delays[1].FeedBack = CELLPARAM(delayFeedback);
-					que->CellParam.delayFeedback = cellParameters.delayFeedback + (float(*RandomDelayDryWet) / 100.0f) * (que->CellParam.delayFeedback - cellParameters.delayFeedback);
+			//if (cellParameters.CHANNEL_DELAY)
+			//{
+			//	que->CellParam.CHANNEL_DELAY = 0;
+			//	 
+			//	if (AllowRandom)
+			//	{
+
+			//		que->CellParam.delayTime = que->delays[0].DelayInMS = que->delays[1].DelayInMS =  CELLPARAM(delayTime);
+			//		que->CellParam.delayTime = cellParameters.delayTime + (float(*RandomDelayDryWet) / 100.0f) * (que->CellParam.delayTime - cellParameters.delayTime);
+
+			//		que->CellParam.delayVolume = CELLPARAM(delayVolume);
+			//		que->CellParam.delayVolume = cellParameters.delayVolume + (float(*RandomDelayDryWet) / 100.0f) * (que->CellParam.delayVolume - cellParameters.delayVolume);
+
+			//		que->CellParam.delayFeedback = que->delays[0].FeedBack = que->delays[1].FeedBack = CELLPARAM(delayFeedback);
+			//		que->CellParam.delayFeedback = cellParameters.delayFeedback + (float(*RandomDelayDryWet) / 100.0f) * (que->CellParam.delayFeedback - cellParameters.delayFeedback);
 
 
-					que->CellParam.delayHighCut = CELLPARAM(delayHighCut);
-					que->CellParam.delayDryWet = que->delays[0].WetLevel = que->delays[1].WetLevel = CELLPARAM(delayDryWet);
-					que->CellParam.delayLowCut = CELLPARAM(delayLowCut);
-				}
-				
-				 
-				
-					 
-				 
-				
-				que->CellParam.delayMessagePrepareForPlay = true;
-				que->CellParam.sendSynchronousChangeMessage();
-				que->CellParam.delayMessagePrepareForPlay = false;
-				//Now it safe to notify the processor about the delay
-				que->CellParam.CHANNEL_DELAY = 1;
+			//		que->CellParam.delayHighCut = CELLPARAM(delayHighCut);
+			//		que->CellParam.delayDryWet = que->delays[0].WetLevel = que->delays[1].WetLevel = CELLPARAM(delayDryWet);
+			//		que->CellParam.delayLowCut = CELLPARAM(delayLowCut);
+			//	}
+			//	
+			//	 
+			//	
+			//		 
+			//	 
+			//	
+			//	que->CellParam.delayMessagePrepareForPlay = true;
+			//	que->CellParam.sendSynchronousChangeMessage();
+			//	que->CellParam.delayMessagePrepareForPlay = false;
+			//	//Now it safe to notify the processor about the delay
+			//	que->CellParam.CHANNEL_DELAY = 1;
 
-				CellParamToMidiOut->delayTime = que->CellParam.delayTime;
-				CellParamToMidiOut->delayDryWet = que->CellParam.delayDryWet;
-				CellParamToMidiOut->delayFeedback = que->CellParam.delayFeedback;
+			//	CellParamToMidiOut->delayTime = que->CellParam.delayTime;
+			//	CellParamToMidiOut->delayDryWet = que->CellParam.delayDryWet;
+			//	CellParamToMidiOut->delayFeedback = que->CellParam.delayFeedback;
 
-				que->effects[1] = 1;
-			}
-
+			//	que->effects[1] = 1;
+			//}
+//////////////////////////////////////////////////////////////////////
 		 
 		
 
@@ -469,75 +469,74 @@ void AudioOutEngine::RespondToMidiEvent(MidiParams& params)
 	que->velocity = params.velocity;
 	que->CellParam.Pan = params.Pan;
 	
-	 
-	 
-		if (que->CellParam.CHANNEL_FILTER)
-		{
-			que->CellParam.filterSelection = params.FilterSelection;
-			que->CellParam.FilterCutoff = params.FilterCutoff;
-			que->CellParam.FilterQ = params.FilterQ;
-			que->CellParam.RandomFilterSelection = params.RandomFilterSelection;
-			que->CellParam.RandomFilterCutoff = params.RandomFilterCutoff;
-			que->CellParam.RandomFilterQ = params.RandomFilterQ;
+	 //////////////////////////////////////////
+		//if (que->CellParam.CHANNEL_FILTER)
+		//{
+		//	que->CellParam.filterSelection = params.FilterSelection;
+		//	que->CellParam.FilterCutoff = params.FilterCutoff;
+		//	que->CellParam.FilterQ = params.FilterQ;
+		//	que->CellParam.RandomFilterSelection = params.RandomFilterSelection;
+		//	que->CellParam.RandomFilterCutoff = params.RandomFilterCutoff;
+		//	que->CellParam.RandomFilterQ = params.RandomFilterQ;
 
-			if (que->CellParam.filterSelection > 0)
-			{
-				que->biQuad[0].flushDelays();
-				que->biQuad[1].flushDelays();
-				que->biQuad[0].selectionChanged(que->CellParam.filterSelection, float(que->CellParam.FilterCutoff), que->CellParam.FilterQ);
-				que->biQuad[1].selectionChanged(que->CellParam.filterSelection, float(que->CellParam.FilterCutoff), que->CellParam.FilterQ);
+		//	if (que->CellParam.filterSelection > 0)
+		//	{
+		//		que->biQuad[0].flushDelays();
+		//		que->biQuad[1].flushDelays();
+		//		que->biQuad[0].selectionChanged(que->CellParam.filterSelection, float(que->CellParam.FilterCutoff), que->CellParam.FilterQ);
+		//		que->biQuad[1].selectionChanged(que->CellParam.filterSelection, float(que->CellParam.FilterCutoff), que->CellParam.FilterQ);
 
-				if (que->CellParam.RandomFilterSelection > 0)
-				{
-					//update the random side of the filter
-					que->biQuad[0].UpdateMainFilter = false;
-					que->biQuad[1].UpdateMainFilter = false;
+		//		if (que->CellParam.RandomFilterSelection > 0)
+		//		{
+		//			//update the random side of the filter
+		//			que->biQuad[0].UpdateMainFilter = false;
+		//			que->biQuad[1].UpdateMainFilter = false;
 
-					if (que->CellParam.RandomFilterCutoff == -1)
-						que->CellParam.RandomFilterCutoff = que->CellParam.FilterCutoff;
-					if (que->CellParam.RandomFilterQ == -1)
-						que->CellParam.RandomFilterQ = que->CellParam.FilterQ;
-					if (que->CellParam.RandomFilterSelection == -1)
-						que->CellParam.RandomFilterSelection = que->CellParam.filterSelection;
-
-
-					que->biQuad[0].selectionChanged(que->CellParam.RandomFilterSelection, float(que->CellParam.RandomFilterCutoff), que->CellParam.RandomFilterQ);
-					que->biQuad[1].selectionChanged(que->CellParam.RandomFilterSelection, float(que->CellParam.RandomFilterCutoff), que->CellParam.RandomFilterQ);
-
-					//return to working on the main side
-					que->biQuad[0].UpdateMainFilter = true;
-					que->biQuad[1].UpdateMainFilter = true;
-				}
-				que->effects[0] = 1;
-			}
-
-			que->effects[0] = 1;
-		}
-		else
-		{
-			que->effects[0] = 0;
-		}
+		//			if (que->CellParam.RandomFilterCutoff == -1)
+		//				que->CellParam.RandomFilterCutoff = que->CellParam.FilterCutoff;
+		//			if (que->CellParam.RandomFilterQ == -1)
+		//				que->CellParam.RandomFilterQ = que->CellParam.FilterQ;
+		//			if (que->CellParam.RandomFilterSelection == -1)
+		//				que->CellParam.RandomFilterSelection = que->CellParam.filterSelection;
 
 
-		if (que->CellParam.CHANNEL_DELAY)
-		{
+		//			que->biQuad[0].selectionChanged(que->CellParam.RandomFilterSelection, float(que->CellParam.RandomFilterCutoff), que->CellParam.RandomFilterQ);
+		//			que->biQuad[1].selectionChanged(que->CellParam.RandomFilterSelection, float(que->CellParam.RandomFilterCutoff), que->CellParam.RandomFilterQ);
 
-			que->CellParam.delayTime = que->delays[0].DelayInMS = que->delays[1].DelayInMS = params.Delaytime;
-			que->CellParam.delayDryWet = que->delays[0].WetLevel = que->delays[1].WetLevel = params.DelayWet;
-			que->CellParam.delayFeedback = que->delays[0].FeedBack = que->delays[1].FeedBack = params.DelayFeedback;
+		//			//return to working on the main side
+		//			que->biQuad[0].UpdateMainFilter = true;
+		//			que->biQuad[1].UpdateMainFilter = true;
+		//		}
+		//		que->effects[0] = 1;
+		//	}
 
-			//que->delays[0].TargetCellParameters = que->delays[1].TargetCellParameters = &que->CellParam;
-			que->delays[0].PrepareForPlay();
-			que->delays[1].PrepareForPlay();
+		//	que->effects[0] = 1;
+		//}
+		//else
+		//{
+		//	que->effects[0] = 0;
+		//}
 
-			que->effects[1] = 1;
-		}
-		else
-		{
-			que->effects[1] = 0;
-		}
 
-	 
+		//if (que->CellParam.CHANNEL_DELAY)
+		//{
+
+		//	que->CellParam.delayTime = que->delays[0].DelayInMS = que->delays[1].DelayInMS = params.Delaytime;
+		//	que->CellParam.delayDryWet = que->delays[0].WetLevel = que->delays[1].WetLevel = params.DelayWet;
+		//	que->CellParam.delayFeedback = que->delays[0].FeedBack = que->delays[1].FeedBack = params.DelayFeedback;
+
+		//	//que->delays[0].TargetCellParameters = que->delays[1].TargetCellParameters = &que->CellParam;
+		//	que->delays[0].PrepareForPlay();
+		//	que->delays[1].PrepareForPlay();
+
+		//	que->effects[1] = 1;
+		//}
+		//else
+		//{
+		//	que->effects[1] = 0;
+		//}
+
+	 /////////////////////////////
 
 	
 	que->CellParam.audioParams[que->CellParam.audioParams.size() - 1].startSample = params.startSample;
@@ -614,7 +613,7 @@ void AudioOutEngine::LoadPreset(juce::XmlElement* xmlChannel)
 
 void fileToPlay::ApplyEffects(float& xn, int& channel)
 {
-	for (int i = 0; i < 6; i++)
+	/*for (int i = 0; i < 6; i++)
 	{
 		if (effects[i])
 		{
@@ -627,5 +626,5 @@ void fileToPlay::ApplyEffects(float& xn, int& channel)
 				delays[channel].processDelay(xn);				
 			}
 		}		 
-	}
+	}*/
 }
