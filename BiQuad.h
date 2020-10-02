@@ -49,8 +49,6 @@ public:
 	juce::MathConstants<float> mc;
 	RandomFilterParameters RandomParams;
 
-	bool* AllowRandom = nullptr; // a pointer to the mixer RND btn value through audio out engine;
-
 	float sampleRate;
 
 	float m_f_X;
@@ -102,9 +100,9 @@ public:
 	void changeListenerCallback(juce::ChangeBroadcaster* source);
 	void reset();
 
-	void add_audio_set_params(CellParameters* params) override;
-	//void respond_to_midi_set_params() {};
-	void ApplyEffects(float& xn, float DryWet);
+	void add_audio_set_params(CellParameters& FileQueParams, CellParameters& StepParams) override;
+	void respond_to_midi_set_params(CellParameters* params, MidiParams& midiParams) override;
+	void ApplyEffects(float& xn, float DryWet) override;
 
 	
 private:

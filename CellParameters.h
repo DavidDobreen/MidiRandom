@@ -59,7 +59,7 @@ public:
 	int endSample = -1; int endSampleDry = -1; int endSampleWet = -1;
 };
 
-class CellParameters : public juce::ChangeBroadcaster
+class CellParameters 
 {
 public:
 	CellParameters(){}
@@ -77,13 +77,9 @@ public:
 	int CHANNEL_FILTER = 0;
 	int FilterCutoff = -1; float FilterQ = -1.0; int filterSelection = -1;
 	int RandomFilterCutoff = -1; float RandomFilterQ = -1.0f; int RandomFilterSelection = -1;
-
-	bool flushDelaysMessage = false; bool selectionChangedMessage = false;
-
-
 	int CHANNEL_DELAY = 0;
 	int delayTime = -1; float delayVolume = -1.0f; float delayFeedback = -1.0f; int delayHighCut = -1; float delayDryWet = -1.0f; int delayLowCut = -1;
-	bool delayMessagePrepareForPlay = false; bool delayCookVariablesMessage = false; bool delayResetMessage = false;
+	 
 
 #define COP_PAR(value) value = other.value
 	void copyParamsFrom(const CellParameters& other);
@@ -95,12 +91,16 @@ public:
 	void LoadPreset(juce::XmlElement* step);
 };
 
+#define OVERIDE_IF_NEEDED(value)  ((StepParams.value >= 0) * (StepParams.value)) + ((StepParams.value == -1) * FileQueParams.value)
 class FXhandler
 {
 public:	 
+	bool* AllowRandom = nullptr; // a pointer to the mixer RND btn value through audio out engine;
+	int* RandomGUI_DryWet_Value;
+
 	virtual ~FXhandler() = default;
-	virtual void add_audio_set_params(CellParameters* params)=0;
-	//virtual void respond_to_midi_set_params() {};
+	virtual void add_audio_set_params(CellParameters& FileQueParams, CellParameters& StepParams)=0;
+	virtual void respond_to_midi_set_params(CellParameters* params, MidiParams& midiParams) = 0;
 	virtual void ApplyEffects(float& xn, float DryWet) =0;
 };
 

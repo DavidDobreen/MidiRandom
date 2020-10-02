@@ -28,8 +28,7 @@ AudioOutEngine::AudioOutEngine()
 		q->setFileToPlay(NULL);	
 		//q->CellParam.addChangeListener(&q->delays[0]);
 		//q->CellParam.addChangeListener(&q->delays[1]);
-		//q->delays[0].TargetCellParameters = &q->CellParam;
-		//q->delays[1].TargetCellParameters = &q->CellParam;
+		
 		 
 
 	}
@@ -44,10 +43,7 @@ AudioOutEngine::AudioOutEngine()
 }
 
 AudioOutEngine::~AudioOutEngine()
-{
-    //NULL out pointers    
-    fileQue.getLast()->CellParam.removeAllChangeListeners();
-}
+{}
 
 
 //Text-reducer macros to keep the streaming branchless
@@ -115,7 +111,7 @@ void AudioOutEngine::sendToOutput(juce::AudioBuffer<float>& buffer, juce::MidiBu
 						for (int sampleIndex = 0; sampleIndex < numOfSamples; ++sampleIndex)
 						{
 							xN = 0;
-							//currentFile->delays[_channel].processDelay(xN);							
+							currentFile->EffectLine[channel + 2].get()->ApplyEffects(xN, 1.0f);
 							channelData[sampleIndex] += xN * (!mute * !(otherIsSolo > 0) || solo);
 						}
 					break;
@@ -274,71 +270,32 @@ void AudioOutEngine::addAudioToQue(float velocity, internalStep* step)
 		 
 		velocityToMidi = que->velocity;
 
-
-
 		if (AllowRandom)
 			que->CellParam.Pan = CELLPARAM(Pan);
 		else
 			que->CellParam.Pan = CELLPARAM(dryPan);
-		 
-		 
-			que->CellParam.filterSelection = CELLPARAM(filterSelection);
-			que->CellParam.FilterCutoff = CELLPARAM(FilterCutoff);
-			que->CellParam.FilterQ = CELLPARAM(FilterQ);
-			que->CellParam.RandomFilterSelection = CELLPARAM(RandomFilterSelection);
-			que->CellParam.RandomFilterCutoff = CELLPARAM(RandomFilterCutoff);
-			que->CellParam.RandomFilterQ = CELLPARAM(RandomFilterQ);
+		 		 		
+		if (cellParameters.CHANNEL_FILTER)
+		{				
+			que->EffectLine[0].get()->add_audio_set_params(que->CellParam, step->cellParameters);
+			que->EffectLine[1].get()->add_audio_set_params(que->CellParam, step->cellParameters);					
+			que->effects[0] = 1;				 
+		}
+		else
+		{
+			que->effects[0] = 0;
+		}
 
-
-			//////////////////////////////////////////////
-			if (cellParameters.CHANNEL_FILTER)
-			{
-				que->EffectLine[0].get()->add_audio_set_params(&que->CellParam);
-				que->EffectLine[1].get()->add_audio_set_params(&que->CellParam);
-
-
-
-				//if (que->CellParam.filterSelection > 0)
-				//{
-				//	que->biQuad[0].flushDelays();
-				//	que->biQuad[1].flushDelays();
-				//	que->biQuad[0].selectionChanged(que->CellParam.filterSelection, float(que->CellParam.FilterCutoff), que->CellParam.FilterQ);
-				//	que->biQuad[1].selectionChanged(que->CellParam.filterSelection, float(que->CellParam.FilterCutoff), que->CellParam.FilterQ);
-
-				//	if (AllowRandom)
-				//	{
-				//		if (que->CellParam.RandomFilterSelection > 0)
-				//		{
-				//			//update the random side of the filter
-				//			que->biQuad[0].UpdateMainFilter = false;
-				//			que->biQuad[1].UpdateMainFilter = false;
-
-				//			if (que->CellParam.RandomFilterCutoff == -1)
-				//				que->CellParam.RandomFilterCutoff = que->CellParam.FilterCutoff;
-				//			if (que->CellParam.RandomFilterQ == -1)
-				//				que->CellParam.RandomFilterQ = que->CellParam.FilterQ;
-				//			if (que->CellParam.RandomFilterSelection == -1)
-				//				que->CellParam.RandomFilterSelection = que->CellParam.filterSelection;
-
-
-				//			que->biQuad[0].selectionChanged(que->CellParam.RandomFilterSelection, float(que->CellParam.RandomFilterCutoff), que->CellParam.RandomFilterQ);
-				//			que->biQuad[1].selectionChanged(que->CellParam.RandomFilterSelection, float(que->CellParam.RandomFilterCutoff), que->CellParam.RandomFilterQ);
-
-				//			//return to working on the main side
-				//			que->biQuad[0].UpdateMainFilter = true;
-				//			que->biQuad[1].UpdateMainFilter = true;
-				//		}
-				//	}
-					
-					que->effects[0] = 1;
-				 
-			}
-			else
-			{
-				que->effects[0] = 0;
-			}
-
-
+		if (cellParameters.CHANNEL_DELAY)
+		{
+			que->EffectLine[2].get()->add_audio_set_params(que->CellParam, step->cellParameters);
+			que->EffectLine[3].get()->add_audio_set_params(que->CellParam, step->cellParameters);
+			que->effects[1] = 1;
+		}
+		else
+		{
+			que->effects[1] = 0;
+		}
 			//if (cellParameters.CHANNEL_DELAY)
 			//{
 			//	que->CellParam.CHANNEL_DELAY = 0;
@@ -464,8 +421,10 @@ void AudioOutEngine::RespondToMidiEvent(MidiParams& params)
 	que->CellParam.Pan = params.Pan;
 	
 	 //////////////////////////////////////////
-		//if (que->CellParam.CHANNEL_FILTER)
-		//{
+		if (que->CellParam.CHANNEL_FILTER)
+		{
+			que->EffectLine[0].get()->respond_to_midi_set_params(&que->CellParam, params);
+			que->EffectLine[1].get()->respond_to_midi_set_params(&que->CellParam, params);
 		//	que->CellParam.filterSelection = params.FilterSelection;
 		//	que->CellParam.FilterCutoff = params.FilterCutoff;
 		//	que->CellParam.FilterQ = params.FilterQ;
@@ -501,15 +460,15 @@ void AudioOutEngine::RespondToMidiEvent(MidiParams& params)
 		//			que->biQuad[0].UpdateMainFilter = true;
 		//			que->biQuad[1].UpdateMainFilter = true;
 		//		}
-		//		que->effects[0] = 1;
-		//	}
+			que->effects[0] = 1;
+		}
 
 		//	que->effects[0] = 1;
 		//}
-		//else
-		//{
-		//	que->effects[0] = 0;
-		//}
+		else
+		{
+			que->effects[0] = 0;
+		}
 
 
 		//if (que->CellParam.CHANNEL_DELAY)
@@ -620,6 +579,7 @@ void fileToPlay::ApplyEffects(float& xn, int& channel)
 			}
 			if (i == 1)
 			{
+				EffectLine[channel+2].get()->ApplyEffects(xn, (float(*EffectLine[channel+2].get()->RandomGUI_DryWet_Value) * 0.01f));
 				//delays[channel].processDelay(xn);				
 			}
 		}		 

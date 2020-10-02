@@ -23,8 +23,7 @@ void driver::AddEngine()
 	generalBuffer.channels.back()->engine = engine;
 	engine->channel = generalBuffer.channels.back()->chNumber;
 	engine->RandomVelocityDryWet = &generalBuffer.channels.back()->VelDryWet;
-	engine->RandomDelayDryWet = &generalBuffer.channels.back()->RandomDelayDryWet;
-	
+		
 	fxInstallerMessage.sendSynchronousChangeMessage();
 }
 
@@ -253,7 +252,7 @@ void MidiHandler::decode(juce::MidiBuffer& midiMessages)
 			 
 			if (message.isNoteOn())
 			{
-				midiParams[channel].SampleSelection = engines[channel]->cellParameters.audioParams.size();
+				midiParams[channel].SampleSelection = engines[channel-1]->cellParameters.audioParams.size();
 			}
 		}
 		

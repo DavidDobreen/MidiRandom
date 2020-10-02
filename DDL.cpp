@@ -25,9 +25,7 @@ DelayModule::DelayModule()
 }
 
 void DelayModule::cookVariables()
-{
-	TargetCellParameters->delayCookVariablesMessage = false;
-
+{	 
 	FeedBack = TargetCellParameters->delayFeedback;
 	WetLevel = TargetCellParameters->delayDryWet;
 	float synced = float((*bpm)) / 60.0f * syncBPM[TargetCellParameters->delayTime];
@@ -107,6 +105,27 @@ void DelayModule::reset()
 	CFynValue = IsCrossFading = 0;
 }
 
+void DelayModule::add_audio_set_params(CellParameters& FileQueParams, CellParameters& StepParams)
+{
+	DelayInMS = FileQueParams.delayTime;
+	FeedBack = FileQueParams.delayFeedback;
+	if (AllowRandom)
+		{	 
+			DelayInMS = FileQueParams.delayTime = FileQueParams.delayTime + (float(*RandomGUI_DryWet_Value) / 100.0f) * (StepParams.delayTime - FileQueParams.delayTime);			 
+			FeedBack = FileQueParams.delayFeedback = FileQueParams.delayFeedback + (float(*RandomGUI_DryWet_Value) / 100.0f) * (StepParams.delayFeedback - FileQueParams.delayFeedback);		 	 
+	    }
+	PrepareForPlay();
+}
+
+void DelayModule::respond_to_midi_set_params(CellParameters* params, MidiParams& midiParams)
+{
+}
+
+void DelayModule::ApplyEffects(float& xn, float DryWet)
+{
+	processDelay(xn);
+}
+
 void DelayModule::processDelay(float& xN)
 {
 	const juce::ScopedLock myScopedLock(objectLock);
@@ -173,11 +192,11 @@ void DelayModule::processDelay(float& xN)
 
 void DelayModule::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
-	CellParameters* parameters = dynamic_cast<CellParameters*> (source);
-	if (parameters->delayMessagePrepareForPlay)
-		PrepareForPlay();
-	if (parameters->delayCookVariablesMessage)
-		cookVariables();
-	if (parameters->delayResetMessage)
-		resetDelay();
+	//CellParameters* parameters = dynamic_cast<CellParameters*> (source);
+	//if (parameters->delayMessagePrepareForPlay)
+	//	PrepareForPlay();
+	//if (parameters->delayCookVariablesMessage)
+	//	cookVariables();
+	//if (parameters->delayResetMessage)
+	//	resetDelay();
 }

@@ -117,11 +117,11 @@ BiQuad& BiQuad::operator=(BiQuad other)
 
 void BiQuad::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
-	CellParameters* parameters = dynamic_cast<CellParameters*> (source);
-	if (parameters->selectionChangedMessage)
-		selectionChanged(parameters->filterSelection, parameters->FilterCutoff, parameters->FilterQ);
-	if (parameters->flushDelaysMessage)
-		flushDelays();
+	//CellParameters* parameters = dynamic_cast<CellParameters*> (source);
+	//if (parameters->selectionChangedMessage)
+	//	selectionChanged(parameters->filterSelection, parameters->FilterCutoff, parameters->FilterQ);
+	//if (parameters->flushDelaysMessage)
+	//	flushDelays();
 }
 
 void BiQuad::reset()
@@ -130,43 +130,78 @@ void BiQuad::reset()
 		freqResponse[i] = 0;
 }
 
-void BiQuad::add_audio_set_params(CellParameters* params)
+void BiQuad::add_audio_set_params(CellParameters& FileQueParams, CellParameters& StepParams)
 {
-
-	/*if (cellParameters.CHANNEL_FILTER)
-			{*/
-				if (params->filterSelection > 0)
-				{
-					flushDelays();					
-					selectionChanged(params->filterSelection, float(params->FilterCutoff), params->FilterQ);
+	FileQueParams.filterSelection = OVERIDE_IF_NEEDED(filterSelection);
+	FileQueParams.FilterCutoff = OVERIDE_IF_NEEDED(FilterCutoff);
+	FileQueParams.FilterQ = OVERIDE_IF_NEEDED(FilterQ);
+	FileQueParams.RandomFilterSelection = OVERIDE_IF_NEEDED(RandomFilterSelection);
+	FileQueParams.RandomFilterCutoff = OVERIDE_IF_NEEDED(RandomFilterCutoff);
+	FileQueParams.RandomFilterQ = OVERIDE_IF_NEEDED(RandomFilterQ);
+ 
+	if (FileQueParams.filterSelection > 0)
+	{
+		flushDelays();					
+		selectionChanged(FileQueParams.filterSelection, float(FileQueParams.FilterCutoff), FileQueParams.FilterQ);
 					 
-					if (AllowRandom)
-					{
-						if (params->RandomFilterSelection > 0)
-						{
-							//update the random side of the filter
-							UpdateMainFilter = false;
-							
-							if (params->RandomFilterCutoff == -1)
-								params->RandomFilterCutoff = params->FilterCutoff;
-							if (params->RandomFilterQ == -1)
-								params->RandomFilterQ = params->FilterQ;
-							if (params->RandomFilterSelection == -1)
-								params->RandomFilterSelection = params->filterSelection;
-
-							selectionChanged(params->RandomFilterSelection, float(params->RandomFilterCutoff), params->RandomFilterQ);
-							 
-							//return to working on the main side
-							UpdateMainFilter = true;							
-						}
-					} 										
-				}
-			/*}
-			else
+		if (AllowRandom)
+		{
+			if (FileQueParams.RandomFilterSelection > 0)
 			{
-				que->effects[0] = 0;
-			}*/
+				//update the random side of the filter
+				UpdateMainFilter = false;
+							
+				if (FileQueParams.RandomFilterCutoff == -1)
+					FileQueParams.RandomFilterCutoff = FileQueParams.FilterCutoff;
+				if (FileQueParams.RandomFilterQ == -1)
+					FileQueParams.RandomFilterQ = FileQueParams.FilterQ;
+				if (FileQueParams.RandomFilterSelection == -1)
+					FileQueParams.RandomFilterSelection = FileQueParams.filterSelection;
+
+				selectionChanged(FileQueParams.RandomFilterSelection, float(FileQueParams.RandomFilterCutoff), FileQueParams.RandomFilterQ);
+							 
+				//return to working on the main side
+				UpdateMainFilter = true;							
+			}
+		} 										
+	}
 }
+
+void BiQuad::respond_to_midi_set_params(CellParameters* params, MidiParams& midiParams)
+{
+	params->filterSelection = midiParams.FilterSelection;
+	params->FilterCutoff = midiParams.FilterCutoff;
+	params->FilterQ = midiParams.FilterQ;
+	params->RandomFilterSelection = midiParams.RandomFilterSelection;
+	params->RandomFilterCutoff = midiParams.RandomFilterCutoff;
+	params->RandomFilterQ = midiParams.RandomFilterQ;
+
+	if (params->filterSelection > 0)
+	{
+		flushDelays();
+		selectionChanged(params->filterSelection, float(params->FilterCutoff), params->FilterQ);
+
+		if (params->RandomFilterSelection > 0)
+		{
+			//update the random side of the filter
+			UpdateMainFilter = false;
+
+			if (params->RandomFilterCutoff == -1)
+				params->RandomFilterCutoff = params->FilterCutoff;
+			if (params->RandomFilterQ == -1)
+				params->RandomFilterQ = params->FilterQ;
+			if (params->RandomFilterSelection == -1)
+				params->RandomFilterSelection = params->filterSelection;
+
+			selectionChanged(params->RandomFilterSelection, float(params->RandomFilterCutoff), params->RandomFilterQ);
+
+			//return to working on the main side
+			UpdateMainFilter = true;
+
+		}
+	}
+}
+ 
 
 void BiQuad::ApplyEffects(float& f_xn, float DryWet)
 {

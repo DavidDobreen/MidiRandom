@@ -11,6 +11,7 @@
 #pragma once
 #include "driver.h"
 #include "BiQuad.h"
+#include "DDL.h"
 
 
 //This object adds effects to an (audio engine's) file que object. 
@@ -27,19 +28,26 @@ public:
     void changeListenerCallback(juce::ChangeBroadcaster* source) {
         for (auto& q : Driver.engines.getLast()->fileQue)
         {  
-            std::unique_ptr<BiQuad> LeftBiquad(new BiQuad());                          
+            std::unique_ptr<BiQuad> LeftBiquad(new BiQuad());   //0                      
             q->EffectLine.push_back(std::move(LeftBiquad));
-            std::unique_ptr<BiQuad> RightBiquad(new BiQuad());
+            std::unique_ptr<BiQuad> RightBiquad(new BiQuad());  //1
             q->EffectLine.push_back(std::move(RightBiquad));
 
+            for (int x = 0; x < 2; x++)
+            {
+                std::unique_ptr<DelayModule> Delay(new DelayModule());  //3 + 4
+                Delay.get()->RandomGUI_DryWet_Value = &Driver.generalBuffer.channels.back()->RandomDelayDryWet;
+                Delay.get()->TargetCellParameters = &q->CellParam;
+                Delay.get()->bpm = Driver.clockTimer.BPM;
+                q->EffectLine.push_back(std::move(Delay));
+            }
+       
+
             
-
+       
             q->FilterDryWet = &Driver.generalBuffer.channels.back()->RandomFilterDryWet;
-
-
-            // TODO:  ADD THIS BACK
-            /*q->delays[0].bpm = Driver.clockTimer.BPM;
-            q->delays[1].bpm = Driver.clockTimer.BPM;*/
+            
+ 
             
         }
     }
