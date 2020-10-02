@@ -30,11 +30,16 @@ public:
 	//BiQuad biQuad[2];
 	int* FilterDryWet;
 
-	juce::OwnedArray<FXhandler> EffectLine;
+	std::vector<std::unique_ptr<FXhandler>> EffectLine;
+	 
 	int effects[6] = { 0, 0, 0, 0, 0, 0 };
 
-	fileToPlay() { fileBuffer = NULL; } //Construtor
-	~fileToPlay() { fileBuffer = NULL; }
+	fileToPlay() { fileBuffer = nullptr; } //Construtor
+	~fileToPlay() {
+		for (auto it = EffectLine.begin(); it != EffectLine.end(); ) {
+			it = EffectLine.erase(it);
+		}
+		fileBuffer = nullptr; }
 
 	//Set the pointer to the audio source
 	void setFileToPlay(juce::AudioBuffer<float>* _fileBuffer)
@@ -64,9 +69,7 @@ public:
 	foleys::LevelMeterSource meterSource;
 	juce::AudioBuffer<float> VUAudioBuffer;
 	int VUAudioBufferIndex;
-	
-
-	juce::AudioFormatManager& pFormatManager; //Reference to the format manager
+		 
 	juce::OwnedArray<juce::AudioBuffer<float>> fileBuffers; //Audio sources
 	std::vector<juce::URL> URLS; //URLs for audio sources
 
@@ -89,9 +92,7 @@ public:
 
 	//soundtouch::SoundTouch soundTouchLeft;
 	//soundtouch::SoundTouch soundTouchRight;
-
-	/*AudioBuffer<float> tesetBufferLeft;
-	AudioBuffer<float> tesetBufferRight;*/
+ 
 	float pitchShift;
 
 	//SendToOutput optimization
@@ -115,7 +116,7 @@ public:
 
 	CellParameters cellParameters;
 	 
-	AudioOutEngine(juce::AudioFormatManager& _pFormatManager);
+	AudioOutEngine();
 	~AudioOutEngine();
 
 	void sendToOutput(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages);

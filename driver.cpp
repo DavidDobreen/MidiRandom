@@ -13,6 +13,21 @@
 
  
 
+void driver::AddEngine()
+{
+	auto engine = new AudioOutEngine();
+	engines.add(engine);
+	//Seq Channel configs
+	generalBuffer.patterns[generalBuffer.currentPattern]->channels.add(new seqChannel(16, int(generalBuffer.channels.size())));
+	generalBuffer.channels.push_back(generalBuffer.patterns[generalBuffer.currentPattern]->channels.getLast());
+	generalBuffer.channels.back()->engine = engine;
+	engine->channel = generalBuffer.channels.back()->chNumber;
+	engine->RandomVelocityDryWet = &generalBuffer.channels.back()->VelDryWet;
+	engine->RandomDelayDryWet = &generalBuffer.channels.back()->RandomDelayDryWet;
+	
+	fxInstallerMessage.sendSynchronousChangeMessage();
+}
+
 void driver::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     //int activeChannels = generalBuffer.activeChannels.size();

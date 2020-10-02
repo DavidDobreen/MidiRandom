@@ -17,8 +17,9 @@ enum FilterSelections
 	None = 0, LPF, HPF, LPR, HPR, BPF, BSF, ButterworthBPF, ButterworthBSF, Low_Shelve, High_Shelve, Peak, Notch
 };
 
-class BiQuad : public juce::ChangeListener, public FXhandler
+class BiQuad : public FXhandler, public juce::ChangeListener
 {
+public:
 	//If the user wants to randomize the filter, the newly created random parameters will be stored in this simple struct.
 	//This is needed in order to allow dry-wet behavior between the original and random filters.
 	struct RandomFilterParameters
@@ -38,8 +39,9 @@ class BiQuad : public juce::ChangeListener, public FXhandler
 		float m_f_c0;
 		float m_f_d0;
 	};
-public:
 
+
+	
 	CellParameters* TargetCellParameters;
 	juce::String name;
 
@@ -47,6 +49,7 @@ public:
 	juce::MathConstants<float> mc;
 	RandomFilterParameters RandomParams;
 
+	bool* AllowRandom = nullptr; // a pointer to the mixer RND btn value through audio out engine;
 
 	float sampleRate;
 
@@ -99,9 +102,10 @@ public:
 	void changeListenerCallback(juce::ChangeBroadcaster* source);
 	void reset();
 
+	void add_audio_set_params(CellParameters* params) override;
+	//void respond_to_midi_set_params() {};
+	void ApplyEffects(float& xn, float DryWet);
 
-	void add_audio_set_params(CellParameters& params) override;
-	void respond_to_midi_set_params() override;
-	void ApplyEffects() override;
+	
 private:
 };

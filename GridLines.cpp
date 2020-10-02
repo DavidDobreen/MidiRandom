@@ -388,25 +388,7 @@
 */
 Seq_16_step_line::Seq_16_step_line(int x, int y, int w, int h, juce::Component* parent, driver& driver) : childComp(x, y, w, h), drived(driver, parent, this)
 { 
-    auto engine = new AudioOutEngine{ Driver.formatManager };
-    
-    Driver.engines.add(engine);
-    //Seq Channel configs
-    Driver.generalBuffer.patterns[Driver.generalBuffer.currentPattern]->channels.add(new seqChannel(16, int(Driver.generalBuffer.channels.size())));
-    Driver.generalBuffer.channels.push_back(Driver.generalBuffer.patterns[Driver.generalBuffer.currentPattern]->channels.getLast());
-    Driver.generalBuffer.channels.back()->engine = engine;
-    engine->channel = Driver.generalBuffer.channels.back()->chNumber;
-    engine->RandomVelocityDryWet = &Driver.generalBuffer.channels.back()->VelDryWet;
-    engine->RandomDelayDryWet = &Driver.generalBuffer.channels.back()->RandomDelayDryWet;
-
-
-    for (auto& q : engine->fileQue)
-    {
-        // TODO:  ADD THIS BACK
-        /*q->delays[0].bpm = Driver.clockTimer.BPM;
-        q->delays[1].bpm = Driver.clockTimer.BPM;*/
-        q->FilterDryWet = &Driver.generalBuffer.channels.back()->RandomFilterDryWet;
-    }
+    Driver.AddEngine();
     //Seq Line configs
     line.chNumber = Driver.engines.size() - 1;
     line.assignChennelNumberToSteps();

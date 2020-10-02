@@ -97,10 +97,10 @@ public:
 
 class FXhandler
 {
-public:
-	FXhandler() {};
-	virtual void add_audio_set_params(CellParameters& params) {};
-	virtual void respond_to_midi_set_params() {};
-	virtual void ApplyEffects() {};
+public:	 
+	virtual ~FXhandler() = default;
+	virtual void add_audio_set_params(CellParameters* params)=0;
+	//virtual void respond_to_midi_set_params() {};
+	virtual void ApplyEffects(float& xn, float DryWet) =0;
 };
 

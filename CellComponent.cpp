@@ -192,8 +192,9 @@ void CellEffectsComp::changeListenerCallback(juce::ChangeBroadcaster* source)
                 Driver.engines[Driver.ActiveLine]->currentActive--;
                 for (auto& q : Driver.engines[Driver.ActiveLine]->fileQue)
                 {
-                    q->delays[0].resetDelay();
-                    q->delays[1].resetDelay();
+                   // TODO: add this back
+                   // q->delays[0].resetDelay();
+                    //q->delays[1].resetDelay();
                 }
                     
             }

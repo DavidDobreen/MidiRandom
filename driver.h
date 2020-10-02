@@ -62,6 +62,8 @@ public:
     StepDragHandler stepDragHandler{ generalBuffer };
     ClockTimerHandler clockTimerHandler{ generalBuffer };   
     StartStopHandler startStopHandler { generalBuffer ,clockTimer ,engines };
+
+    juce::ChangeBroadcaster fxInstallerMessage;
    
     //std::vector<ThumbnailComp*> thumbRszr;
     std::vector<juce::ChangeListener*> LAClisteners;
@@ -77,7 +79,7 @@ public:
     driver();
     ~driver();
    
-    
+    void AddEngine();
     void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages);
 
     void CreatePreset(juce::String name);
