@@ -63,10 +63,10 @@ void Step::mouseDown(const juce::MouseEvent& event)
 {
 	if (event.mods.isLeftButtonDown())
 	{
-		//lastVelocity = velocity;
+		lastVelocity = velocity;
 		if (!isOn)
 		{
-			velocity = 1.0f;
+			//velocity = 1.0f;
 			isOn = true;
 			doNotTurnOff = true;
 			repaint();
@@ -76,7 +76,7 @@ void Step::mouseDown(const juce::MouseEvent& event)
 		else
 		{
 			p1.y = float(event.y);
-			lastVelocity = velocity;
+			//lastVelocity = velocity;
 		}
 		//repaint();
 		//sendChangeMessage();
@@ -124,7 +124,7 @@ void Step::mouseDrag(const juce::MouseEvent& event)
 		dragMessage = true;
 		p2.y = float(event.y);
 		velocity = juce::jmin(juce::jmax(lastVelocity - (float(p2.y - p1.y) / 100.0f), 0.0f), 1.0f);
-		 
+		
 		repaint();
 		stepDragMessage.sendSynchronousChangeMessage();
 	}

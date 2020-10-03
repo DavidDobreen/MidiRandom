@@ -12,28 +12,22 @@
 #include "MainLine.h"
 
       
-MainLineStep::MainStepOnOffMessage::MainStepOnOffMessage(bool& isOn, int& stepnumber, int& channelnumber) : on(isOn), stepNumber(stepnumber), channelNumber(channelnumber) 
-{
-}
+//MainLineStep::MainStepOnOffMessage::MainStepOnOffMessage(bool& isOn, int& stepnumber, int& channelnumber) : on(isOn), stepNumber(stepnumber), channelNumber(channelnumber) 
+//{
+//}
 
-MainLineStep::MainLineStep(int x, int y, int w, int h, juce::String _onPng, juce::String _offPng, juce::Component* parent, pngHandler& Handler)
-: chButton(x,y,w,h,_onPng,_offPng,parent,Handler)
-{
-}
+//MainLineStep::MainLineStep(int x, int y, int w, int h, juce::String _onPng, juce::String _offPng, juce::Component* parent, pngHandler& Handler)
+//: chButton(x,y,w,h,_onPng,_offPng,parent,Handler)
+//{
+//}
 
-void MainLineStep::mouseDown(const juce::MouseEvent&  )
-{
-    IsOn = !IsOn;
-    IsOn ? CurrentImage = OnImage : CurrentImage = OffImage;
-    mainStepOnOffMessage.sendSynchronousChangeMessage();
-    repaint();
-}
+
 
 MainSeqLine::MainSeqLine(int x, int y, int w, int h , juce::Component* parent, pngHandler& Handler) : childComp(x, y, w, h) ,handled(Handler,parent,this)  {
     for (int i = 0; i < 16; i++)
     {
-        auto step = new MainLineStep { 6+ i * 44+(i*2), 0, 44, 53, "Low pad gray NO shadow.png","Low pad gray with shadow.png",parent, handler};
-        step->index = i;
+        auto step = new MainLineStep { 6+ i * 44+(i*2), 0, 44, 53, /*"Low pad gray NO shadow.png","Low pad gray with shadow.png",*/parent, handler};
+        step->stepNumber = i;
         steps.add(step);
     }
 }
@@ -45,7 +39,8 @@ MainLineComp::MainLineComp(int x, int y, int w, int h, LoadAudioComponent& LAC, 
     Driver.LAClisteners.push_back(&_LAC_Drop_File_Handler);
     for (auto& s : mainSeqLine.steps)
     {
-        s->mainStepOnOffMessage.addChangeListener(&mainLineListener);
+        s->OnOffMessage.addChangeListener(&mainLineListener);
+        
     }
 }
 
@@ -56,10 +51,10 @@ MainLineComp::~MainLineComp()
 
 void MainLineListener::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
-    MainLineStep::MainStepOnOffMessage* m = dynamic_cast<MainLineStep::MainStepOnOffMessage*> (source);
+    Step::StepOnOffMessage* m = dynamic_cast<Step::StepOnOffMessage*> (source);
     if (m != nullptr)
     {
-        generalBuffer.updateNoteEvent(m->on, m->channelNumber, m->stepNumber);
+        generalBuffer.updateNoteEvent(m->on, *m->channelNumber, m->stepNumber);
         velcoityyStrip.vels[m->stepNumber]->IsOn = m->on;
         velcoityyStrip.vels[m->stepNumber]->repaint();
     }
@@ -93,3 +88,31 @@ MainLineComp::LAC_Drop_File_Handler::LAC_Drop_File_Handler(MainSeqLine& _mainSeq
     : mainSeqLine(_mainSeqLine), bottomLAC(LAC), LAClistener(dr), velocityStrip(VelocityStrip)
 {
 }
+
+void MainLineComp::LAC_Drop_File_Handler::changeListenerCallback(juce::ChangeBroadcaster* source)
+{
+    LoadAudioComponent* LAC = dynamic_cast<LoadAudioComponent*>(source);
+    if (LAC != nullptr)
+    {
+        mainSeqLine.chNumber = LAC->chNumber;
+        bottomLAC.fileBuffers = &Driver.engines[LAC->chNumber]->fileBuffers;
+
+
+        for (auto& s : mainSeqLine.steps)
+        {
+            s->channelNumber = &mainSeqLine.chNumber;
+            s->OnOffMessage.channelNumber = &mainSeqLine.chNumber;
+        }
+
+        for (int i = 0; i < mainSeqLine.steps.size(); i++)
+        {
+            mainSeqLine.steps[i]->isOn = velocityStrip.vels[i]->IsOn = Driver.generalBuffer.channels[mainSeqLine.chNumber]->steps[i]->On;
+            mainSeqLine.steps[i]->isOn ? mainSeqLine.steps[i]->CurrentImage = mainSeqLine.steps[i]->OnImage : mainSeqLine.steps[i]->CurrentImage = mainSeqLine.steps[i]->OffImage;
+            mainSeqLine.steps[i]->repaint();
+            velocityStrip.vels[i]->text = juce::String(int(Driver.generalBuffer.channels[LAC->chNumber]->steps[i]->velocity * 127));
+            velocityStrip.vels[i]->repaint();
+        }
+    }
+}
+
+ 

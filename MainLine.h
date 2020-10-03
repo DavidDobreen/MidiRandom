@@ -11,31 +11,102 @@
 #pragma once
 #include "LoadAudioComponent.h"
 #include "driver.h"
+ 
 
-class MainLineStep : public chButton
+//class MainLineStep : public chButton
+//{
+//public:
+//    class MainStepOnOffMessage : public juce::ChangeBroadcaster
+//    {
+//    public:
+//        bool& on;
+//        int& stepNumber;
+//        int& channelNumber;
+//
+//        MainStepOnOffMessage(bool& isOn, int& stepnumber, int& channelnumber);
+//        ~MainStepOnOffMessage() { removeAllChangeListeners(); }
+//    private:
+//    };
+//
+//    class MainStepDragMessage : public juce::ChangeBroadcaster
+//    {
+//    public:
+//        bool& on;
+//        int& stepNumber;
+//        int& channelNumber;
+//        float Velocity;
+//
+//        MainStepDragMessage(bool& isOn, int& stepnumber, int& channelnumber, float& velocity);
+//        ~MainStepDragMessage() { removeAllChangeListeners(); }
+//    private:
+//    };
+//
+//    int index;
+//    int channel;
+//    float velocity = 1.0f;
+//    float lastVelocity = 1.0f;
+//
+//    bool doNotTurnOff = false;
+//
+//    juce::Point<float> p1;
+//    juce::Point<float> p2;
+//
+//    MainStepOnOffMessage mainStepOnOffMessage{ IsOn, index, channel };
+//    MainStepDragMessage mainStepDragMessage { IsOn, index, channel,velocity };
+//    MainLineStep(int x, int y, int w, int h, juce::String _onPng, juce::String _offPng, juce::Component* parent, pngHandler& Handler);
+//    ~MainLineStep(){}
+//    void mouseDown(const juce::MouseEvent& event) override;
+//    void mouseDrag(const juce::MouseEvent& event) override;
+//    void mouseUp(const juce::MouseEvent& event) override;
+//     
+// 
+//private:
+//};
+
+class MainLineStep : public chStep
 {
 public:
-    class MainStepOnOffMessage : public juce::ChangeBroadcaster
+
+    class MouseDragNotifier : public juce::ChangeBroadcaster, public childComp ,public handled
     {
     public:
-        bool& on;
-        int& stepNumber;
-        int& channelNumber;
-
-        MainStepOnOffMessage(bool& isOn, int& stepnumber, int& channelnumber);
-        ~MainStepOnOffMessage() { removeAllChangeListeners(); }
-    private:
+        MouseDragNotifier(int x, int y, int w, int h, juce::Component* parent, pngHandler& Handler)
+            : childComp(x,y,w,h), handled(Handler,parent,this){}
+       
     };
-    int index;
-    int channel;
-    MainStepOnOffMessage mainStepOnOffMessage{ IsOn, index, channel };
-    MainLineStep(int x, int y, int w, int h, juce::String _onPng, juce::String _offPng, juce::Component* parent, pngHandler& Handler);
-    ~MainLineStep(){}
-    void mouseDown(const juce::MouseEvent& event) override;
-     
- 
-private:
+    
+    juce::Image OnImage;
+    juce::Image OffImage;
+    juce::Image CurrentImage;
+
+    MouseDragNotifier mouseDragNotifier { 0,0,0,0,this,handler };
+
+    MainLineStep(int x, int y, int w, int h, juce::Component* parent, pngHandler& Handler)
+        : chStep(x,y,w,h,Handler,parent){
+        OnImage = juce::PNGImageFormat::loadFrom(Handler.PNGdir.getChildFile("Low pad gray NO shadow.png"));
+        OffImage = juce::PNGImageFormat::loadFrom(Handler.PNGdir.getChildFile("Low pad gray with shadow.png"));
+        CurrentImage = OffImage;
+    }
+
+    void mouseDrag(const juce::MouseEvent& event)
+    {
+        chStep::mouseDrag(event);
+        mouseDragNotifier.sendSynchronousChangeMessage();
+    }
+
+    void paint(juce::Graphics& g) {
+        refresh();
+        g.drawImage(CurrentImage, getLocalBounds().toFloat(), juce::RectanglePlacement::stretchToFit, false);
+    };
+    void refresh()
+    {
+        if (isOn)
+            CurrentImage = OnImage;
+        else
+            CurrentImage = OffImage;        
+    }
 };
+ 
 
 class VelocityStrip : public childComp, public drived
 {
@@ -89,8 +160,6 @@ public:
     };
 
     LoadAudioComponent& bottomLAC;
-
-     
     VelocityStrip velocityStrip{ 0, 57, 746, 12, this, Driver };
 
     MainSeqLine mainSeqLine{0,0,740,120,this,Driver.handler };

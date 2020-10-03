@@ -147,14 +147,7 @@ private:
 class GridLines :   public childComp, public driven
 {
 public:
-    class AddLineButton : public childComp, public handled, public juce::ChangeBroadcaster
-    {
-    public:
-        AddLineButton(int x, int y, int w, int h, juce::Component* parent, pngHandler& Handler);
-
-        void mouseDown(const juce::MouseEvent& event) override;
-        void paint(juce::Graphics& g) override;
-    };
+    
     class LAClistener : public juce::ChangeListener, public driven {
     public:
         LAClistener(juce::OwnedArray< Seq_16_And_LAC>& Lines, juce::OwnedArray< VELcomp>& Vels, driver& Driver);
@@ -175,25 +168,45 @@ public:
 
     };
 
+    class MainLineStepDragListener : public juce::ChangeListener , public driven{
+    public:
+        juce::OwnedArray< Seq_16_And_LAC>& lines;
+        MainLineStepDragListener(juce::OwnedArray< Seq_16_And_LAC>& Lines, driver& driver);        
+        void changeListenerCallback(juce::ChangeBroadcaster* source);
+    };
+
     class MainLineUpdater : public juce::ChangeListener {
     public:
-        MainLineUpdater(MainSeqLine& mainLine) : mainSeqLine(mainLine) {};
+        MainLineUpdater(MainLineComp& mainLine) : mainLineComp(mainLine) {};
         ~MainLineUpdater() {};
         void changeListenerCallback(juce::ChangeBroadcaster* source);
     private:
-        MainSeqLine& mainSeqLine;
+        MainLineComp& mainLineComp;
 
+    };
+
+    class AddLineButton : public childComp, public handled, public juce::ChangeBroadcaster
+    {
+    public:
+        juce::OwnedArray< VELcomp>& Vels;
+        MainLineComp& mainLineComp;
+        
+        AddLineButton(int x, int y, int w, int h, MainLineComp& MainLineComp, juce::OwnedArray< VELcomp>& vels, juce::Component* parent, pngHandler& Handler);
+
+        void mouseDown(const juce::MouseEvent& event) override;
+        void paint(juce::Graphics& g) override;
     };
 
     juce::OwnedArray< Seq_16_And_LAC> lines;
     juce::OwnedArray< VELcomp> vels;
     MainLineStepListener mainLineListener{ lines };
-    MainSeqLine& mainSeqLine;
-    MainLineUpdater mainLineUpdater{ mainSeqLine };
+    MainLineComp& mainLineComp;
+    MainLineUpdater mainLineUpdater{ mainLineComp };
+    MainLineStepDragListener mainLineStepDragListener{ lines,Driver };
     LAClistener LACListener{ lines,vels,Driver };
-    AddLineButton addButton{ 110,0,20,20,this,Driver.handler };
+    AddLineButton addButton{ 110,0,20,20,mainLineComp,vels,this,Driver.handler };
 
-    GridLines(int x, int y, int w, int h, MainSeqLine& mainLine, juce::Component& velocityLineHolder, Mixer& Mixer, juce::Component* parent, driver& dr);
+    GridLines(int x, int y, int w, int h, MainLineComp& mainLineComp, juce::Component& velocityLineHolder, Mixer& Mixer, juce::Component* parent, driver& dr);
     ~GridLines() {}
 
     void AddLine();

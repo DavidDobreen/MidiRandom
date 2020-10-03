@@ -480,7 +480,7 @@ VELcomp::VELcomp(int x, int y, int w, int h, SeqLine& Line, juce::Component* par
     for (auto* s : line.items) {
         velLine.steps.add(s);
         s->OnOffMessage.addChangeListener(&stepOnOffListener);
-        s->stepDragMessage.addChangeListener(&stepOnOffListener);
+        s->stepDragMessage.addChangeListener(&stepOnOffListener);//??
     }
     velLine.chNumber = driver.engines.size() - 1;
     velLine.addChangeListener(&seqLineVelocityHandler);
@@ -510,8 +510,16 @@ void  SeqLineVelocityHandler::changeListenerCallback(juce::ChangeBroadcaster* ) 
     }
 }
 
-GridLines::AddLineButton::AddLineButton(int x, int y, int w, int h, juce::Component* parent, pngHandler& Handler) : childComp(x, y, w, h), handled(Handler, parent, this) {}
-void GridLines::AddLineButton::mouseDown(const juce::MouseEvent&) { sendSynchronousChangeMessage(); }
+GridLines::AddLineButton::AddLineButton(int x, int y, int w, int h, MainLineComp& MainLineComp, juce::OwnedArray<VELcomp>& vels, juce::Component* parent, pngHandler& Handler)
+    : mainLineComp(MainLineComp), Vels(vels), childComp(x, y, w, h), handled(Handler, parent, this) {}
+void GridLines::AddLineButton::mouseDown(const juce::MouseEvent&) { 
+    sendSynchronousChangeMessage(); 
+    for (auto& s : mainLineComp.mainSeqLine.steps)
+    {
+        s->OnOffMessage.addChangeListener(&Vels.getLast()->stepOnOffListener);
+        s->stepDragMessage.addChangeListener(&Vels.getLast()->stepOnOffListener);
+    }     
+}
 void GridLines::AddLineButton::paint(juce::Graphics& g)
 {
     g.setColour(juce::Colours::white); g.drawFittedText("+", getLocalBounds(), juce::Justification::centred, 1);
@@ -556,5 +564,129 @@ void GridLines::LAClistener::changeListenerCallback(juce::ChangeBroadcaster* sou
         }
         src->droppedFile.clear();
 
+    }
+}
+
+
+
+GridLines::MainLineStepListener::MainLineStepListener(juce::OwnedArray<Seq_16_And_LAC>& Lines) : lines(Lines)
+{
+
+}
+
+GridLines::MainLineStepListener::~MainLineStepListener()
+{
+}
+
+void GridLines::MainLineStepListener::changeListenerCallback(juce::ChangeBroadcaster* source)
+{   
+    Step::StepOnOffMessage* s = dynamic_cast<Step::StepOnOffMessage*>(source);
+    if (s != nullptr)
+    {
+        lines[*s->channelNumber]->line.line.items[s->stepNumber]->isOn = s->on;
+        lines[*s->channelNumber]->line.line.items[s->stepNumber]->repaint();
+        return;
+    }
+}
+
+GridLines::GridLines(int x, int y, int w, int h, MainLineComp& mainLineComp, juce::Component& velocityLineHolder, Mixer& Mixer, juce::Component*, driver& dr)
+    : mainLineComp(mainLineComp), VelocityLineHolder(velocityLineHolder), mixer(Mixer), childComp(x, y, w, h), driven(dr/*,parent,this*/) {
+    for (auto& s : mainLineComp.mainSeqLine.steps)
+    {
+        s->OnOffMessage.addChangeListener(&mainLineListener);
+        s->mouseDragNotifier.addChangeListener(&mainLineStepDragListener);
+    }
+}
+
+void GridLines::AddLine()
+{
+    auto line = new Seq_16_And_LAC{ 0,lines.size() * 30 ,1100,30,this,Driver };
+    lines.add(line);
+    for (auto& s : line->line.line.items)
+    {
+        s->OnOffMessage.addChangeListener(&mainLineUpdater);
+        s->stepDragMessage.addChangeListener(&mainLineUpdater);
+    }
+        
+
+    line->LAC.addChangeListener(&LACListener);
+
+    addAndMakeVisible(line);
+    line->setBounds(line->dims[0], line->dims[1], line->dims[2], line->dims[3]);
+
+
+    line->addAndMakeVisible(line->line);
+    line->line.setBounds(line->line.dims[0], line->line.dims[1], line->line.dims[2], line->line.dims[3]);
+
+    line->line.addAndMakeVisible(line->line.line);
+    line->line.line.setBounds(line->line.line.dims[0], line->line.line.dims[1], line->line.line.dims[2], line->line.line.dims[3]);
+
+
+    for (auto& s : line->line.line.items)
+    {
+        line->line.line.addAndMakeVisible(s);
+        s->setBounds(s->dims[0], s->dims[1], s->dims[2], s->dims[3]);
+    }
+
+    line->addAndMakeVisible(line->LAC);
+    line->LAC.setBounds(line->LAC.dims[0], line->LAC.dims[1], line->LAC.dims[2], line->LAC.dims[3]);
+
+    line->LAC.addAndMakeVisible(line->LAC.area);
+    line->LAC.area.setBounds(line->LAC.area.dims[0], line->LAC.area.dims[1], line->LAC.area.dims[2], line->LAC.area.dims[3]);
+
+    addButton.setBounds(addButton.dims[0], lines.size() * 30, addButton.dims[2], addButton.dims[3]);
+
+    auto velocty = new VELcomp{ 164,263,737,60,lines.getLast()->line.line, this,Driver };
+    vels.add(velocty);
+    VelocityLineHolder.addAndMakeVisible(velocty);
+    velocty->setBounds(velocty->dims[0], velocty->dims[1], velocty->dims[2], velocty->dims[3]);
+
+    velocty->addAndMakeVisible(velocty->velLine);
+    velocty->velLine.setBounds(velocty->velLine.dims[0], velocty->velLine.dims[1], velocty->velLine.dims[2], velocty->velLine.dims[3]);
+
+    mixer.AddSlider(*Driver.engines.getLast());
+}
+
+void GridLines::MainLineUpdater::changeListenerCallback(juce::ChangeBroadcaster* source)
+{
+    Step::StepDragMessage* d = dynamic_cast<Step::StepDragMessage*>(source);
+    if ((d != nullptr) && (*(d->channelNumber) == mainLineComp.mainSeqLine.chNumber))
+    {
+        auto m = mainLineComp.mainSeqLine.steps[d->stepNumber];
+        m->velocity = d->velocity;        
+        m->repaint();
+        return;
+    }
+
+    Step::StepOnOffMessage* s = dynamic_cast<Step::StepOnOffMessage*>(source);
+    if ((s != nullptr) && (*(s->channelNumber) == mainLineComp.mainSeqLine.chNumber))
+    {
+        auto m = mainLineComp.mainSeqLine.steps[s->stepNumber];
+        m->isOn = s->on;
+        m->isOn ? m->CurrentImage = m->OnImage : m->CurrentImage = m->OffImage;         
+        m->repaint();
+        mainLineComp.velocityStrip.vels[s->stepNumber]->IsOn = s->on;
+        mainLineComp.velocityStrip.vels[s->stepNumber]->repaint();
+        return;
+    }
+    
+}
+
+GridLines::MainLineStepDragListener::MainLineStepDragListener(juce::OwnedArray<Seq_16_And_LAC>& Lines,driver& driver)
+    :lines(Lines), driven(driver)
+{
+}
+
+void GridLines::MainLineStepDragListener::changeListenerCallback(juce::ChangeBroadcaster* source)
+{
+    Step* s = dynamic_cast<Step*>(dynamic_cast<MainLineStep::MouseDragNotifier*>(source)->getParentComponent());
+    if (s != nullptr)
+    {
+        lines[*s->channelNumber]->line.line.items[s->stepNumber]->velocity = s->velocity;
+        Driver.generalBuffer.channels[*s->channelNumber]->steps[s->stepNumber]->velocity = s->velocity;
+        Driver.generalBuffer.channels[*s->channelNumber]->steps[s->stepNumber]->baseVelocity = s->velocity;
+        Driver.generalBuffer.channels[*s->channelNumber]->steps[s->stepNumber]->wetVelocity = s->velocity;
+        lines[*s->channelNumber]->line.line.items[s->stepNumber]->repaint();
+        return;
     }
 }

@@ -83,7 +83,7 @@ public:
     juce::Viewport GLviewport;   
     juce::Viewport MixerViewport;
     Mixer mixer { 0,0,890,720, Driver };
-    GridLines GL{ 0,0,890,720, mainLineComp.mainSeqLine,*this,mixer,this,Driver };     
+    GridLines GL{ 0,0,890,720, mainLineComp,*this,mixer,this,Driver };     
     CenterComponent(int x, int y, int w, int h, MainLineComp& _mainLineComp, juce::Component* parent, driver& driver);
 
 };
