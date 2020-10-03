@@ -42,6 +42,7 @@ void GeneralBuffer::readStep()
 
 			if (offset > 0.5f)
 			{
+
 				if (channels[currentChannel]->steps[x]->On)
 				{
 					offset = 15.0f / float(*m_BPM) * 1000.0f * (offset - 0.5f);

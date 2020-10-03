@@ -37,6 +37,22 @@ public:
 private:
 };
 
+class VelocityStrip : public childComp, public drived
+{
+public:
+    chBgComp bkgd{ "low botton velocity strip2.png" , this, Driver.handler };
+    juce::OwnedArray<fxLabel> vels;
+    VelocityStrip(int x, int y, int w, int h, juce::Component* parent, driver& driver)
+        :childComp(x, y, w, h), drived(driver, parent, this)
+    {
+        for (int i = 0; i < 16; i++)
+        {
+            auto vel = new fxLabel(25 + i * 46, 0, 22, 12, "0", DEFAULT_LABEL_COLORS, nullptr, this, Driver.handler);
+            vels.add(vel);
+        }
+    }
+};
+
 class MainSeqLine : public childComp , public handled
 {
 public:   
@@ -49,29 +65,37 @@ private:
 
 class MainLineListener : public juce::ChangeListener {
 public:
-    MainLineListener(GeneralBuffer& buffer) : generalBuffer(buffer) {};
+    MainLineListener(GeneralBuffer& buffer, VelocityStrip& VelcoityyStrip) : generalBuffer(buffer), velcoityyStrip(VelcoityyStrip){};
     ~MainLineListener() {};
     void changeListenerCallback(juce::ChangeBroadcaster* source);
 private:
     GeneralBuffer& generalBuffer;
+    VelocityStrip& velcoityyStrip;
 };
 
 class MainLineComp : public childComp, public drived
 {
 public:
+
     class LAC_Drop_File_Handler : public LAClistener
     {
     public:
-        LAC_Drop_File_Handler(MainSeqLine& _mainSeqLine, LoadAudioComponent& LAC, driver& dr);
+        LAC_Drop_File_Handler(MainSeqLine& _mainSeqLine, LoadAudioComponent& LAC , VelocityStrip& VelocityStrip, driver& dr);
         void changeListenerCallback(juce::ChangeBroadcaster* source);
     private:
         MainSeqLine& mainSeqLine;  
         LoadAudioComponent& bottomLAC;
+        VelocityStrip& velocityStrip;
     };
+
     LoadAudioComponent& bottomLAC;
-    MainSeqLine mainSeqLine{ dims[0],dims[1],dims[2],dims[3],this,Driver.handler };
-    LAC_Drop_File_Handler _LAC_Drop_File_Handler { mainSeqLine, bottomLAC, Driver};
-    MainLineListener mainLineListener{ Driver.generalBuffer };
+
+     
+    VelocityStrip velocityStrip{ 0, 57, 746, 12, this, Driver };
+
+    MainSeqLine mainSeqLine{0,0,740,120,this,Driver.handler };
+    LAC_Drop_File_Handler _LAC_Drop_File_Handler { mainSeqLine, bottomLAC, velocityStrip, Driver};
+    MainLineListener mainLineListener{ Driver.generalBuffer,velocityStrip };
     
     MainLineComp(int x, int y, int w, int h, LoadAudioComponent& LAC, juce::Component* parent, driver& Driver);
     ~MainLineComp();

@@ -93,9 +93,10 @@ class BottomSection : public childComp, public drived
 public:
     juce::String LACbkgd = "bottom pads name frame2.png";
  
-    LedLine leds{ 211, -4, 740, 120, this, Driver };    
+    LedLine leds{ 211, -4, 740, 15, this, Driver };    
     LoadAudioComponent LAC { 0,10,152,35, LACbkgd,this, Driver.handler  };
-    MainLineComp mainLine{ 200,10,740,120 ,LAC,this, Driver };
+    MainLineComp mainLine{ 193,10,746,140 ,LAC,this, Driver };
+        
     BottomSection(int x, int y, int w, int h, juce::Component* parent, driver& driver);
 };
 

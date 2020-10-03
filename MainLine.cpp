@@ -32,7 +32,7 @@ void MainLineStep::mouseDown(const juce::MouseEvent&  )
 MainSeqLine::MainSeqLine(int x, int y, int w, int h , juce::Component* parent, pngHandler& Handler) : childComp(x, y, w, h) ,handled(Handler,parent,this)  {
     for (int i = 0; i < 16; i++)
     {
-        auto step = new MainLineStep { i * 44+(i*2), 0, 44, 53, "Low pad gray NO shadow.png","Low pad gray with shadow.png",parent, handler};
+        auto step = new MainLineStep { 6+ i * 44+(i*2), 0, 44, 53, "Low pad gray NO shadow.png","Low pad gray with shadow.png",parent, handler};
         step->index = i;
         steps.add(step);
     }
@@ -60,6 +60,8 @@ void MainLineListener::changeListenerCallback(juce::ChangeBroadcaster* source)
     if (m != nullptr)
     {
         generalBuffer.updateNoteEvent(m->on, m->channelNumber, m->stepNumber);
+        velcoityyStrip.vels[m->stepNumber]->IsOn = m->on;
+        velcoityyStrip.vels[m->stepNumber]->repaint();
     }
 }
 
@@ -83,4 +85,11 @@ void LedLine::ClockTimerHandler::changeListenerCallback(juce::ChangeBroadcaster*
     leds[last]->on.setVisible(false);
     leds[Driver.clockTimer.counter]->on.setVisible(true);
     last = Driver.clockTimer.counter;
+}
+
+
+
+MainLineComp::LAC_Drop_File_Handler::LAC_Drop_File_Handler(MainSeqLine& _mainSeqLine, LoadAudioComponent& LAC, VelocityStrip& VelocityStrip, driver& dr)
+    : mainSeqLine(_mainSeqLine), bottomLAC(LAC), LAClistener(dr), velocityStrip(VelocityStrip)
+{
 }

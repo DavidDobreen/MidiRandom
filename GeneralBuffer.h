@@ -75,7 +75,7 @@ public:
 	//Remember to add a pointer here for every new knob/slider/button you add in the GUI if it is not some kind of child object.
 	//Most of the plugin objects will be childern of either SeqChannel or AudioOutEngine, but global parameters will probably not be.
 	int* m_Volume;
-	int* m_BPM;  //Used for XML communication and live offset calculations
+	float* m_BPM;  //Used for XML communication and live offset calculations
 	int* GridSize;
 	int* GridRangeSelection;
 	int* MasterComponenetCurrentTab;

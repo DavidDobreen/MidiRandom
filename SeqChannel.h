@@ -15,8 +15,41 @@
 class seqChannel
 {
 public:
+	class shuffleHandler : public juce::ChangeListener
+	{
+	public:
+		bool shuffled = false;
+		float amount;
+		juce::OwnedArray<internalStep>& steps;
+		shuffleHandler(juce::OwnedArray<internalStep>& Steps) : steps(Steps){}
+		void changeListenerCallback(juce::ChangeBroadcaster* source)
+		{
+			if (!shuffled)
+			{
+				
+				for (auto& s : steps)
+				{
+					if (s->stepIndex % 2 == 1)
+						s->offSet = amount;
+				}
+				shuffled = true;
+			}			
+			else
+			{
+				for (auto& s : steps)
+				{					 
+					if (s->stepIndex % 2 == 1)
+						s->offSet = 0.5f;					
+				}
+				shuffled = false;
+			}
+			
+
+		}
+	};
 	int notesOn;
 	juce::OwnedArray<internalStep> steps;
+	shuffleHandler ShuffleHandler{ steps };
 	int chNumber;
 	AudioOutEngine* engine;
 	int VisibleEffectInCell = 2;

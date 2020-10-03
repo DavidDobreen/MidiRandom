@@ -16,10 +16,7 @@
 
 
 
-MainLineComp::LAC_Drop_File_Handler::LAC_Drop_File_Handler(MainSeqLine& _mainSeqLine, LoadAudioComponent& LAC, driver& dr)
-    :mainSeqLine(_mainSeqLine), bottomLAC(LAC), LAClistener(dr)
-{
-}
+
 
 void MainLineComp::LAC_Drop_File_Handler::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
@@ -37,9 +34,10 @@ void MainLineComp::LAC_Drop_File_Handler::changeListenerCallback(juce::ChangeBro
 
         for (int i = 0; i < mainSeqLine.steps.size(); i++)
         {
-            mainSeqLine.steps[i]->IsOn = Driver.generalBuffer.channels[mainSeqLine.chNumber]->steps[i]->On;
+            mainSeqLine.steps[i]->IsOn = velocityStrip.vels[i]->IsOn = Driver.generalBuffer.channels[mainSeqLine.chNumber]->steps[i]->On;
             mainSeqLine.steps[i]->IsOn ? mainSeqLine.steps[i]->CurrentImage = mainSeqLine.steps[i]->OnImage : mainSeqLine.steps[i]->CurrentImage = mainSeqLine.steps[i]->OffImage;
             mainSeqLine.steps[i]->repaint();
+            velocityStrip.vels[i]->repaint();
         }
     }
 }
@@ -125,6 +123,7 @@ void GridLines::MainLineUpdater::changeListenerCallback(juce::ChangeBroadcaster*
         m->IsOn = s->on;
         m->IsOn ? m->CurrentImage = m->OnImage : m->CurrentImage = m->OffImage;
         m->repaint();
+        
     }
 }
 
