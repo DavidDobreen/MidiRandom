@@ -167,33 +167,33 @@ void BiQuad::add_audio_set_params(CellParameters& FileQueParams, CellParameters&
 	}
 }
 
-void BiQuad::respond_to_midi_set_params(CellParameters* params, MidiParams& midiParams)
+void BiQuad::respond_to_midi_set_params(CellParameters& FileQueParams, MidiParams& midiParams)
 {
-	params->filterSelection = midiParams.FilterSelection;
-	params->FilterCutoff = midiParams.FilterCutoff;
-	params->FilterQ = midiParams.FilterQ;
-	params->RandomFilterSelection = midiParams.RandomFilterSelection;
-	params->RandomFilterCutoff = midiParams.RandomFilterCutoff;
-	params->RandomFilterQ = midiParams.RandomFilterQ;
+	FileQueParams.filterSelection = midiParams.FilterSelection;
+	FileQueParams.FilterCutoff = midiParams.FilterCutoff;
+	FileQueParams.FilterQ = midiParams.FilterQ;
+	FileQueParams.RandomFilterSelection = midiParams.RandomFilterSelection;
+	FileQueParams.RandomFilterCutoff = midiParams.RandomFilterCutoff;
+	FileQueParams.RandomFilterQ = midiParams.RandomFilterQ;
 
-	if (params->filterSelection > 0)
+	if (FileQueParams.filterSelection > 0)
 	{
 		flushDelays();
-		selectionChanged(params->filterSelection, float(params->FilterCutoff), params->FilterQ);
+		selectionChanged(FileQueParams.filterSelection, float(FileQueParams.FilterCutoff), FileQueParams.FilterQ);
 
-		if (params->RandomFilterSelection > 0)
+		if (FileQueParams.RandomFilterSelection > 0)
 		{
 			//update the random side of the filter
 			UpdateMainFilter = false;
 
-			if (params->RandomFilterCutoff == -1)
-				params->RandomFilterCutoff = params->FilterCutoff;
-			if (params->RandomFilterQ == -1)
-				params->RandomFilterQ = params->FilterQ;
-			if (params->RandomFilterSelection == -1)
-				params->RandomFilterSelection = params->filterSelection;
+			if (FileQueParams.RandomFilterCutoff == -1)
+				FileQueParams.RandomFilterCutoff = FileQueParams.FilterCutoff;
+			if (FileQueParams.RandomFilterQ == -1)
+				FileQueParams.RandomFilterQ = FileQueParams.FilterQ;
+			if (FileQueParams.RandomFilterSelection == -1)
+				FileQueParams.RandomFilterSelection = FileQueParams.filterSelection;
 
-			selectionChanged(params->RandomFilterSelection, float(params->RandomFilterCutoff), params->RandomFilterQ);
+			selectionChanged(FileQueParams.RandomFilterSelection, float(FileQueParams.RandomFilterCutoff), FileQueParams.RandomFilterQ);
 
 			//return to working on the main side
 			UpdateMainFilter = true;

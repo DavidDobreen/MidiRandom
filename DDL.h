@@ -12,7 +12,7 @@
 #include "CellParameters.h"
 
 
-class  DelayModule : public FXhandler, juce::ChangeListener
+class  DelayModule : public FXhandler
 {
 public:
 	juce::CriticalSection objectLock;
@@ -74,11 +74,10 @@ public:
 	void cookVariables();
 	void PrepareForPlay();
 	void processDelay(float& xN);
-	void changeListenerCallback(juce::ChangeBroadcaster* source);
-
+	
 	void reset();
 
 	void add_audio_set_params(CellParameters& FileQueParams, CellParameters& StepParams) override;
-	void respond_to_midi_set_params(CellParameters* params, MidiParams& midiParams) override;
+	void respond_to_midi_set_params(CellParameters& FileQueParams, MidiParams& midiParams) override;
 	void ApplyEffects(float& xn, float DryWet) override;
 };

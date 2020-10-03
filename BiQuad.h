@@ -101,7 +101,7 @@ public:
 	void reset();
 
 	void add_audio_set_params(CellParameters& FileQueParams, CellParameters& StepParams) override;
-	void respond_to_midi_set_params(CellParameters* params, MidiParams& midiParams) override;
+	void respond_to_midi_set_params(CellParameters& FileQueParams, MidiParams& midiParams) override;
 	void ApplyEffects(float& xn, float DryWet) override;
 
 	

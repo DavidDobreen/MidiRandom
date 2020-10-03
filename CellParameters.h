@@ -100,7 +100,7 @@ public:
 
 	virtual ~FXhandler() = default;
 	virtual void add_audio_set_params(CellParameters& FileQueParams, CellParameters& StepParams)=0;
-	virtual void respond_to_midi_set_params(CellParameters* params, MidiParams& midiParams) = 0;
+	virtual void respond_to_midi_set_params(CellParameters& FileQueParams, MidiParams& midiParams) = 0;
 	virtual void ApplyEffects(float& xn, float DryWet) =0;
 };
 

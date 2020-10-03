@@ -109,16 +109,24 @@ void DelayModule::add_audio_set_params(CellParameters& FileQueParams, CellParame
 {
 	DelayInMS = FileQueParams.delayTime;
 	FeedBack = FileQueParams.delayFeedback;
+	WetLevel = FileQueParams.delayDryWet;
 	if (AllowRandom)
-		{	 
-			DelayInMS = FileQueParams.delayTime = FileQueParams.delayTime + (float(*RandomGUI_DryWet_Value) / 100.0f) * (StepParams.delayTime - FileQueParams.delayTime);			 
-			FeedBack = FileQueParams.delayFeedback = FileQueParams.delayFeedback + (float(*RandomGUI_DryWet_Value) / 100.0f) * (StepParams.delayFeedback - FileQueParams.delayFeedback);		 	 
-	    }
+	{	 
+		//use jmax(0) since you might have -1 values  which should be treated as 0
+		//Delay time should not be affected by dry-wet change unless you really want to.
+		DelayInMS = FileQueParams.delayTime = juce::jmax(0, FileQueParams.delayTime) + (float(*RandomGUI_DryWet_Value) / 100.0f) * (StepParams.delayTime - juce::jmax(0,FileQueParams.delayTime));
+		FeedBack = FileQueParams.delayFeedback = juce::jmax(0.0f, juce::jmax(0.0f,FileQueParams.delayFeedback) + (float(*RandomGUI_DryWet_Value) / 100.0f) * (StepParams.delayFeedback - juce::jmax(0.0f,FileQueParams.delayFeedback)));
+		WetLevel = FileQueParams.delayDryWet = juce::jmax(0.0f, juce::jmax(0.0f,FileQueParams.delayDryWet) + (float(*RandomGUI_DryWet_Value) / 100.0f) * (StepParams.delayDryWet - juce::jmax(0.0f, FileQueParams.delayDryWet)));
+	}
 	PrepareForPlay();
 }
 
-void DelayModule::respond_to_midi_set_params(CellParameters* params, MidiParams& midiParams)
+void DelayModule::respond_to_midi_set_params(CellParameters& FileQueParams, MidiParams& midiParams)
 {
+	FileQueParams.delayTime =  DelayInMS = midiParams.Delaytime;
+	FileQueParams.delayDryWet = WetLevel =  midiParams.DelayWet;
+	FileQueParams.delayFeedback =  FeedBack = midiParams.DelayFeedback;
+	PrepareForPlay();
 }
 
 void DelayModule::ApplyEffects(float& xn, float DryWet)
@@ -190,13 +198,3 @@ void DelayModule::processDelay(float& xN)
 
 }
 
-void DelayModule::changeListenerCallback(juce::ChangeBroadcaster* source)
-{
-	//CellParameters* parameters = dynamic_cast<CellParameters*> (source);
-	//if (parameters->delayMessagePrepareForPlay)
-	//	PrepareForPlay();
-	//if (parameters->delayCookVariablesMessage)
-	//	cookVariables();
-	//if (parameters->delayResetMessage)
-	//	resetDelay();
-}
