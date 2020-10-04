@@ -43,12 +43,9 @@ void DropArea::filesDropped(const juce::StringArray& files, int, int)
 	End = fileName.indexOfChar(begin, '.');
 	fileName = fileName.substring(begin + 1, End);
 
-	LoadAudioComponent* parent = static_cast<LoadAudioComponent*>(getParentComponent());
-	 
-		 
-	parent->droppedFile.push_back(juce::URL(juce::File(files[0])));
+	LoadAudioComponent* parent = static_cast<LoadAudioComponent*>(getParentComponent());		 
+	parent->droppedFile.push_back(juce::URL(juce::File(files[0])));	
 	parent->fileBuffers->add(new juce::AudioBuffer<float>);
-
 	juce::AudioFormatReader* reader;
 	juce::URL& audioURL = parent->droppedFile.back();
 
@@ -69,21 +66,14 @@ void DropArea::filesDropped(const juce::StringArray& files, int, int)
 		parent->fileBuffers->getLast()->setSize(reader->numChannels, int(reader->lengthInSamples), false, false, false);
 		reader->read(parent->fileBuffers->getLast(), 0, int(reader->lengthInSamples), 0, true, true);
 
-		/*AudioParams params;
-		params.sampleRate = reader->sampleRate;
-		params.numSamples = params.end = int(reader->lengthInSamples) - 1;
-		params.start = 0;
-		cellParameters.audioParams.push_back(params);*/
-
 		sampleRate = reader->sampleRate;
 		numSamples = end = int(reader->lengthInSamples) - 1;
 		start = 0;
-
+		
 		parent->NewLoadMessage = true;
 		parent->sendSynchronousChangeMessage();
-		 
-		//FileDropped();
-		delete reader;
+
+		delete reader;		
 	}
 
 	selected = true;
@@ -124,44 +114,7 @@ void DropArea::readFileFromXML(juce::URL url)
 	repaint();
 }
 
-void DropArea::updateTextColor(int i)
-{
-	colorPick = i;
-	switch (colorPick)
-	{
-	case 0:
-	{
-		textColor = juce::Colours::red;
-		break;
-	}
-	case 1:
-	{
-		textColor = juce::Colours::blue;
-		break;
-	}
-	case 2:
-	{
-		textColor = juce::Colours::green;
-		break;
-	}
-	case 3:
-	{
-		textColor = juce::Colours::purple;
-		break;
-	}
-	case 4:
-	{
-		textColor = juce::Colours::yellow;
-		break;
-	}
-	default:
-		break;
-	}
-}
-
-DropArea::DropArea(int x, int y, int w, int h) : childComp(x, y, w, h) {
-	updateTextColor(0);
-}
+DropArea::DropArea(int x, int y, int w, int h) : childComp(x, y, w, h) {}
 DropArea::~DropArea(){removeAllChangeListeners();}
 
 void DropArea::paint(juce::Graphics& g)

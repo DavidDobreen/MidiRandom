@@ -203,8 +203,6 @@ void childComp::mouseDown(const juce::MouseEvent&){}
  chButton::chButton(int x, int y, int w, int h, juce::String _onPng, juce::String _offPng, juce::Component* parent , pngHandler& Handler) : rOnOffRect(x,y,w,h,_onPng,_offPng) , handled(Handler,parent,this)
  {
 	 handler.renderTriggerButton(this, onPng, offPng);
-	 //dims[0] = x, dims[1] = y, dims[2] = w, dims[3] = h;
-	// handler.compRszr_push(parent, this);
  }
 
  chButton::~chButton()
@@ -346,4 +344,44 @@ void childComp::mouseDown(const juce::MouseEvent&){}
 	 r.setHeight(11.0);
 	 g.setFont(r);
 	 g.drawFittedText(text, getLocalBounds(), juce::Justification::topLeft, 1);
+ }
+
+ MiniColorPicker::MiniColor::MiniColor(int x, int y, int w, int h, juce::Component* parent, pngHandler& Handler)
+	 : childComp(x,y,w,h) , handled(Handler,parent, this){}
+
+ MiniColorPicker::MiniColorPicker(int x, int y, int w, int h, juce::Component* parent, pngHandler& Handler)
+	 :childComp(x, y, w, h), handled(Handler, parent, this)
+ {
+	 red.cColour = (juce::Colours::red);
+	 red.addChangeListener(this);
+	 blue.cColour = (juce::Colours::blue);
+	 blue.addChangeListener(this);
+	 green.cColour = (juce::Colours::green);
+	 green.addChangeListener(this);
+	 purple.cColour = (juce::Colours::purple);
+	 purple.addChangeListener(this);
+	 yellow.cColour = (juce::Colours::yellow);
+	 yellow.addChangeListener(this);
+	 brown.cColour = (juce::Colours::brown);
+	 brown.addChangeListener(this);
+	 orange.cColour = (juce::Colours::orange);
+	 orange.addChangeListener(this);
+	 pink.cColour = (juce::Colours::pink);	 
+	 pink.addChangeListener(this);
+ }
+ void MiniColorPicker::changeListenerCallback(juce::ChangeBroadcaster* source)
+ {
+	 ColourPick = static_cast<MiniColorPicker::MiniColor*>(source)->cColour;
+	 sendSynchronousChangeMessage();
+ }
+ void MiniColorPicker::MiniColor::mouseDown(const juce::MouseEvent& event)
+ {
+	 sendSynchronousChangeMessage();
+ }
+
+ void MiniColorPicker::MiniColor::paint(juce::Graphics& g)
+ {
+	 g.setColour(cColour);
+	 
+	 g.fillRoundedRectangle(getLocalBounds().reduced(1).toFloat(), 3.0f);
  }

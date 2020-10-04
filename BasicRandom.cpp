@@ -9,6 +9,7 @@
 */
 
 #include "BasicRandom.h"
+#include "CustomComps.h"
 
 
 BasicRandom::BasicRandom()
@@ -342,6 +343,8 @@ BasicRandomComp::DryWetChangeHandler::DryWetChangeHandler(BasicRandom& randomEng
 	: RandomEngine(randomEngine), gui(GUI), channel(Channel), EffectCode(effectCode), driven(driver)
 {
 }
+
+ 
 
 void BasicRandomComp::DryWetChangeHandler::sliderValueChanged(juce::Slider* )
 {

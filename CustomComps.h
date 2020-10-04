@@ -14,6 +14,7 @@
 #include "Filter.h"
 #include "Mixer.h"
 #include "Grid.h"
+#include "Thumbnail.h"
  
 class RunStopButton : public chButton, public driven
 {
@@ -231,5 +232,101 @@ public:
         }
       
     }
+};
+
+class ColorPickerHandler : public juce::ChangeListener, public childComp, public drived
+{
+public:
+    GridLines& GL;
+    ThumbBkgd& thumb;
+    MainLineComp& mainline;
+
+    MiniColorPicker::MiniColor current{ 5,0,15,15,this,Driver.handler };
+    MiniColorPicker colourPicker { 0,15,dims[2],dims[3]-15 ,this,Driver.handler};
+    ColorPickerHandler(int x, int y, int w, int h, GridLines& GL, ThumbBkgd& thumb, MainLineComp& mainline, juce::Component* parent, driver& driver)
+        :GL(GL), thumb(thumb), mainline(mainline), childComp(x, y, w, h), drived(driver, parent, this) {
+        current.cColour = (juce::Colours::red);
+        current.addChangeListener(this);
+        colourPicker.addChangeListener(this);
+        Driver.LAClisteners.push_back(this);
+    }
+    void changeListenerCallback(juce::ChangeBroadcaster* source)
+    {
+        if (dynamic_cast<LoadAudioComponent*>(source) != nullptr)
+        {
+            current.cColour = dynamic_cast<LoadAudioComponent*>(source)->area.textColor;
+            current.repaint();
+            return;
+        }
+        MiniColorPicker::MiniColor* c = dynamic_cast<MiniColorPicker::MiniColor*>(source);
+        if (c != nullptr)
+        {
+            colourPicker.setVisible(!colourPicker.isVisible());
+        }
+        else
+        {
+            GL.lines[Driver.ActiveLine]->LAC.area.textColor = colourPicker.ColourPick;
+            GL.lines[Driver.ActiveLine]->LAC.area.repaint();
+            for (auto& s : GL.lines[Driver.ActiveLine]->line.line.items)
+            {
+                s->onColour = colourPicker.ColourPick;
+                s->repaint();
+            }
+            thumb.TopPanel.channelColor = colourPicker.ColourPick;
+            thumb.TopPanel.repaint();
+            thumb.thumbnail.get()->channelColor = colourPicker.ColourPick;
+            thumb.thumbnail.get()->repaint();
+            
+            mainline.bottomLAC.area.textColor = colourPicker.ColourPick;
+            mainline.bottomLAC.area.repaint();
+         
+            current.cColour = colourPicker.ColourPick;
+            current.repaint();
+            colourPicker.setVisible(false);
+        }              
+    }
+};
+
+//needed to reflect changes in RandomVelocity on mainLine velocityStrip
+class VelocityStripUpdater : public juce::ChangeListener, public juce::Slider::Listener, public juce::Thread, public driven
+{
+public:
+    chButton& randmize;
+    SliderComp& wet; 
+    VelocityStrip& vels;
+    VelocityStripUpdater(chButton& randmize, SliderComp& wet, VelocityStrip& vels, driver& driver)
+        : randmize(randmize), wet(wet), vels(vels) , Thread("VelocityStripUpdate") , driven(driver){
+        randmize.addChangeListener(this); 
+        wet.addListener(this);
+    }
+    void sliderValueChanged(juce::Slider* slider)
+    {
+        for (int i = 0; i < 16; i++)
+        {
+            vels.vels[i]->text = juce::String(int(Driver.generalBuffer.channels[Driver.ActiveLine]->steps[i]->velocity * 127));
+            vels.vels[i]->repaint();
+        }        
+    }
+
+    void changeListenerCallback(juce::ChangeBroadcaster* source)
+    {  
+        startThread(10);           
+    }
+
+    void run() override
+    {
+        sleep(50); //sleep a bit before update to make sure the latest values are used 
+        const juce::MessageManagerLock mml(Thread::getCurrentThread());
+
+        if (!mml.lockWasGained())  // if something is trying to kill this job, the lock
+            return;
+        for (int i = 0; i < 16; i++)
+        {
+            vels.vels[i]->text = juce::String(int(Driver.generalBuffer.channels[Driver.ActiveLine]->steps[i]->velocity * 127));
+            vels.vels[i]->repaint();
+        }
+        return;
+    }
+    
 };
 

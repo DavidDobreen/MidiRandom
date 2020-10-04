@@ -428,6 +428,7 @@ Seq_16_And_LAC::Seq_16_And_LAC(int x, int y, int w, int h, juce::Component* pare
 
     LAC.chNumber = Driver.engines.size() - 1;
     LAC.addChangeListener(&_LAC_Drop_File_Handler);
+    LAC.setComponentID("grid line LAC ");
      
     /*for (auto& t : Driver.thumbRszr)
         LAC.addChangeListener(t); */
@@ -450,9 +451,8 @@ void Seq_16_And_LAC::paint(juce::Graphics& g)
 void Seq_16_And_LAC::LAC_Drop_File_Handler::changeListenerCallback(juce::ChangeBroadcaster*)
 {
     if (LAC.NewLoadMessage)
-    {
+    {       
         Driver.engines[LAC.chNumber]->URLS.push_back(LAC.droppedFile.back());
-
         Driver.engines[LAC.chNumber]->cellParameters.itemSelectedInComboBox = Driver.engines[LAC.chNumber]->fileBuffers.size();
         //Create new AudioParams and push it to the audio engine and virtual step 
         AudioParams params;
@@ -460,8 +460,7 @@ void Seq_16_And_LAC::LAC_Drop_File_Handler::changeListenerCallback(juce::ChangeB
         params.startSample = 0;
         params.numSamples = params.endSample = int(LAC.area.numSamples) - 1;
         //audioProcessor.SampleStep.cellParameters.audioParams.push_back(params);
-        Driver.engines[LAC.chNumber]->cellParameters.audioParams.push_back(params);
-
+        Driver.engines[LAC.chNumber]->cellParameters.audioParams.push_back(params);       
         //Before updating each step, null start and end data.
         params.startSample = -1;
         params.endSample = -1;
@@ -469,9 +468,10 @@ void Seq_16_And_LAC::LAC_Drop_File_Handler::changeListenerCallback(juce::ChangeB
             stp->cellParameters.audioParams.push_back(params);
 
         //Need to send another message to make sure the GUI refreshes
-        LAC.NewLoadMessage = false;
+        LAC.NewLoadMessage = false;      
         LAC.sendSynchronousChangeMessage();
     }
+    DBG("Seq_16_And_LAC::LAC_Drop_File_Handler::changeListenerCallback - new load message = false");
     Driver.ActiveLine = LAC.chNumber;
 }
 
@@ -527,12 +527,12 @@ void GridLines::AddLineButton::paint(juce::Graphics& g)
 }
 
 void GridLines::LAClistener::changeListenerCallback(juce::ChangeBroadcaster* source)
-{
+{  
     LoadAudioComponent* src = dynamic_cast<LoadAudioComponent*>(source);
     int index = src->chNumber;
-    //GridLine LAC source
+    //GridLine LAC source   
     if (index >= 0)
-    {
+    {        
         for (int i = 0; i < lines.size(); i++)
         {
             if (i != index)
@@ -549,22 +549,24 @@ void GridLines::LAClistener::changeListenerCallback(juce::ChangeBroadcaster* sou
     }
     //MainLine LAC source
     else
-    {
+    {       
         for (int i = 0; i < lines.size(); i++)
         {
             if (lines[i]->LAC.area.selected)
             {
-                lines[i]->LAC.droppedFile.push_back(src->droppedFile.back());
-                lines[i]->LAC.fileBuffers->add(src->fileBuffers->getLast());
-                src->fileBuffers->removeLast(1, false);
+                lines[i]->LAC.droppedFile.push_back(src->droppedFile.back());                
+                lines[i]->LAC.area.sampleRate = src->area.sampleRate;
+                lines[i]->LAC.area.numSamples = src->area.numSamples;
                 lines[i]->LAC.area.fileName = src->area.fileName;
-                lines[i]->LAC.area.repaint();
+
+                lines[i]->LAC.area.repaint();                
+                lines[i]->LAC.NewLoadMessage = true;
                 lines[i]->LAC.sendSynchronousChangeMessage();
             }
         }
         src->droppedFile.clear();
 
-    }
+    }   
 }
 
 
@@ -593,9 +595,9 @@ GridLines::GridLines(int x, int y, int w, int h, MainLineComp& mainLineComp, juc
     : mainLineComp(mainLineComp), VelocityLineHolder(velocityLineHolder), mixer(Mixer), childComp(x, y, w, h), driven(dr/*,parent,this*/) {
     for (auto& s : mainLineComp.mainSeqLine.steps)
     {
-        s->OnOffMessage.addChangeListener(&mainLineListener);
+        s->OnOffMessage.addChangeListener(&mainLineListener);        
         s->mouseDragNotifier.addChangeListener(&mainLineStepDragListener);
-    }
+    }     
 }
 
 void GridLines::AddLine()
@@ -653,8 +655,10 @@ void GridLines::MainLineUpdater::changeListenerCallback(juce::ChangeBroadcaster*
     if ((d != nullptr) && (*(d->channelNumber) == mainLineComp.mainSeqLine.chNumber))
     {
         auto m = mainLineComp.mainSeqLine.steps[d->stepNumber];
-        m->velocity = d->velocity;        
+        m->velocity = d->velocity;  
+        mainLineComp.velocityStrip.vels[d->stepNumber]->text = juce::String(int(d->velocity * 127));
         m->repaint();
+        mainLineComp.velocityStrip.vels[d->stepNumber]->repaint();
         return;
     }
 
@@ -668,8 +672,7 @@ void GridLines::MainLineUpdater::changeListenerCallback(juce::ChangeBroadcaster*
         mainLineComp.velocityStrip.vels[s->stepNumber]->IsOn = s->on;
         mainLineComp.velocityStrip.vels[s->stepNumber]->repaint();
         return;
-    }
-    
+    }   
 }
 
 GridLines::MainLineStepDragListener::MainLineStepDragListener(juce::OwnedArray<Seq_16_And_LAC>& Lines,driver& driver)

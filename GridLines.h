@@ -177,12 +177,12 @@ public:
 
     class MainLineUpdater : public juce::ChangeListener {
     public:
-        MainLineUpdater(MainLineComp& mainLine) : mainLineComp(mainLine) {};
+        MainLineUpdater(juce::OwnedArray<Seq_16_And_LAC>& Lines, MainLineComp& mainLine) : lines(Lines),mainLineComp(mainLine) {};
         ~MainLineUpdater() {};
         void changeListenerCallback(juce::ChangeBroadcaster* source);
     private:
         MainLineComp& mainLineComp;
-
+        juce::OwnedArray<Seq_16_And_LAC>& lines;
     };
 
     class AddLineButton : public childComp, public handled, public juce::ChangeBroadcaster
@@ -201,7 +201,7 @@ public:
     juce::OwnedArray< VELcomp> vels;
     MainLineStepListener mainLineListener{ lines };
     MainLineComp& mainLineComp;
-    MainLineUpdater mainLineUpdater{ mainLineComp };
+    MainLineUpdater mainLineUpdater{ lines,mainLineComp };
     MainLineStepDragListener mainLineStepDragListener{ lines,Driver };
     LAClistener LACListener{ lines,vels,Driver };
     AddLineButton addButton{ 110,0,20,20,mainLineComp,vels,this,Driver.handler };

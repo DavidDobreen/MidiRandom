@@ -18,7 +18,7 @@ class DropArea : public childComp, public juce::ChangeBroadcaster, private juce:
 public:
 	juce::String fileName;	
 	int colorPick = 1;
-	juce::Colour textColor;
+	juce::Colour textColor{ juce::Colours::red };
 	double sampleRate;
 	int numSamples;
 	int start;
@@ -32,8 +32,7 @@ public:
 
 	void paint(juce::Graphics& g) override;
 	void mouseDown(const juce::MouseEvent& event) override;
-	void readFileFromXML(juce::URL url);
-	void updateTextColor(int i);
+	void readFileFromXML(juce::URL url);	 
 private:
 
 	bool isInterestedInDragSource(const SourceDetails& dragSourceDetails) override;

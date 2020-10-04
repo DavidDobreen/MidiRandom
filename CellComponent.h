@@ -86,6 +86,10 @@ public:
     ThumbAreaListenenr ThumbListener{ ActiveChannel,Driver };
     SliderComp pan{ "pan",0, 100, 1,500,100,39,41 ,this, Driver.handler };
     CenterComponent& CentComp;
+    BottomSection& bottomSection;
+    MasterSection& mastersection;
+
+    LoadAudioComponent* LAC; //for change listener callback
 
     CellEffectsComp EffectsComp{ 645,22,260,135,this,Driver };
 
@@ -95,8 +99,9 @@ public:
     SelectionList::option random{ 0,0,150,30, 0,"RANDOM",  this, Driver.handler };
 
     AddLineListener addLineListener{ ActiveChannel,CentComp, pan, Driver };
-    CellComponent(int x, int y, int w, int h, CenterComponent& centComp, juce::Component* parent, driver& driver);
+    CellComponent(int x, int y, int w, int h, MasterSection& mastersection, BottomSection& bottomSection, CenterComponent& centComp, juce::Component* parent, driver& driver);
 
+    
     void sliderValueChanged(juce::Slider* slider);
     void changeListenerCallback(juce::ChangeBroadcaster* source);
 

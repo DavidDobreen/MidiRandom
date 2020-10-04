@@ -35,11 +35,13 @@ MainSeqLine::MainSeqLine(int x, int y, int w, int h , juce::Component* parent, p
 MainLineComp::MainLineComp(int x, int y, int w, int h, LoadAudioComponent& LAC, juce::Component* parent, driver& driver)
     : bottomLAC(LAC), childComp(x,y,w,h), drived (driver,parent,this)
 {
+    LAC.setComponentID("main line LAC");
     LAC.pFormatManager = &Driver.formatManager;
     Driver.LAClisteners.push_back(&_LAC_Drop_File_Handler);
     for (auto& s : mainSeqLine.steps)
     {
         s->OnOffMessage.addChangeListener(&mainLineListener);
+        s->stepDragMessage.addChangeListener(&mainLineListener);
         
     }
 }
@@ -51,6 +53,14 @@ MainLineComp::~MainLineComp()
 
 void MainLineListener::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
+    Step::StepDragMessage* d = dynamic_cast<Step::StepDragMessage*> (source);
+    if (d != nullptr)
+    {         
+        velcoityyStrip.vels[d->stepNumber]->text = juce::String(int(d->velocity * 127));
+        velcoityyStrip.vels[d->stepNumber]->repaint();
+        return;
+    }
+
     Step::StepOnOffMessage* m = dynamic_cast<Step::StepOnOffMessage*> (source);
     if (m != nullptr)
     {
@@ -90,13 +100,15 @@ MainLineComp::LAC_Drop_File_Handler::LAC_Drop_File_Handler(MainSeqLine& _mainSeq
 }
 
 void MainLineComp::LAC_Drop_File_Handler::changeListenerCallback(juce::ChangeBroadcaster* source)
-{
+{    
     LoadAudioComponent* LAC = dynamic_cast<LoadAudioComponent*>(source);
+   
     if (LAC != nullptr)
     {
         mainSeqLine.chNumber = LAC->chNumber;
-        bottomLAC.fileBuffers = &Driver.engines[LAC->chNumber]->fileBuffers;
-
+        bottomLAC.fileBuffers = &Driver.engines[LAC->chNumber]->fileBuffers;     
+        bottomLAC.area.fileName = LAC->area.fileName;
+        bottomLAC.area.repaint();
 
         for (auto& s : mainSeqLine.steps)
         {
@@ -111,7 +123,7 @@ void MainLineComp::LAC_Drop_File_Handler::changeListenerCallback(juce::ChangeBro
             mainSeqLine.steps[i]->repaint();
             velocityStrip.vels[i]->text = juce::String(int(Driver.generalBuffer.channels[LAC->chNumber]->steps[i]->velocity * 127));
             velocityStrip.vels[i]->repaint();
-        }
+        }        
     }
 }
 

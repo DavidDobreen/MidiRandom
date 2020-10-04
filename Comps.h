@@ -555,6 +555,34 @@ public:
 
 };
 
+class MiniColorPicker : public juce::ChangeListener, public juce::ChangeBroadcaster, public childComp, public handled
+{
+public:
+	class MiniColor : public juce::ChangeBroadcaster, public childComp, public handled
+	{
+	public:
+		juce::Colour cColour;
+		MiniColor(int x, int y, int w, int h, juce::Component* parent, pngHandler& Handler);
+		void mouseDown(const juce::MouseEvent& event) override;
+		void paint(juce::Graphics& g) override;
+	};
+	juce::Colour ColourPick;
+
+	MiniColor red{ 0,0,25,25,this,handler };
+	MiniColor blue{ 0,25,25,25,this,handler };
+	MiniColor green{ 0,50,25,25,this,handler };
+	MiniColor purple{ 0,75,25,25,this,handler };
+	MiniColor yellow{ 0,100,25,25,this,handler };
+	MiniColor brown{ 0,125,25,25,this,handler };
+	MiniColor orange{ 0,150,25,25,this,handler };
+	MiniColor pink{ 0,175,25,25,this,handler };
+
+	MiniColorPicker(int x, int y, int w, int h, juce::Component* parent, pngHandler& Handler);
+
+	void changeListenerCallback(juce::ChangeBroadcaster* source);
+	
+};
+
 
 
 

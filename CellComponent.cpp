@@ -10,8 +10,8 @@
 
 #include "CellComponent.h"
 
-CellComponent::CellComponent(int x, int y, int w, int h, CenterComponent& centComp, juce::Component* parent, driver& driver)
-    : CentComp(centComp), childComp(x, y, w, h), drived(driver, parent, this)
+CellComponent::CellComponent(int x, int y, int w, int h, MasterSection& mastersection, BottomSection& bottomSection, CenterComponent& centComp, juce::Component* parent, driver& driver)
+    : mastersection(mastersection),bottomSection(bottomSection), CentComp(centComp), childComp(x, y, w, h),   drived(driver, parent, this)
 {
     thumbnail.SelectionArea.startLine.addChangeListener(&ThumbListener);
     thumbnail.SelectionArea.endLine.addChangeListener(&ThumbListener);
@@ -22,6 +22,9 @@ CellComponent::CellComponent(int x, int y, int w, int h, CenterComponent& centCo
     pan.addListener(this);
     pan.rightClickMessage.addChangeListener(this);
 
+    //due to circular refrence, we use this cell component to update mainline with random velocity changes..
+    mastersection.grid.RandomVelocity.gui.DryWet.addListener(this);
+    mastersection.grid.RandomVelocity.gui.Randomize.addChangeListener(this);
 
     random.addChangeListener(this);
 
@@ -30,29 +33,28 @@ CellComponent::CellComponent(int x, int y, int w, int h, CenterComponent& centCo
 }
 
 void CellComponent::changeListenerCallback(juce::ChangeBroadcaster* source)
-{
-    LoadAudioComponent* LAC = dynamic_cast<LoadAudioComponent*>(source);
+{    
+    LAC = dynamic_cast<LoadAudioComponent*>(source);
     if (LAC != nullptr)
     {
-        ActiveChannel = LAC->chNumber;
+        ActiveChannel = LAC->chNumber;       
         CellParameters* params = &Driver.engines[ActiveChannel]->cellParameters;
         if (params->audioParams.size())
-        {
-            
+        {                  
             thumbnail.SelectionArea.startLine.setTopLeftPosition(int(juce::jmax(0.0f, float(params->audioParams[params->itemSelectedInComboBox - 1].startSample) / float(params->audioParams[params->itemSelectedInComboBox - 1].numSamples) * thumbnail.SelectionArea.dims[2] - 5)), 0);
             thumbnail.SelectionArea.startLine.dims[0] = thumbnail.SelectionArea.startLine.getX();
             thumbnail.SelectionArea.endLine.setTopLeftPosition(int(juce::jmin(float(params->audioParams[params->itemSelectedInComboBox - 1].endSample) / float(params->audioParams[params->itemSelectedInComboBox - 1].numSamples) * thumbnail.SelectionArea.dims[2] - 5, float(params->audioParams[params->itemSelectedInComboBox - 1].numSamples))), 0);
             thumbnail.SelectionArea.endLine.dims[0] = thumbnail.SelectionArea.endLine.getX();
         }
         else
-        {
+        {           
             //draw start and end lines off screen if no audio is loaded
             thumbnail.SelectionArea.startLine.setTopLeftPosition(thumbnail.SelectionArea.dims[0] - 50, 0);
             thumbnail.SelectionArea.startLine.dims[0] = thumbnail.SelectionArea.startLine.getX();
-            thumbnail.SelectionArea.endLine.setTopLeftPosition( thumbnail.SelectionArea.dims[2] + 50, 0);
+            thumbnail.SelectionArea.endLine.setTopLeftPosition(thumbnail.SelectionArea.dims[2] + 50, 0);
             thumbnail.SelectionArea.endLine.dims[0] = thumbnail.SelectionArea.endLine.getX();
         }
-        
+
         pan.setValue(params->Pan, juce::dontSendNotification);
 
         EffectsComp.filter.setVisible(false);
@@ -67,21 +69,18 @@ void CellComponent::changeListenerCallback(juce::ChangeBroadcaster* source)
         switch (Driver.generalBuffer.channels[ActiveChannel]->VisibleEffectInCell)
         {
         case(EffectCode::filter):
-            {
+        {
             EffectsComp.filerLabel.sendSynchronousChangeMessage();
-                break;
-            }
-        case(EffectCode::delay):
-            {
-            EffectsComp.delayLabel.sendSynchronousChangeMessage();
-                break;
-            }
-        default:
             break;
         }
-
- 
-
+        case(EffectCode::delay):
+        {
+            EffectsComp.delayLabel.sendSynchronousChangeMessage();
+            break;
+        }
+        default:
+            break;
+        }        
         return;
     }
     else if (dynamic_cast<SliderComp::RightClickMessage*>(source) != nullptr)
@@ -107,8 +106,10 @@ void CellComponent::changeListenerCallback(juce::ChangeBroadcaster* source)
 
         return;
     }
+  
 }
 
+ 
 void CellComponent::sliderValueChanged(juce::Slider* slider)
 {
     CellParameters* params = &Driver.engines[ActiveChannel]->cellParameters;
@@ -117,6 +118,7 @@ void CellComponent::sliderValueChanged(juce::Slider* slider)
         params->Pan = params->dryPan = params->wetPan = float(slider->getValue());
         CentComp.mixer.sliders[Driver.ActiveLine]->panner.setValue(params->Pan, juce::dontSendNotification);
     }
+   
 }
 
 void CellComponent::ThumbAreaListenenr::changeListenerCallback(juce::ChangeBroadcaster* source)
