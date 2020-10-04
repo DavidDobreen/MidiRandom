@@ -471,7 +471,6 @@ void Seq_16_And_LAC::LAC_Drop_File_Handler::changeListenerCallback(juce::ChangeB
         LAC.NewLoadMessage = false;      
         LAC.sendSynchronousChangeMessage();
     }
-    DBG("Seq_16_And_LAC::LAC_Drop_File_Handler::changeListenerCallback - new load message = false");
     Driver.ActiveLine = LAC.chNumber;
 }
 

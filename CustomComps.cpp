@@ -48,12 +48,8 @@ CenterComponent::CenterComponent(int x, int y, int w, int h, MainLineComp& _main
     MixerViewport.setBounds(13, 0, 900, 325);
 }
  
-
-
- 
 BottomSection::BottomSection(int x, int y, int w, int h, juce::Component* parent, driver& driver) : childComp(x, y, w, h) , drived (driver,parent,this) {}   
 
- 
 BPMComponent::BPMComponent(int x, int y, int w, int h, float Min, float Max, float Interval, juce::Colour TextColor, juce::Component* parent, driver& driver)
     : BPMbox(x, y, w, h, Min, Max, Interval, TextColor, parent, driver.handler), driven(driver) 
 {
@@ -61,27 +57,17 @@ BPMComponent::BPMComponent(int x, int y, int w, int h, float Min, float Max, flo
 };
 BPMComponent::~BPMComponent(){}
   
- 
-
-
-
 MasterMeterBox::MasterMeterBox(int x, int y, int w, int h, juce::Component* parent, driver& driver)
     : childComp(x, y, w, h), drived(driver, parent, this)
 {
 }
 
 
-
-ShortCommands::ShortCommands(int x, int y, int w, int h, juce::Component* parent, driver& driver) : childComp(x, y, w, h), drived(driver, parent, this) {}
-
 MasterTab_Component::MasterTab_Component(int x, int y, int w, int h, juce::Component* parent, driver& driver)
     : childComp(x, y, w, h), drived(driver, parent, this)
 {
     filter.setName("filter");
 }
-
-
-
 
 MasterSection::MasterSection(int x, int y, int w, int h, juce::OwnedArray< Seq_16_And_LAC>& Channels, juce::OwnedArray< VELcomp>& Vels, juce::Component* parent, driver& driver)
     : channels(Channels), vels(Vels), childComp(x, y, w, h), drived(driver, parent, this) {

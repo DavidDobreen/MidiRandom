@@ -36,26 +36,109 @@ public:
 class ShortCommands : public childComp, public drived
 {
 public:
-    chBgComp bkgd{ "short commands2.png",this,Driver.handler };
+    class CommandsArea : public childComp, public drived
+    {
+    public:
+        juce::OwnedArray< Seq_16_And_LAC>& lines;
+        juce::OwnedArray< VELcomp>& vels;
 
-    ShortCommands(int x, int y, int w, int h, juce::Component* parent, driver& driver);
+        CommandsArea(int x, int y, int w, int h, juce::OwnedArray< Seq_16_And_LAC>& Lines, juce::OwnedArray< VELcomp>& Vels, juce::Component* parent, driver& driver)
+            : lines(Lines), vels(Vels),childComp(x,y,w,h), drived(driver,parent,this){}
+       
+        void mouseDown(const juce::MouseEvent& event)
+        {
+            int x = event.getMouseDownX();
+            int y = event.getMouseDownY();
+             
+            //clear
+            if ((x >= 0 && x <= 47) && (y >= 0 && y <= 14))
+            {
+                for (auto& s : lines[Driver.ActiveLine]->line.line.items)
+                {
+                    if (s->isOn)
+                    {
+                        s->isOn = false;
+                        Driver.generalBuffer.channels[Driver.ActiveLine]->steps[s->stepNumber]->On = false; 
+                        s->repaint();
+                    }
+                }                
+            }
+            //fill all
+            else if ((x >= 0 && x <= 33) && (y >= 19 && y <= 34))
+            {
+                for (auto& s : lines[Driver.ActiveLine]->line.line.items)
+                {
+                    if (!s->isOn)
+                    {
+                        s->isOn = true;
+                        Driver.generalBuffer.channels[Driver.ActiveLine]->steps[s->stepNumber]->On = true;   
+                        s->repaint();
+                    }
+                }                
+            }
+            //double
+           /* else if ((x >= 0 && x <= 47) && (y >= 0 && y <= 14))
+            {
+                return;
+            }
+            //half
+            else if ((x >= 0 && x <= 47) && (y >= 0 && y <= 14))
+            {
+                return;
+            }*/
+            else if ((x >= 0 && x <= 80) && (y >= 75 && y <= 90))
+            {
+                std::vector<int> ons;
+                for (auto& s : lines[Driver.ActiveLine]->line.line.items)
+                {
+                    if (s->isOn)
+                    {
+                        ons.push_back(s->stepNumber);
+                        s->isOn = false;
+                        Driver.generalBuffer.channels[Driver.ActiveLine]->steps[s->stepNumber]->On = false; 
+                        s->repaint();
+                    }
+                }
+                int size = lines[Driver.ActiveLine]->line.line.items.size();
+                for (auto& o : ons)
+                {
+                    lines[Driver.ActiveLine]->line.line.items[size - 1 - o]->isOn = true;  
+                    Driver.generalBuffer.channels[Driver.ActiveLine]->steps[size - 1 - o]->On = true;  
+                    lines[Driver.ActiveLine]->line.line.items[size - 1 - o]->repaint();
+                }                                                                           
+            }
+            vels[Driver.ActiveLine]->repaint();
+            lines[Driver.ActiveLine]->LAC.sendSynchronousChangeMessage();
+        }
+    };
+
+    juce::OwnedArray< Seq_16_And_LAC>& lines;
+    juce::OwnedArray< VELcomp>& vels;
+
+    chBgComp bkgd{ "short commands2.png",this,Driver.handler };
+    CommandsArea area{ 0,0,dims[2],dims[3],lines,vels,this,Driver };
+    ShortCommands(int x, int y, int w, int h, juce::OwnedArray< Seq_16_And_LAC>& Lines , juce::OwnedArray< VELcomp>& Vels, juce::Component* parent, driver& driver);
+
+    
 };
 
 class GridTab_Component : public juce::Slider::Listener, public childComp, public drived
 {
 public:
-    juce::OwnedArray< Seq_16_And_LAC>& channels;
+    juce::OwnedArray< Seq_16_And_LAC>& lines;
     juce::OwnedArray< VELcomp>& vels;
 
     chBgComp bkgd{ "RANDOM GRID - TEXTS2.png",this,Driver.handler };
     AllTrackSelected allTrackSelected{ 26,55,222,24,this, Driver };
-    ShortCommands shortCommands{ 177,95,81,92,this, Driver };
+    ShortCommands shortCommands{ 177,95,81,92,lines,vels,this, Driver };
     juce::String png = "RANDOM GRID tab.png";
     ImageComp random_grid{ 84,352,108,28,png,this,Driver.handler };
-    VelocityRefresher velocityRefresher{ channels , vels, Driver };
+    VelocityRefresher velocityRefresher{ lines , vels, Driver };
     BasicRandomComp RandomVelocity{ 79,404,175,50,EffectCode::velocity, this,Driver };
     BasicRandomComp RandomOffsets{ 79,475,175,50,EffectCode::offsets,this,Driver };
-    GridTab_Component(int x, int y, int w, int h, juce::OwnedArray< Seq_16_And_LAC>& Channels, juce::OwnedArray< VELcomp>& Vels, juce::Component* parent, driver& driver);
+    GridTab_Component(int x, int y, int w, int h, juce::OwnedArray< Seq_16_And_LAC>& Lines, juce::OwnedArray< VELcomp>& Vels, juce::Component* parent, driver& driver);
 
     void sliderValueChanged(juce::Slider* slider);
+
+     
 };

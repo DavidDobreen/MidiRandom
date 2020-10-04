@@ -10,8 +10,8 @@
 
 #include "Grid.h"
 
-GridTab_Component::GridTab_Component(int x, int y, int w, int h, juce::OwnedArray< Seq_16_And_LAC>& Channels, juce::OwnedArray< VELcomp>& Vels, juce::Component* parent, driver& driver)
-    : channels(Channels), vels(Vels), childComp(x, y, w, h), drived(driver, parent, this) {
+GridTab_Component::GridTab_Component(int x, int y, int w, int h, juce::OwnedArray< Seq_16_And_LAC>& Lines, juce::OwnedArray< VELcomp>& Vels, juce::Component* parent, driver& driver)
+    : lines(Lines), vels(Vels), childComp(x, y, w, h), drived(driver, parent, this) {
     RandomVelocity.randomizeListener.refersher = &velocityRefresher;
     RandomVelocity.dryWetChangeHandler.refersher = &velocityRefresher;
     velocityRefresher.channel = &RandomVelocity.channel;
@@ -101,3 +101,5 @@ void AllTrackSelected::AllTrackSelectedArea::mouseDown(const juce::MouseEvent& e
     sendSynchronousChangeMessage();
 
 }
+
+ShortCommands::ShortCommands(int x, int y, int w, int h, juce::OwnedArray< Seq_16_And_LAC>& Lines, juce::OwnedArray< VELcomp>& Vels, juce::Component* parent, driver& driver) : lines(Lines), vels(Vels), childComp(x, y, w, h), drived(driver, parent, this) {}
