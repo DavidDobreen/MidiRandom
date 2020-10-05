@@ -56,12 +56,7 @@
 
 //==============================================================================
 /**
-    A pre-configured sequencer step line with 16 steps. The constructor takes the initial top-left position.
-    Just call addAndMakeVisible on it and it will appear.
-
-    example:
-    Seq_16_step_line line{ 20,20 };     //variable declaration
-    addAndMakeVisible(line);            //in the constructor
+    A pre-configured sequencer step line with 16 steps. The constructor takes the initial top-left position.   
 */
 class Seq_16_step_line : public childComp, public drived
 {

@@ -132,17 +132,18 @@ void Step::mouseDrag(const juce::MouseEvent& event)
 
 void Step::paint(juce::Graphics& g)
 {
-	//g.fillRect(getWidth() / 20.0f, getHeight() / 20.0f, getWidth() *.95f, getHeight() *.95f);
-	g.setColour(juce::Colours::white);
-	g.drawRect(0.0f, 0.0f, float(getWidth()), float(getHeight()), 0.4f);
+	if (!isquickPatternStep)
+	{
+		g.setColour(juce::Colours::white);
+		g.drawRect(0.0f, 0.0f, float(getWidth()), float(getHeight()), 0.4f);
 
-	g.setColour(juce::Colours::darkgrey);
-	g.setOpacity(0.4f);
-	g.drawRect(getWidth() / 2, getY(), getWidth() / 20, getHeight() * 2);
+		g.setColour(juce::Colours::darkgrey);
+		g.setOpacity(0.4f);
+		g.drawRect(getWidth() / 2, getY(), getWidth() / 20, getHeight() * 2);
 
-	g.setColour(juce::Colours::darkslategrey);
-	g.setOpacity(1.0f);
-
+		g.setColour(juce::Colours::darkslategrey);
+		g.setOpacity(1.0f);
+	
 	if (isOn)
 	{
 		if (selected)
@@ -164,25 +165,34 @@ void Step::paint(juce::Graphics& g)
 		g.setColour(offColour.withAlpha(0.0f));
 	}
 
-	//g.fillRoundedRectangle(drawArea, 3.0f);
-	g.fillRoundedRectangle(getLocalBounds().reduced(3).toFloat(), 5.0f);
+	
+		g.fillRoundedRectangle(getLocalBounds().reduced(3).toFloat(), 5.0f);
 
-
-	switch (stepNumber)
-	{
-	case 0:
-		g.drawLine(0, 0, 0, float(getHeight()), 2.0f);
-		break;
-	case 4:
-		g.drawLine(0, 0, 0, float(getHeight()), 2.0f);
-		break;
-	case 8:
-		g.drawLine(0, 0, 0, float(getHeight()), 2.0f);
-		break;
-	case 12:
-		g.drawLine(0, 0, 0, float(getHeight()), 2.0f);
-		break;
+		switch (stepNumber)
+		{
+		case 0:
+			g.drawLine(0, 0, 0, float(getHeight()), 2.0f);
+			break;
+		case 4:
+			g.drawLine(0, 0, 0, float(getHeight()), 2.0f);
+			break;
+		case 8:
+			g.drawLine(0, 0, 0, float(getHeight()), 2.0f);
+			break;
+		case 12:
+			g.drawLine(0, 0, 0, float(getHeight()), 2.0f);
+			break;
+		}
 	}
+	else
+	{
+		if (isOn)
+			g.setColour(onColour);
+		else
+			g.setColour(offColour);
+		g.fillRect(getLocalBounds().reduced(1).toFloat());
+	}
+		
 
 }
 

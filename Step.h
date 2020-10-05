@@ -77,6 +77,7 @@ public:
 	juce::Point<float> p1;
 	juce::Point<float> p2;
 
+	bool isquickPatternStep = false;
 	juce::Rectangle<float> drawArea;
 
 
