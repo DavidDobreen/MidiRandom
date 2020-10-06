@@ -452,6 +452,9 @@ void Seq_16_And_LAC::LAC_Drop_File_Handler::changeListenerCallback(juce::ChangeB
 {
     if (LAC.NewLoadMessage)
     {       
+        juce::CriticalSection objectLock;
+        const juce::ScopedLock myScopedLock(objectLock);
+
         Driver.engines[LAC.chNumber]->URLS.push_back(LAC.droppedFile.back());
         Driver.engines[LAC.chNumber]->cellParameters.itemSelectedInComboBox = Driver.engines[LAC.chNumber]->fileBuffers.size();
         //Create new AudioParams and push it to the audio engine and virtual step 
@@ -460,12 +463,20 @@ void Seq_16_And_LAC::LAC_Drop_File_Handler::changeListenerCallback(juce::ChangeB
         params.startSample = 0;
         params.numSamples = params.endSample = int(LAC.area.numSamples) - 1;
         //audioProcessor.SampleStep.cellParameters.audioParams.push_back(params);
+
+        Driver.engines[LAC.chNumber]->cellParameters.audioParams.clear();
+
         Driver.engines[LAC.chNumber]->cellParameters.audioParams.push_back(params);       
         //Before updating each step, null start and end data.
         params.startSample = -1;
         params.endSample = -1;
         for (auto& stp : Driver.generalBuffer.channels[LAC.chNumber]->steps)
+        {
+            stp->cellParameters.audioParams.clear();
+
             stp->cellParameters.audioParams.push_back(params);
+        }
+            
 
         //Need to send another message to make sure the GUI refreshes
         LAC.NewLoadMessage = false;      

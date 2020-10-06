@@ -16,6 +16,7 @@
 class DropArea : public childComp, public juce::ChangeBroadcaster, private juce::DragAndDropTarget, public juce::FileDragAndDropTarget
 {
 public:
+	juce::CriticalSection objectLock;
 	juce::String fileName;	
 	int colorPick = 1;
 	juce::Colour textColor{ juce::Colours::red };
@@ -33,12 +34,14 @@ public:
 	void paint(juce::Graphics& g) override;
 	void mouseDown(const juce::MouseEvent& event) override;
 	void readFileFromXML(juce::URL url);	 
+
+	void filesDropped(const juce::StringArray& files, int /*x*/, int /*y*/) override;
 private:
 
 	bool isInterestedInDragSource(const SourceDetails& dragSourceDetails) override;
 	void itemDropped(const SourceDetails& dragSourceDetails) override;
 	bool isInterestedInFileDrag(const juce::StringArray& /*files*/) override;
-	void filesDropped(const juce::StringArray& files, int /*x*/, int /*y*/) override;
+	
 	
 	juce::String getText() { return fileName; }
 

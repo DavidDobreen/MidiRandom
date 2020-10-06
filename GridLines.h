@@ -139,7 +139,7 @@ private:
 
 };
 
-class GridLines :   public childComp, public driven
+class GridLines : public childComp, public driven
 {
 public:
     
@@ -205,9 +205,7 @@ public:
     ~GridLines() {}
 
     void AddLine();
-    
-
-
+  
 private:
     juce::Component& VelocityLineHolder;
     Mixer& mixer;

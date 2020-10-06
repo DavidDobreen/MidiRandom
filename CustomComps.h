@@ -66,7 +66,7 @@ private:
 class UpperBar : public childComp, public drived
 {
 public:
-    juce::TextButton save;
+    //juce::TextButton save;
 
     chBgComp bkgd { "top wood panel2.png",this,Driver.handler };
     PlayStopBox playStopBox { 25,11,239,32,this,Driver};
@@ -130,25 +130,73 @@ public:
     MasterTab_Component(int x, int y, int w, int h, juce::Component* parent, driver& driver);
 };
 
+//look for examples on how to update this object for android and ios
+class Browser_Component : public juce::FileBrowserListener, public childComp, public drived
+{
+public:
+   
+    chBgComp bkgd{ "MASTER GRAY PANEL2.png",this,Driver.handler };
+    juce::OwnedArray< Seq_16_And_LAC>& lines;
+     
+    juce::TimeSliceThread tst{ "browser" };
+    juce::WildcardFileFilter ff{ juce::String("*.wav;*.aiff"), "*.*","Audio files" };
+    juce::DirectoryContentsList dcl{ &ff,tst };     
+    juce::FileTreeComponent ftc { dcl };
+    
+    Browser_Component(int x, int y, int w, int h, juce::OwnedArray< Seq_16_And_LAC>& Lines, juce::Component* parent, driver& driver) 
+        : lines(Lines), childComp(x, y, w, h), drived(driver, parent, this)
+    {        
+        addAndMakeVisible(ftc);
+        ftc.addListener(this);
+        dcl.setDirectory(juce::File::getSpecialLocation(juce::File::userDesktopDirectory), true, true);
+        tst.startThread(3);
+        ftc.setRootItemVisible(true);     
+    }
+    ~Browser_Component(){ tst.stopThread(1000); }
+   
+    void resized()
+    {
+        ftc.setBounds(10, 40, dims[2] - 20, dims[3] - 60);
+    }
+
+    void fileClicked(const juce::File&, const juce::MouseEvent&) override {}
+    void fileDoubleClicked(const juce::File&) override {}
+    void browserRootChanged(const juce::File&) override {}
+
+    void selectionChanged()
+    {    
+        for (auto& q : Driver.generalBuffer.channels[Driver.ActiveLine]->engine->fileQue)
+        {
+            if(q->CellParam.audioParams.size())
+                 q->CellParam.audioParams[q->CellParam.itemSelectedInComboBox - 1].endSample = -1;
+        }
+            
+        //juce::StringArray file(ftc.getSelectedFile().getFullPathName(), 1);
+        lines[Driver.ActiveLine]->LAC.area.filesDropped(ftc.getSelectedFile().getFullPathName(),1,1);
+    }
+};
+
+
 class MasterSection : public juce::ChangeListener, public childComp, public drived
 {
 public:
-    juce::OwnedArray< Seq_16_And_LAC>& channels; 
+    juce::OwnedArray< Seq_16_And_LAC>& lines; 
     juce::OwnedArray< VELcomp>& vels;
 
     chBgComp bkgd{ "MASTER GRAY PANEL2.png",this,Driver.handler };
-    GridTab_Component grid{ 0,0,dims[2],dims[3],channels,vels,this, Driver };
+    Browser_Component browser{ 0,0,dims[2],dims[3],lines,this, Driver };
+    GridTab_Component grid{ 0,0,dims[2],dims[3],lines,vels,this, Driver };
     MasterTab_Component master{ 0,0,dims[2],dims[3],this, Driver };
     juce::String tabPNG = "MASTER TAB2.png";
-    juce::String browser = "BROWSER";
+    juce::String browsr = "BROWSER";
     juce::String mster = "MASTER";
     juce::String grd = "GRID";
      
 
-    Tab browserTab{ -5,0,98,49,tabPNG, browser, this,Driver.handler };
+    Tab browserTab{ -5,0,98,49,tabPNG, browsr, this,Driver.handler };
     Tab masterTab{ 83,0,98,49,tabPNG, mster, this,Driver.handler };
     Tab gridTab{ 171,0,98,49,tabPNG, grd, this,Driver.handler };
-    MasterSection(int x, int y, int w, int h, juce::OwnedArray< Seq_16_And_LAC>& Channels , juce::OwnedArray< VELcomp>& Vels, juce::Component* parent, driver& driver);
+    MasterSection(int x, int y, int w, int h, juce::OwnedArray< Seq_16_And_LAC>& Lines , juce::OwnedArray< VELcomp>& Vels, juce::Component* parent, driver& driver);
 
     void changeListenerCallback(juce::ChangeBroadcaster* source);
 };

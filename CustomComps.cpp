@@ -13,7 +13,7 @@
 
 
 UpperBar::UpperBar(int x, int y, int w, int h, juce::Component* parent, driver& driver) : childComp(x, y, w, h), drived(driver, parent, this) {
-    addAndMakeVisible(save);
+    /*addAndMakeVisible(save);
     save.setBounds(700, 10, 100, 30);
     save.setAlwaysOnTop(true);
     save.setButtonText("save");
@@ -21,7 +21,7 @@ UpperBar::UpperBar(int x, int y, int w, int h, juce::Component* parent, driver& 
     save.onClick = [&] {
         Driver.CreatePreset("default");
         Driver.presets->writeToFile(Driver.xmlFile,"");
-    };
+    };*/
 }
 UpperBar::~UpperBar() {}
 
@@ -69,8 +69,8 @@ MasterTab_Component::MasterTab_Component(int x, int y, int w, int h, juce::Compo
     filter.setName("filter");
 }
 
-MasterSection::MasterSection(int x, int y, int w, int h, juce::OwnedArray< Seq_16_And_LAC>& Channels, juce::OwnedArray< VELcomp>& Vels, juce::Component* parent, driver& driver)
-    : channels(Channels), vels(Vels), childComp(x, y, w, h), drived(driver, parent, this) {
+MasterSection::MasterSection(int x, int y, int w, int h, juce::OwnedArray< Seq_16_And_LAC>& Lines, juce::OwnedArray< VELcomp>& Vels, juce::Component* parent, driver& driver)
+    : lines(Lines), vels(Vels), childComp(x, y, w, h), drived(driver, parent, this) {
     browserTab.Area.addChangeListener(this);
     browserTab.Area.index = 1;
     masterTab.Area.addChangeListener(this);
@@ -92,7 +92,7 @@ void MasterSection::changeListenerCallback(juce::ChangeBroadcaster* source)
         masterTab.setTopLeftPosition(masterTab.getX(), -10);
         gridTab.setTopLeftPosition(gridTab.getX(), -10);
         browserTab.setTopLeftPosition(tab->getParentComponent()->getX(), -3);
-        //browser.tofront(false;
+        browser.toFront(false);
         break;
     case 2:
         browserTab.setTopLeftPosition(browserTab.getX(), -10);

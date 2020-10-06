@@ -31,6 +31,7 @@ bool DropArea::isInterestedInFileDrag(const juce::StringArray& /*files*/)
 
 void DropArea::filesDropped(const juce::StringArray& files, int, int)
 {
+	const juce::ScopedLock myScopedLock(objectLock);
 	fileName = files[0];
 	int index = 1;
 	int begin = 0;
@@ -44,20 +45,24 @@ void DropArea::filesDropped(const juce::StringArray& files, int, int)
 	fileName = fileName.substring(begin + 1, End);
 
 	LoadAudioComponent* parent = static_cast<LoadAudioComponent*>(getParentComponent());		 
-	parent->droppedFile.push_back(juce::URL(juce::File(files[0])));	
+
+	parent->droppedFile.clear();
+	parent->fileBuffers->clear();
+	
+	parent->droppedFile.push_back(juce::URL(juce::File(files[0])));
 	parent->fileBuffers->add(new juce::AudioBuffer<float>);
 	juce::AudioFormatReader* reader;
 	juce::URL& audioURL = parent->droppedFile.back();
 
-#if ! JUCE_IOS
+	#if ! JUCE_IOS
 	if (audioURL.isLocalFile())
 	{
 		reader = parent->pFormatManager->createReaderFor(audioURL.getLocalFile());
 	}
 	else
-#endif
-	{		 
-			reader = parent->pFormatManager->createReaderFor(audioURL.createInputStream(false));
+	#endif
+	{
+		reader = parent->pFormatManager->createReaderFor(audioURL.createInputStream(false));
 	}
 
 	if (reader != nullptr)
@@ -69,17 +74,16 @@ void DropArea::filesDropped(const juce::StringArray& files, int, int)
 		sampleRate = reader->sampleRate;
 		numSamples = end = int(reader->lengthInSamples) - 1;
 		start = 0;
-		
+
 		parent->NewLoadMessage = true;
 		parent->sendSynchronousChangeMessage();
 
-		delete reader;		
+		delete reader;
 	}
 
 	selected = true;
 	repaint();
-
-
+	
 }
 
 //Similar to filesDropped() but used to read URL from xml instead of from dropped files
