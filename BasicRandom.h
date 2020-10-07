@@ -173,14 +173,3 @@ private:
 
 };
 
-class SamplePositionRandomComp : public drived, public childComp
-{
-public:
-
-	BasicRandomComp start{ 0,50,200,50,EffectCode::sampleStart,this,Driver };
-	BasicRandomComp length{ 0,100,200,50,EffectCode::sampleLen,this,Driver };
-
-	SamplePositionRandomComp(int x, int y, int w, int h, juce::Component* parent, driver& driver);  
-private:
-
-};

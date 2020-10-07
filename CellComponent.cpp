@@ -13,9 +13,9 @@
 CellComponent::CellComponent(int x, int y, int w, int h, MasterSection& mastersection, BottomSection& bottomSection, CenterComponent& centComp, juce::Component* parent, driver& driver)
     : mastersection(mastersection),bottomSection(bottomSection), CentComp(centComp), childComp(x, y, w, h),   drived(driver, parent, this)
 {
-    thumbnail.SelectionArea.startLine.addChangeListener(&ThumbListener);
-    thumbnail.SelectionArea.endLine.addChangeListener(&ThumbListener);
-    ThumbListener.width = float(thumbnail.SelectionArea.dims[2]);
+    thumbnail.thumbBkgd.SelectionArea.startLine.addChangeListener(&ThumbListener);
+    thumbnail.thumbBkgd.SelectionArea.endLine.addChangeListener(&ThumbListener);
+    ThumbListener.width = float(thumbnail.thumbBkgd.SelectionArea.dims[2]);
 
 
     Driver.LAClisteners.push_back(this);
@@ -39,22 +39,23 @@ void CellComponent::changeListenerCallback(juce::ChangeBroadcaster* source)
     {
         ActiveChannel = LAC->chNumber;    
         panRandomComp.channel = Driver.generalBuffer.channels[ActiveChannel];
+        thumbnail.RandomGUI.channel = Driver.generalBuffer.channels[ActiveChannel];
 
         CellParameters* params = &Driver.engines[ActiveChannel]->cellParameters;
         if (params->audioParams.size())
         {                  
-            thumbnail.SelectionArea.startLine.setTopLeftPosition(int(juce::jmax(0.0f, float(params->audioParams[params->itemSelectedInComboBox - 1].startSample) / float(params->audioParams[params->itemSelectedInComboBox - 1].numSamples) * thumbnail.SelectionArea.dims[2] - 5)), 0);
-            thumbnail.SelectionArea.startLine.dims[0] = thumbnail.SelectionArea.startLine.getX();
-            thumbnail.SelectionArea.endLine.setTopLeftPosition(int(juce::jmin(float(params->audioParams[params->itemSelectedInComboBox - 1].endSample) / float(params->audioParams[params->itemSelectedInComboBox - 1].numSamples) * thumbnail.SelectionArea.dims[2] - 5, float(params->audioParams[params->itemSelectedInComboBox - 1].numSamples))), 0);
-            thumbnail.SelectionArea.endLine.dims[0] = thumbnail.SelectionArea.endLine.getX();
+            thumbnail.thumbBkgd.SelectionArea.startLine.setTopLeftPosition(int(juce::jmax(0.0f, float(params->audioParams[params->itemSelectedInComboBox - 1].startSample) / float(params->audioParams[params->itemSelectedInComboBox - 1].numSamples) * thumbnail.thumbBkgd.SelectionArea.dims[2] - 5)), 0);
+            thumbnail.thumbBkgd.SelectionArea.startLine.dims[0] = thumbnail.thumbBkgd.SelectionArea.startLine.getX();
+            thumbnail.thumbBkgd.SelectionArea.endLine.setTopLeftPosition(int(juce::jmin(float(params->audioParams[params->itemSelectedInComboBox - 1].endSample) / float(params->audioParams[params->itemSelectedInComboBox - 1].numSamples) * thumbnail.thumbBkgd.SelectionArea.dims[2] - 5, float(params->audioParams[params->itemSelectedInComboBox - 1].numSamples))), 0);
+            thumbnail.thumbBkgd.SelectionArea.endLine.dims[0] = thumbnail.thumbBkgd.SelectionArea.endLine.getX();
         }
         else
         {           
             //draw start and end lines off screen if no audio is loaded
-            thumbnail.SelectionArea.startLine.setTopLeftPosition(thumbnail.SelectionArea.dims[0] - 50, 0);
-            thumbnail.SelectionArea.startLine.dims[0] = thumbnail.SelectionArea.startLine.getX();
-            thumbnail.SelectionArea.endLine.setTopLeftPosition(thumbnail.SelectionArea.dims[2] + 50, 0);
-            thumbnail.SelectionArea.endLine.dims[0] = thumbnail.SelectionArea.endLine.getX();
+            thumbnail.thumbBkgd.SelectionArea.startLine.setTopLeftPosition(thumbnail.thumbBkgd.SelectionArea.dims[0] - 50, 0);
+            thumbnail.thumbBkgd.SelectionArea.startLine.dims[0] = thumbnail.thumbBkgd.SelectionArea.startLine.getX();
+            thumbnail.thumbBkgd.SelectionArea.endLine.setTopLeftPosition(thumbnail.thumbBkgd.SelectionArea.dims[2] + 50, 0);
+            thumbnail.thumbBkgd.SelectionArea.endLine.dims[0] = thumbnail.thumbBkgd.SelectionArea.endLine.getX();
         }
 
         pan.setValue(params->Pan, juce::dontSendNotification);
@@ -68,7 +69,8 @@ void CellComponent::changeListenerCallback(juce::ChangeBroadcaster* source)
         EffectsComp.delayButton.IsOn = bool(params->CHANNEL_DELAY == 1);
         EffectsComp.delayButton.refresh();
 
-        panRandomComp.refresh();
+        panRandomComp.refresh();        
+        thumbnail.RandomGUI.refresh();
 
 
         switch (Driver.generalBuffer.channels[ActiveChannel]->VisibleEffectInCell)
@@ -250,3 +252,6 @@ void PanRandomComp::refresh( )
     panLbl.repaint();
     Random.gui.refresh(channel->RandomPanAmount, channel->RandomPanPercentageOfCells, channel->RandomPanDryWet);
 }
+
+
+

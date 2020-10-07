@@ -145,6 +145,7 @@ void BasicRandom::applyRandomParameter(seqChannel* channel, int effect, bool onl
 
 
 				params->endSample = params->endSampleWet = juce::jmin(params->numSamples, params->startSample + len);
+				DBG("end sample: " << params->endSample);
 			}
 		}	
 		break;
@@ -165,7 +166,8 @@ void BasicRandom::applyRandomParameter(seqChannel* channel, int effect, bool onl
 
 				int len = channel->engine->cellParameters.audioParams[channel->engine->cellParameters.itemSelectedInComboBox - 1].numSamples - channel->engine->cellParameters.audioParams[channel->engine->cellParameters.itemSelectedInComboBox - 1].startSample;
 				params->endSampleWet = params->startSample + int(len * r * 0.01f);				
-				params->endSample = int(params->endSampleDry + (params->endSampleWet - params->endSampleDry) * (float(DryWetValue) / float(100)));				
+				params->endSample = int(params->endSampleDry + (params->endSampleWet - params->endSampleDry) * (float(DryWetValue) / float(100)));
+				DBG("end sample: " << params->endSample);
 			}
 		}
 		break;
@@ -334,10 +336,7 @@ BasicRandomComp::BasicRandomComp(int x, int y, int w, int h, int effect, juce::C
 	Driver.LAClisteners.push_back(&_LAC_Drop_File_Handler);
 }
 
-SamplePositionRandomComp::SamplePositionRandomComp(int x, int y, int w, int h, juce::Component* parent, driver& driver)
-	:childComp(x, y, w, h), drived(driver, parent, this)
-{
-}
+
 
 BasicRandomComp::DryWetChangeHandler::DryWetChangeHandler(BasicRandom& randomEngine, BasicRandomKnobs& GUI, int& Channel, int& effectCode, driver& driver)
 	: RandomEngine(randomEngine), gui(GUI), channel(Channel), EffectCode(effectCode), driven(driver)

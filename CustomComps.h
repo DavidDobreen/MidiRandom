@@ -310,6 +310,16 @@ public:
         if (c != nullptr)
         {
             colourPicker.setVisible(!colourPicker.isVisible());
+            //since this is a top level component you need to make it size 0 when not visible
+            if (colourPicker.isVisible())
+            {
+                colourPicker.setBounds(colourPicker.dims[0], colourPicker.dims[1], colourPicker.dims[2], colourPicker.dims[3]);
+            }             
+            else
+            {                
+                colourPicker.setBounds(0, 0, 0, 0);               
+            }
+                 
         }
         else
         {

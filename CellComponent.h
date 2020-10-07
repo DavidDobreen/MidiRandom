@@ -20,7 +20,7 @@ class PanRandomComp : public juce::Slider::Listener, public childComp, public dr
 public:
     chBgComp bkgd{ "wave main box and frame2.png" ,this,Driver.handler };
     seqChannel* channel;
-    BasicRandomComp Random{ 25,25,200,50,-1,this,Driver };
+    BasicRandomComp Random{ 25,25,200,50,EffectCode::pan,this,Driver };
     BasicRandomLabels lbls{ 25,75,150,30,this,Driver.handler };
     fxLabel panLbl{ 215,50,70,40,"pan", DEFAULT_LABEL_COLORS ,nullptr ,this,Driver.handler };
      
@@ -33,6 +33,8 @@ private:
     SliderComp& PanSlider; 
     CenterComponent& CentComp;
 };
+
+
 
 class CellEffectsComp : public juce::ChangeListener, public childComp, public drived
 {
@@ -73,10 +75,12 @@ public:
         int& ActiveChannel;
         CenterComponent& CentComp;
         SliderComp& pan;
-        AddLineListener (int& channel, CenterComponent& centComp, SliderComp& Pan, driver& driver) : ActiveChannel(channel) ,CentComp(centComp), pan(Pan), driven(driver) {}
+        DrivedThumb& thumb;
+        AddLineListener (int& channel, CenterComponent& centComp, DrivedThumb& Thumb, SliderComp& Pan, driver& driver) : ActiveChannel(channel) ,CentComp(centComp), thumb(Thumb),pan(Pan), driven(driver) {}
             void changeListenerCallback(juce::ChangeBroadcaster* source) {
                 CentComp.GL.AddLine();
                 CentComp.mixer.sliders.getLast()->panner.addListener(this);
+                thumb.RandomGUI.channel = Driver.generalBuffer.channels.back();
 
                 Driver.generalBuffer.channels[CentComp.GL.lines.size()-1]->VisibleEffectInCell = EffectCode::filter;
                 CentComp.GL.lines.getLast()->LAC.sendSynchronousChangeMessage();
@@ -117,7 +121,7 @@ public:
     PanRandomComp panRandomComp { 400, 400, 260, 110, CentComp, pan,this, Driver };
     SelectionList::option random{ 0,0,150,30, 0,"RANDOM",  this, Driver.handler };
 
-    AddLineListener addLineListener{ ActiveChannel,CentComp, pan, Driver };
+    AddLineListener addLineListener{ ActiveChannel,CentComp, thumbnail, pan, Driver };
     CellComponent(int x, int y, int w, int h, MasterSection& mastersection, BottomSection& bottomSection, CenterComponent& centComp, juce::Component* parent, driver& driver);
 
     

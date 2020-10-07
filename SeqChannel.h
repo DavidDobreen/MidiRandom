@@ -87,6 +87,8 @@ public:
 	int RandomPosAmountValue = 0;	
 	int RandomPosPercentageOfCells = 0;
 	int RandomPosDryWet = 0;
+	bool startLbl = false;
+	bool endLbl = false;
 
 	seqChannel(int length, int num);
 	seqChannel(const seqChannel& other); //copy constructor
