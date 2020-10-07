@@ -313,6 +313,7 @@ public:
         }
         else
         {
+            Driver.generalBuffer.channels[Driver.ActiveLine]->channelColour = colourPicker.ColourPick;
             GL.lines[Driver.ActiveLine]->LAC.area.textColor = colourPicker.ColourPick;
             GL.lines[Driver.ActiveLine]->LAC.area.repaint();
             for (auto& s : GL.lines[Driver.ActiveLine]->line.line.items)

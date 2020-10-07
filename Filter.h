@@ -16,11 +16,14 @@
 class FilterRandomComp : public juce::ChangeListener, public juce::Slider::Listener, public childComp, public drived
 {
 public:
+    chBgComp bkgd{ "wave main box and frame2.png" ,this,Driver.handler };
     seqChannel* channel;
-    ComboRandomComp Random{ 0,0,200,50,-1,this,Driver };
-    fxLabel cutoff{ 140,50,70,15,"cutoff", DEFAULT_LABEL_COLORS ,nullptr ,this,Driver.handler };
-    fxLabel q{ 140,75,70,25,"q", DEFAULT_LABEL_COLORS ,nullptr ,this,Driver.handler };
-    fxLabel selection{ 140,100,90,25,"selection", DEFAULT_LABEL_COLORS ,nullptr ,this,Driver.handler };
+    ComboRandomComp Random{ 25,25,200,50,-1,this,Driver };
+    BasicRandomLabels lbls{ 25,75,150,30,this,Driver.handler };
+    fxLabel cutoff{ 215,25,70,40,"cutoff", DEFAULT_LABEL_COLORS ,nullptr ,this,Driver.handler };
+    fxLabel q{ 215,50,70,40,"q", DEFAULT_LABEL_COLORS ,nullptr ,this,Driver.handler };
+    fxLabel selection{ 215,75,90,40,"selection", DEFAULT_LABEL_COLORS ,nullptr ,this,Driver.handler };
+
 
     FilterRandomComp(int x, int y, int w, int h, SliderComp& CutoffSlider, SliderComp& QSlider, juce::Component* parent, driver& driver);
     void changeListenerCallback(juce::ChangeBroadcaster* source);
@@ -170,14 +173,17 @@ public:
     
     MiniAnalyzerComp analyzer{ 150,5,89,43,this, Driver.handler };
     //MiniAnalyzerComp analyzer{ 0,0,700,400,this, Driver.handler };
-    FilterSelectionBox selectionBox{ 5,50,33,15,this, Driver.handler };
+    FilterSelectionBox selectionBox{ 55,35,33,15,this, Driver.handler };
     SliderComp CutOff{ "CutOff",100, 5000, 10,5,5,39,41 ,this, Driver.handler };
     SliderComp Frequncy{ "Frequncy",5, 100, 1,90,5,39,41 ,this, Driver.handler };
-    FilterSelectionList selectionList{ 890,577,200,400,getTopLevelComponent(), Driver.handler };
+    fxLabel lblCutoff{ 12,50,39,30,"Cutoff",juce::Colours::white,juce::Colours::white ,nullptr,this,Driver.handler };
+    fxLabel lblQ{ 103,48,39,30,"q",juce::Colours::white,juce::Colours::white ,nullptr,this,Driver.handler };
+
+    FilterSelectionList selectionList{ 940,575,200,400,getTopLevelComponent(), Driver.handler };
     
 
     BasicWindow BasicRandom{ "Random Filter" , juce::Colours::black,4 };
-    FilterRandomComp BasicRandomGUI{ 400, 400, 200, 200, CutOff, Frequncy, this, Driver };
+    FilterRandomComp BasicRandomGUI{ 400, 400, 275, 110, CutOff, Frequncy, this, Driver };
     SelectionList::option random{ 0,0,150,30, -1,"RANDOM",  this, Driver.handler };
 
     LAC_Drop_File_Handler LAC_Handler{ CutOff, Frequncy, selectionBox, BasicRandomGUI, analyzer , Driver };

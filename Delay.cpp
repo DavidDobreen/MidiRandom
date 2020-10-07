@@ -11,13 +11,14 @@
 #include "Delay.h"
 
 CellDelayComponent::CellDelayComponent(int x, int y, int w, int h, juce::Component* parent, driver& driver)
-	: childComp(x,y,w,h), drived(driver,parent,this)
-{ 	 
-	delayTime.addListener(this);
-	delayDryWet.addListener(this);
-	delayFeedback.addListener(this);
- 
-    random.addChangeListener(this);   
+    : childComp(x, y, w, h), drived(driver, parent, this)
+{
+    delayTime.addListener(this);
+    delayDryWet.addListener(this);
+    delayFeedback.addListener(this);
+
+    random.addChangeListener(this);
+
 }
 
 void CellDelayComponent::mouseDown(const juce::MouseEvent& event)
@@ -72,6 +73,10 @@ DelayRandomComp::DelayRandomComp(int x, int y, int w, int h, SliderComp& DelayTi
     Random.gui.Percetntage.addListener(this);
     Random.gui.DryWet.addListener(this);
     Random.randomizeListeners.updateMinMaxRequest.addChangeListener(this);
+
+    time.fontHight = 14;
+    wet.fontHight = 14;
+    feedback.fontHight = 14;
 }
 
 void DelayRandomComp::changeListenerCallback(juce::ChangeBroadcaster* source)
@@ -86,6 +91,7 @@ void DelayRandomComp::changeListenerCallback(juce::ChangeBroadcaster* source)
         {
             if (lbl->text == "time")
             {
+                channel->TimeLbl = true;
                 Random.randomizeListeners.effects.add(EffectCode::delayTime);
                 Random.RandomEngine.min = int(delayTime.getMinimum());
                 Random.RandomEngine.max = int(delayTime.getMaximum());
@@ -93,12 +99,14 @@ void DelayRandomComp::changeListenerCallback(juce::ChangeBroadcaster* source)
 
             else if (lbl->text == "wet")
             {
+                channel->WetLbl = true;
                 Random.randomizeListeners.effects.add(EffectCode::delayWet);
                 Random.RandomEngine.min = int(delayDryWet.getMinimum());
                 Random.RandomEngine.max = int(delayDryWet.getMaximum());
             }
             else if (lbl->text == "feedback")
             {
+                channel->FeedbackLbl = true;
                 Random.randomizeListeners.effects.add(EffectCode::delayFeedback);
                 Random.RandomEngine.min = int(delayFeedback.getMinimum());
                 Random.RandomEngine.max = int(delayFeedback.getMaximum());
@@ -108,11 +116,21 @@ void DelayRandomComp::changeListenerCallback(juce::ChangeBroadcaster* source)
         else
         {
             if (lbl->text == "time")
+            {
+                channel->TimeLbl = false;
                 Random.randomizeListeners.effects.remove(Random.randomizeListeners.effects.indexOf(EffectCode::delayTime));
-            else if (lbl->text == "wet")
+            }
+            else if (lbl->text == "wet")        
+            {
+                channel->WetLbl = false;
                 Random.randomizeListeners.effects.remove(Random.randomizeListeners.effects.indexOf(EffectCode::delayWet));
+            }           
             else if (lbl->text == "feedback")
+            {
+                channel->FeedbackLbl = false;
                 Random.randomizeListeners.effects.remove(Random.randomizeListeners.effects.indexOf(EffectCode::delayFeedback));
+            }
+                
         } 
         return;
     }
@@ -166,6 +184,15 @@ void DelayRandomComp::sliderValueChanged(juce::Slider* slider)
 void DelayRandomComp::refresh()
 {
     Random.gui.refresh(channel->RandomDelayAmount, channel->RandomDelayPercentageOfCells, channel->RandomDelayDryWet);
+
+    time.onColor = wet.onColor = feedback.onColor = channel->channelColour;
+
+    time.IsOn = channel->TimeLbl;
+    time.repaint();
+    wet.IsOn = channel->WetLbl;
+    wet.repaint();
+    feedback.IsOn = channel->FeedbackLbl;
+    feedback.repaint();
 }
 
 CellDelayComponent::LAC_Drop_File_Handler::LAC_Drop_File_Handler(int x, int y, int w, int h, SliderComp& DelayTime, SliderComp& DelayDryWet, SliderComp& DelayFeedback, DelayRandomComp& delayRandomComp, juce::Component* parent, driver& driver)

@@ -268,6 +268,10 @@ FilterRandomComp::FilterRandomComp(int x, int y, int w, int h, SliderComp& Cutof
     Random.gui.Percetntage.addListener(this);
     Random.gui.DryWet.addListener(this);
     Random.randomizeListeners.updateMinMaxRequest.addChangeListener(this);
+
+    cutoff.fontHight = 14;  
+    q.fontHight = 14;
+    selection.fontHight = 14;
 }
 
 void FilterRandomComp::changeListenerCallback(juce::ChangeBroadcaster* source)
@@ -282,6 +286,7 @@ void FilterRandomComp::changeListenerCallback(juce::ChangeBroadcaster* source)
         {
             if (lbl->text == "cutoff")
             {
+                channel->CutOffLbl = true;
                 Random.randomizeListeners.effects.add(EffectCode::filterCutoff);
                 Random.RandomEngine.min = int(cutoffSlider.getMinimum());
                 Random.RandomEngine.max = int(cutoffSlider.getMaximum());
@@ -289,22 +294,36 @@ void FilterRandomComp::changeListenerCallback(juce::ChangeBroadcaster* source)
                         
             else if (lbl->text == "q")
             {
+                channel->QLbl = true;
                 Random.randomizeListeners.effects.add(EffectCode::filterQ);
                 Random.RandomEngine.min = int(qSlider.getMinimum());
                 Random.RandomEngine.max = int(qSlider.getMaximum());
             }                
             else if (lbl->text == "selection")
+            {
+                channel->SelectionLbl = true;
                 Random.randomizeListeners.effects.add(EffectCode::filterSelection);
-                
+            }      
         }
         else
         {
             if (lbl->text == "cutoff")
+            {
+                channel->CutOffLbl = false;
                 Random.randomizeListeners.effects.remove(Random.randomizeListeners.effects.indexOf(EffectCode::filterCutoff));
+            }              
             else if (lbl->text == "q")
+            {
+                channel->QLbl = false;
                 Random.randomizeListeners.effects.remove(Random.randomizeListeners.effects.indexOf(EffectCode::filterQ));
+            }
+                
             else if (lbl->text == "selection")
+            {
+                channel->SelectionLbl = false;
                 Random.randomizeListeners.effects.remove(Random.randomizeListeners.effects.indexOf(EffectCode::filterSelection));
+            }
+                
         }
             
         /*random.setVisible(false);      
@@ -344,4 +363,13 @@ void FilterRandomComp::sliderValueChanged(juce::Slider* slider)
 void FilterRandomComp::refresh()
 {    
     Random.gui.refresh(channel->RandomFilterAmount, channel->RandomFilterPercentageOfCells, channel->RandomFilterDryWet);
+
+    cutoff.onColor = q.onColor = selection.onColor = channel->channelColour;
+
+    cutoff.IsOn = channel->CutOffLbl;
+    cutoff.repaint();
+    q.IsOn = channel->QLbl;
+    cutoff.repaint();
+    selection.IsOn = channel->SelectionLbl;
+    selection.repaint();
 }

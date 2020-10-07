@@ -475,6 +475,36 @@ public:
 
 };
 
+class fxLabel : public childComp, public handled, public juce::ChangeBroadcaster
+{
+public:
+	juce::String text;
+	bool IsOn = false;
+	juce::Colour offColor;
+	juce::Colour onColor;
+	Component* comp;
+	int fontHight{ 11 };
+
+	fxLabel(int x, int y, int w, int h, juce::String name, juce::Colour on, juce::Colour off, Component* Comp, juce::Component* parent, pngHandler& Handler);
+	~fxLabel() { removeAllChangeListeners(); }
+
+	void mouseDown(const juce::MouseEvent& event) override;
+
+	void paint(juce::Graphics& g) override;
+
+};
+
+class BasicRandomLabels :public childComp, public handled
+{
+public:
+	fxLabel Amount{ 3,0,49,30,"Amout", juce::Colours::white, juce::Colours::white, nullptr, this,handler };
+	fxLabel per{ 45,0,49,30,"% of cells", juce::Colours::white, juce::Colours::white, nullptr, this,handler };
+	fxLabel DryWet{ 98,0,49,30,"Dry/Wet", juce::Colours::white, juce::Colours::white, nullptr, this,handler };
+
+	BasicRandomLabels(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler)
+		: childComp(x,y,w,h), handled (handler,parent,this){}
+};
+
 class BasicRandomKnobs : public childComp, public handled
 {
 public:
@@ -535,24 +565,6 @@ public:
 	ThumbSelectionArea(int x, int y, int w, int h, juce::Component* parent, pngHandler& Handler);
 
 	void mouseDown(const juce::MouseEvent& event) override;
-};
-
-class fxLabel : public childComp, public handled, public juce::ChangeBroadcaster
-{
-public:
-	juce::String text;
-	bool IsOn = false;
-	juce::Colour offColor;
-	juce::Colour onColor;
-	Component* comp;
-	
-	fxLabel(int x, int y, int w, int h, juce::String name, juce::Colour on, juce::Colour off, Component* Comp, juce::Component* parent, pngHandler& Handler);
-	~fxLabel() { removeAllChangeListeners(); }
-
-	void mouseDown(const juce::MouseEvent& event) override;
-	
-	void paint(juce::Graphics& g) override;
-
 };
 
 class MiniColorPicker : public juce::ChangeListener, public juce::ChangeBroadcaster, public childComp, public handled

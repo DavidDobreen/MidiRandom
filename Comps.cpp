@@ -322,14 +322,14 @@ void childComp::mouseDown(const juce::MouseEvent&){}
  {
 	 if (event.mods.isRightButtonDown())
 	 {
-		 juce::PopupMenu m;
+		/* juce::PopupMenu m;
 		 m.addItem(1, "Randomize");
 		 const int result = m.show();
 		 if (result == 1)
 		 {
 
 		 }
-		 return;
+		 return;*/
 	 }
 	 sendSynchronousChangeMessage();
  }
@@ -341,7 +341,7 @@ void childComp::mouseDown(const juce::MouseEvent&){}
 	 else
 		 g.setColour(offColor);
 	 juce::Font r = juce::Font(juce::Font::fromString("Roboto"));
-	 r.setHeight(11.0);
+	 r.setHeight(fontHight);
 	 g.setFont(r);
 	 g.drawFittedText(text, getLocalBounds(), juce::Justification::topLeft, 1);
  }

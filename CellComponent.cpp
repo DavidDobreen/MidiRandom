@@ -37,7 +37,9 @@ void CellComponent::changeListenerCallback(juce::ChangeBroadcaster* source)
     LAC = dynamic_cast<LoadAudioComponent*>(source);
     if (LAC != nullptr)
     {
-        ActiveChannel = LAC->chNumber;       
+        ActiveChannel = LAC->chNumber;    
+        panRandomComp.channel = Driver.generalBuffer.channels[ActiveChannel];
+
         CellParameters* params = &Driver.engines[ActiveChannel]->cellParameters;
         if (params->audioParams.size())
         {                  
@@ -56,6 +58,7 @@ void CellComponent::changeListenerCallback(juce::ChangeBroadcaster* source)
         }
 
         pan.setValue(params->Pan, juce::dontSendNotification);
+        
 
         EffectsComp.filter.setVisible(false);
         EffectsComp.filterButton.IsOn = bool(params->CHANNEL_FILTER == 1);
@@ -64,6 +67,8 @@ void CellComponent::changeListenerCallback(juce::ChangeBroadcaster* source)
         EffectsComp.delay.setVisible(false);
         EffectsComp.delayButton.IsOn = bool(params->CHANNEL_DELAY == 1);
         EffectsComp.delayButton.refresh();
+
+        panRandomComp.refresh();
 
 
         switch (Driver.generalBuffer.channels[ActiveChannel]->VisibleEffectInCell)
@@ -97,9 +102,9 @@ void CellComponent::changeListenerCallback(juce::ChangeBroadcaster* source)
     else if (dynamic_cast<SelectionList::option*>(source) != nullptr)
     {
         random.setVisible(false);
-        BasicRandomGUI.channel = ActiveChannel;
+        /*panRandomComp.channel = ActiveChannel;
         if (rightClickedSlider == &pan)
-            BasicRandomGUI.EffectCode = EffectCode::pan;
+            panRandomComp.EffectCode = EffectCode::pan;*/
 
         BasicRandom.setTopLeftPosition(this->getMouseXYRelative());
         BasicRandom.setVisible(true);
@@ -112,12 +117,12 @@ void CellComponent::changeListenerCallback(juce::ChangeBroadcaster* source)
  
 void CellComponent::sliderValueChanged(juce::Slider* slider)
 {
-    CellParameters* params = &Driver.engines[ActiveChannel]->cellParameters;
+   /* CellParameters* params = &Driver.engines[ActiveChannel]->cellParameters;
     if (slider->getName() == "pan")
     {
         params->Pan = params->dryPan = params->wetPan = float(slider->getValue());
         CentComp.mixer.sliders[Driver.ActiveLine]->panner.setValue(params->Pan, juce::dontSendNotification);
-    }
+    }*/
    
 }
 
@@ -203,4 +208,45 @@ void CellEffectsComp::changeListenerCallback(juce::ChangeBroadcaster* source)
                 
         }
     }
+}
+
+PanRandomComp::PanRandomComp(int x, int y, int w, int h, CenterComponent& centComp, SliderComp& PanSlider, juce::Component* parent, driver& driver)
+    : CentComp(centComp),PanSlider(PanSlider),childComp(x,y,w,h),drived(driver,parent,this)
+{
+    Random.gui.Amount.addListener(this);
+    Random.gui.Percetntage.addListener(this);
+    Random.gui.DryWet.addListener(this);     
+    panLbl.fontHight = 14;
+}
+
+void PanRandomComp::sliderValueChanged(juce::Slider* slider)
+{
+    
+
+    if (slider == &Random.gui.Amount)
+    {
+        channel->RandomPanAmount = int(slider->getValue());
+    }
+        
+    if (slider == &Random.gui.Percetntage)
+    {
+        channel->RandomPanPercentageOfCells = int(slider->getValue());
+    }
+        
+    if (slider == &Random.gui.DryWet)
+    {
+        channel->RandomPanDryWet = int(slider->getValue());
+
+        CellParameters* params = &Driver.engines[Driver.ActiveLine]->cellParameters;
+        params->Pan = params->dryPan = params->wetPan = float(slider->getValue());
+        CentComp.mixer.sliders[Driver.ActiveLine]->panner.setValue(params->Pan, juce::dontSendNotification);
+    }
+        
+}
+
+void PanRandomComp::refresh( )
+{
+    panLbl.onColor = panLbl.offColor = channel->channelColour;
+    panLbl.repaint();
+    Random.gui.refresh(channel->RandomPanAmount, channel->RandomPanPercentageOfCells, channel->RandomPanDryWet);
 }

@@ -54,6 +54,7 @@ public:
 	AudioOutEngine* engine;
 	int VisibleEffectInCell = 2;
 	 
+	juce::Colour channelColour;
 
 	int RelativeVelocity = 0;
 	int VelPercentageOfCells = 0;
@@ -64,13 +65,24 @@ public:
 	float OffSetDryWet = 0.0f;
 
 	//TODO: save below values to presets
+
+	int RandomPanAmount = 0;
+	int RandomPanPercentageOfCells = 0;
+	int RandomPanDryWet = 0;
+
 	int RandomFilterAmount = 0;
 	int RandomFilterPercentageOfCells = 0;
 	int RandomFilterDryWet = 0;
+	bool CutOffLbl = false;
+	bool QLbl = false;
+	bool SelectionLbl = false;
 
 	int RandomDelayAmount = 0;
 	int RandomDelayPercentageOfCells = 0;
 	int RandomDelayDryWet = 0;
+	bool TimeLbl = false;
+	bool WetLbl = false;
+	bool FeedbackLbl = false;
 
 	int RandomPosAmountValue = 0;	
 	int RandomPosPercentageOfCells = 0;

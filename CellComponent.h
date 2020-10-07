@@ -15,6 +15,25 @@
 #include "Delay.h"
 #include "CustomComps.h"
 
+class PanRandomComp : public juce::Slider::Listener, public childComp, public drived
+{
+public:
+    chBgComp bkgd{ "wave main box and frame2.png" ,this,Driver.handler };
+    seqChannel* channel;
+    BasicRandomComp Random{ 25,25,200,50,-1,this,Driver };
+    BasicRandomLabels lbls{ 25,75,150,30,this,Driver.handler };
+    fxLabel panLbl{ 215,50,70,40,"pan", DEFAULT_LABEL_COLORS ,nullptr ,this,Driver.handler };
+     
+    PanRandomComp(int x, int y, int w, int h, CenterComponent& centComp, SliderComp& PanSlider, juce::Component* parent, driver& driver);
+
+    void sliderValueChanged(juce::Slider* slider);
+    void refresh();
+
+private:
+    SliderComp& PanSlider; 
+    CenterComponent& CentComp;
+};
+
 class CellEffectsComp : public juce::ChangeListener, public childComp, public drived
 {
 public:
@@ -95,7 +114,7 @@ public:
 
     SliderComp* rightClickedSlider = nullptr;
     BasicWindow BasicRandom{ "radomize pan" , juce::Colours::black,4 };
-    BasicRandomComp BasicRandomGUI{ 0, 0, 200, 41,3, this, Driver };
+    PanRandomComp panRandomComp { 400, 400, 260, 110, CentComp, pan,this, Driver };
     SelectionList::option random{ 0,0,150,30, 0,"RANDOM",  this, Driver.handler };
 
     AddLineListener addLineListener{ ActiveChannel,CentComp, pan, Driver };
