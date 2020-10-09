@@ -303,7 +303,7 @@ public:
         if (dynamic_cast<LoadAudioComponent*>(source) != nullptr)
         {
             current.cColour = dynamic_cast<LoadAudioComponent*>(source)->area.textColor;
-            current.repaint();
+            current.repaint();            
             return;
         }
         MiniColorPicker::MiniColor* c = dynamic_cast<MiniColorPicker::MiniColor*>(source);
@@ -325,19 +325,21 @@ public:
         {
             Driver.generalBuffer.channels[Driver.ActiveLine]->channelColour = colourPicker.ColourPick;
             GL.lines[Driver.ActiveLine]->LAC.area.textColor = colourPicker.ColourPick;
-            GL.lines[Driver.ActiveLine]->LAC.area.repaint();
+           /* GL.lines[Driver.ActiveLine]->LAC.area.repaint();*/
             for (auto& s : GL.lines[Driver.ActiveLine]->line.line.items)
             {
                 s->onColour = colourPicker.ColourPick;
                 s->repaint();
             }
-            thumb.TopPanel.channelColor = colourPicker.ColourPick;
+           /* thumb.TopPanel.channelColor = colourPicker.ColourPick;
             thumb.TopPanel.repaint();
             thumb.thumbnail.get()->channelColor = colourPicker.ColourPick;
-            thumb.thumbnail.get()->repaint();
+            thumb.thumbnail.get()->repaint();*/
             
-            mainline.bottomLAC.area.textColor = colourPicker.ColourPick;
-            mainline.bottomLAC.area.repaint();
+           /* mainline.bottomLAC.area.textColor = colourPicker.ColourPick;
+            mainline.bottomLAC.area.repaint();*/
+
+            GL.lines[Driver.ActiveLine]->LAC.sendSynchronousChangeMessage();
          
             current.cColour = colourPicker.ColourPick;
             current.repaint();

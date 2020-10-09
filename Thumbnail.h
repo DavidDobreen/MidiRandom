@@ -10,6 +10,28 @@
 
 #pragma once
 #include "Comps.h"
+class ThumbSelectionArea : public juce::ChangeBroadcaster, public childComp, public handled
+{
+public:
+	class SelctionLine : public juce::ChangeBroadcaster, public childComp, public handled
+	{
+	public:
+		bool Start;
+		int* min;
+		int* max;
+		SelctionLine(int x, int y, int w, int h, bool start, juce::Component* parent, pngHandler& Handler);
+		~SelctionLine() { removeAllChangeListeners(); }
+		void paint(juce::Graphics& g) override;
+		void mouseDrag(const juce::MouseEvent& event) override;
+		void mouseUp(const juce::MouseEvent& event) override;
+	};
+	SelctionLine startLine{ -5,0,10,dims[3],true,this,handler };
+	SelctionLine endLine{ dims[2] - 5,0,10,dims[3],false,this,handler };
+
+	ThumbSelectionArea(int x, int y, int w, int h, juce::Component* parent, pngHandler& Handler);
+
+	void mouseDown(const juce::MouseEvent& event) override;
+};
 
 class ThumbnailComp : public childComp, public juce::ChangeListener
 {

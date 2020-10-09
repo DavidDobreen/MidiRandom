@@ -44,7 +44,7 @@ void CellComponent::changeListenerCallback(juce::ChangeBroadcaster* source)
         CellParameters* params = &Driver.engines[ActiveChannel]->cellParameters;
         if (params->audioParams.size())
         {                  
-            thumbnail.thumbBkgd.SelectionArea.startLine.setTopLeftPosition(int(juce::jmax(0.0f, float(params->audioParams[params->itemSelectedInComboBox - 1].startSample) / float(params->audioParams[params->itemSelectedInComboBox - 1].numSamples) * thumbnail.thumbBkgd.SelectionArea.dims[2] - 5)), 0);
+            thumbnail.thumbBkgd.SelectionArea.startLine.setTopLeftPosition(int(float(params->audioParams[params->itemSelectedInComboBox - 1].startSample) / float(params->audioParams[params->itemSelectedInComboBox - 1].numSamples) * thumbnail.thumbBkgd.SelectionArea.dims[2] - 5),0);
             thumbnail.thumbBkgd.SelectionArea.startLine.dims[0] = thumbnail.thumbBkgd.SelectionArea.startLine.getX();
             thumbnail.thumbBkgd.SelectionArea.endLine.setTopLeftPosition(int(juce::jmin(float(params->audioParams[params->itemSelectedInComboBox - 1].endSample) / float(params->audioParams[params->itemSelectedInComboBox - 1].numSamples) * thumbnail.thumbBkgd.SelectionArea.dims[2] - 5, float(params->audioParams[params->itemSelectedInComboBox - 1].numSamples))), 0);
             thumbnail.thumbBkgd.SelectionArea.endLine.dims[0] = thumbnail.thumbBkgd.SelectionArea.endLine.getX();

@@ -54,7 +54,7 @@ public:
 	AudioOutEngine* engine;
 	int VisibleEffectInCell = 2;
 	 
-	juce::Colour channelColour;
+	juce::Colour channelColour = juce::Colours::red;
 
 	int RelativeVelocity = 0;
 	int VelPercentageOfCells = 0;

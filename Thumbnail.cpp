@@ -103,21 +103,15 @@ ThumbBkgd::ThumbBkgd(int x, int y, int w, int h, juce::AudioFormatManager& Forma
 	thumbnail.reset(new ThumbnailComp{ 9, 17, 480, 58, ActiveChannel, formatManager });
 	thumbnail.get()->area = &SelectionArea;
 	handler.compRszr_push(this, thumbnail.get());
-	 
-
-	
-	
 
 }
-
- 
 
 ThumbSelectionArea::ThumbSelectionArea(int x, int y, int w, int h, juce::Component* parent, pngHandler& Handler)
 	: childComp(x,y,w,h), handled(Handler, parent, this)
 {
-	startLine.min = &dims[0];
-	startLine.max = &endLine.dims[0];
-	endLine.min = &startLine.dims[0];
+	startLine.min = &dims[0]-5;
+	startLine.max = &endLine.dims[0]-10;
+	endLine.min = &startLine.dims[0]+10;
 	endLine.max = &dims[2];
 }
 
@@ -130,7 +124,9 @@ void ThumbSelectionArea::mouseDown(const juce::MouseEvent& event)
 ThumbSelectionArea::SelctionLine::SelctionLine(int x, int y, int w, int h, bool start, juce::Component* parent, pngHandler& Handler)
 	: childComp(x, y, w, h), handled(Handler, parent, this)
 {
-	Start = start;
+	Start = start;	 
+	DBG("SelectionLine constructor: ");
+	DBG("x: " << x << " y: " << y << " w: " << w << "h: " << h);
 }
 
 void ThumbSelectionArea::SelctionLine::paint(juce::Graphics& g)
@@ -159,6 +155,7 @@ void ThumbSelectionArea::SelctionLine::mouseDrag(const juce::MouseEvent& event)
 		if ((dims[0] + event.getDistanceFromDragStartX() >  -dims[2]/2) && (dims[0] + event.getDistanceFromDragStartX() < (*max) - dims[2]/2))
 		{
 			setTopLeftPosition(dims[0] + event.getDistanceFromDragStartX(), 0);
+			DBG("x: " << dims[0] + event.getDistanceFromDragStartX());
 			sendSynchronousChangeMessage();
 		}
 	}
@@ -167,6 +164,7 @@ void ThumbSelectionArea::SelctionLine::mouseDrag(const juce::MouseEvent& event)
 		if ((dims[0] + event.getDistanceFromDragStartX() > (*min) + dims[2] / 2) && (dims[0] + event.getDistanceFromDragStartX() < (*max) - dims[2] / 2))
 		{
 			setTopLeftPosition(dims[0] + event.getDistanceFromDragStartX(), 0);
+			DBG("x: " << dims[0] + event.getDistanceFromDragStartX());
 			sendSynchronousChangeMessage();
 		}
 	}
@@ -208,9 +206,7 @@ void ThumbTopPanel::changeListenerCallback(juce::ChangeBroadcaster* source)
 	}
 	else
 	{
-		sampleName = "";
-		//setRange(juce::Range<double>(0, 0));
-
+		sampleName = "";		
 	}
 	repaint();
 }

@@ -16,13 +16,16 @@
 void driver::AddEngine()
 {
 	auto engine = new AudioOutEngine();
-	engines.add(engine);
+	engines.add(std::move(engine));
 	//Seq Channel configs
-	generalBuffer.patterns[generalBuffer.currentPattern]->channels.add(new seqChannel(16, int(generalBuffer.channels.size())));
-	generalBuffer.channels.push_back(generalBuffer.patterns[generalBuffer.currentPattern]->channels.getLast());
-	generalBuffer.channels.back()->engine = engine;
+	auto ch = new seqChannel(16, int(generalBuffer.channels.size()));
+	DBG("channels size: " << generalBuffer.channels.size());
+	generalBuffer.patterns[generalBuffer.currentPattern]->channels.add(std::move(ch));
+	generalBuffer.channels.push_back(ch);
+	ch->engine = engine;
 	engine->channel = generalBuffer.channels.back()->chNumber;
 	engine->RandomVelocityDryWet = &generalBuffer.channels.back()->VelDryWet;
+	engine->RandomPosDryWet = &generalBuffer.channels.back()->RandomPosDryWet;
 		
 	fxInstallerMessage.sendSynchronousChangeMessage();
 }
@@ -172,7 +175,7 @@ void StartStopHandler::changeListenerCallback(juce::ChangeBroadcaster* )
 		//mainLine->leds.stopThread(1000);
 		//mainLine->leds.clearLine();
 		generalBuffer.allowedToPlay = false;
-		generalBuffer.currentPattern = -1;
+		generalBuffer.currentPattern = 0;
 
 	}
  

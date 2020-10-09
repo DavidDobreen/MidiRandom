@@ -122,30 +122,36 @@ void BasicRandom::applyRandomParameter(seqChannel* channel, int effect, bool onl
 		}	
 		break;
 	}
+
+#define slct channel->engine->cellParameters.itemSelectedInComboBox - 1
 	case (EffectCode::sampleStart):
 	{
 		if (only_reset)
 		{
 			for (auto& s : channel->steps)
-				s->cellParameters.audioParams[channel->engine->cellParameters.itemSelectedInComboBox - 1].startSample = -1;
+			{
+				s->cellParameters.audioParams[slct].startSample = -1;
+				s->cellParameters.audioParams[slct].startSampleDry = -1;
+				s->cellParameters.audioParams[slct].startSampleWet = -1;
+			}
 		}
 		else
 		{
 			for (auto& n : notesOnAfterRandom)
 			{
 				int r = juce::Random::getSystemRandom().nextInt(juce::Range<int>(0, AmountValue + 1));
-				auto params = &channel->steps[n]->cellParameters.audioParams[channel->engine->cellParameters.itemSelectedInComboBox - 1];
-
-				params->startSampleDry = channel->engine->cellParameters.audioParams[channel->engine->cellParameters.itemSelectedInComboBox - 1].startSampleDry;
-				params->endSampleDry = channel->engine->cellParameters.audioParams[channel->engine->cellParameters.itemSelectedInComboBox - 1].endSampleDry;
-				int len = params->endSampleDry - params->startSampleDry;
-
+				DBG("*******");
+				DBG("sampleStart r: " << r);
+				auto params = &channel->steps[n]->cellParameters.audioParams[slct];
+				int len = channel->engine->cellParameters.audioParams[slct].endSampleDry - channel->engine->cellParameters.audioParams[slct].startSampleDry;
+				
 				params->startSampleWet = int(params->numSamples * r * 0.01f);
-				params->startSample = int(params->startSampleDry + (params->startSampleWet - params->startSampleDry) * (float(DryWetValue) / float(100)));
-
-
-				params->endSample = params->endSampleWet = juce::jmin(params->numSamples, params->startSample + len);
-				DBG("end sample: " << params->endSample);
+				params->endSampleWet = juce::jmin(params->startSampleWet + len, channel->engine->cellParameters.audioParams[slct].numSamples);
+				DBG("startSampleDry: " << params->startSampleDry);
+				DBG("StartSampleWet: " << params->startSampleWet);
+				DBG("endSampleDry: " << params->endSampleDry);
+				DBG("endSampleWet: " << params->endSampleWet);
+				DBG("*******");
 			}
 		}	
 		break;
@@ -155,19 +161,31 @@ void BasicRandom::applyRandomParameter(seqChannel* channel, int effect, bool onl
 		if (only_reset)
 		{
 			for (auto& s : channel->steps)
-				s->cellParameters.audioParams[channel->engine->cellParameters.itemSelectedInComboBox - 1].endSample = -1;
+			{
+				s->cellParameters.audioParams[slct].endSample = -1;
+				s->cellParameters.audioParams[slct].endSampleDry = -1;
+				s->cellParameters.audioParams[slct].endSampleWet = -1;
+			}				 
 		}
 		else
 		{
 			for (auto& n : notesOnAfterRandom)
 			{
-				int r = juce::Random::getSystemRandom().nextInt(juce::Range<int>(0, AmountValue + 1));
-				auto params = &channel->steps[n]->cellParameters.audioParams[channel->engine->cellParameters.itemSelectedInComboBox - 1];
+				int r = juce::Random::getSystemRandom().nextInt(juce::Range<int>(1, AmountValue + 1)); //set min to 1 to ensure minimum sample size
+				int len = channel->engine->cellParameters.audioParams[slct].endSampleDry - channel->engine->cellParameters.audioParams[slct].startSampleDry;
+				DBG("*******");
+				DBG("sampleLen r: " << r);
+				DBG("len: " << len);
+				auto params = &channel->steps[n]->cellParameters.audioParams[slct];
+				 
+				params->endSampleDry = params->startSampleDry + int(len * r * 0.01f);
+				params->endSampleWet = params->startSampleWet + int(len * r * 0.01f);		
 
-				int len = channel->engine->cellParameters.audioParams[channel->engine->cellParameters.itemSelectedInComboBox - 1].numSamples - channel->engine->cellParameters.audioParams[channel->engine->cellParameters.itemSelectedInComboBox - 1].startSample;
-				params->endSampleWet = params->startSample + int(len * r * 0.01f);				
-				params->endSample = int(params->endSampleDry + (params->endSampleWet - params->endSampleDry) * (float(DryWetValue) / float(100)));
-				DBG("end sample: " << params->endSample);
+				DBG("startSampleDry: " << params->startSampleDry);
+				DBG("StartSampleWet: " << params->startSampleWet);
+				DBG("endSampleDry: " << params->endSampleDry);
+				DBG("endSampleWet: " << params->endSampleWet);
+				DBG("*******");
 			}
 		}
 		break;
@@ -290,7 +308,7 @@ void BasicRandom::applyDryWetChange(seqChannel* channel, int effect)
 	}
 	case EffectCode::sampleStart:
 	{
-		for (auto& n : notesOnAfterRandom)
+	/*	for (auto& n : notesOnAfterRandom)
 		{
 			auto params = &channel->steps[n]->cellParameters.audioParams[channel->engine->cellParameters.itemSelectedInComboBox - 1];
 
@@ -298,7 +316,7 @@ void BasicRandom::applyDryWetChange(seqChannel* channel, int effect)
 			params->endSample = int(params->endSampleDry + (params->endSampleWet - params->endSampleDry) * (float(DryWetValue) / float(100)));
 		}
 			 
-		break;
+		break;*/
 	}
 
 	case EffectCode::filter: 

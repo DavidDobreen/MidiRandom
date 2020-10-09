@@ -460,20 +460,19 @@ void Seq_16_And_LAC::LAC_Drop_File_Handler::changeListenerCallback(juce::ChangeB
         //Create new AudioParams and push it to the audio engine and virtual step 
         AudioParams params;
         params.sampleRate = LAC.area.sampleRate;
-        params.startSample = 0;
-        params.numSamples = params.endSample = int(LAC.area.numSamples) - 1;
+        params.startSample = params.startSampleDry = params.startSampleWet = 0;
+        params.numSamples = params.endSample = params.endSampleDry = params.endSampleWet = int(LAC.area.numSamples) - 1;
         //audioProcessor.SampleStep.cellParameters.audioParams.push_back(params);
 
         Driver.engines[LAC.chNumber]->cellParameters.audioParams.clear();
 
         Driver.engines[LAC.chNumber]->cellParameters.audioParams.push_back(params);       
         //Before updating each step, null start and end data.
-        params.startSample = -1;
-        params.endSample = -1;
+        params.startSample = params.startSampleDry = params.startSampleWet = -1;
+        params.endSample = params.endSampleDry = params.endSampleWet = -1;
         for (auto& stp : Driver.generalBuffer.channels[LAC.chNumber]->steps)
         {
             stp->cellParameters.audioParams.clear();
-
             stp->cellParameters.audioParams.push_back(params);
         }
             

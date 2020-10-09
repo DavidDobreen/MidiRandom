@@ -296,19 +296,51 @@ void AudioOutEngine::addAudioToQue(float velocity, internalStep* step)
  
 		que->sampleRate = cellParameters.audioParams[que->CellParam.itemSelectedInComboBox - 1].sampleRate;
 
-		que->CellParam.audioParams[que->CellParam.itemSelectedInComboBox - 1].startSample =
-			((step->cellParameters.audioParams[que->CellParam.itemSelectedInComboBox - 1].startSample >= 0) *
-			(step->cellParameters.audioParams[que->CellParam.itemSelectedInComboBox - 1].startSample)) +
-				((step->cellParameters.audioParams[que->CellParam.itemSelectedInComboBox - 1].startSample == -1) *
-					cellParameters.audioParams[que->CellParam.itemSelectedInComboBox - 1].startSample);
+#define islct que->CellParam.itemSelectedInComboBox - 1
+		if (AllowRandom)
+		{			 
+			DBG("*******");
+			DBG("before random apply: startSample = "<< que->CellParam.audioParams[islct].startSample << " endSample = " << que->CellParam.audioParams[islct].endSample);
 
-		que->CellParam.audioParams[que->CellParam.itemSelectedInComboBox - 1].endSample =
-			((step->cellParameters.audioParams[que->CellParam.itemSelectedInComboBox - 1].endSample >= 0) *
-			(step->cellParameters.audioParams[que->CellParam.itemSelectedInComboBox - 1].endSample)) +
-				((step->cellParameters.audioParams[que->CellParam.itemSelectedInComboBox - 1].endSample == -1) *
-					cellParameters.audioParams[que->CellParam.itemSelectedInComboBox - 1].endSample);
+			que->CellParam.audioParams[islct].startSampleDry = CELLPARAM(audioParams[islct].startSampleDry);
+			/*que->CellParam.audioParams[islct].startSampleDry =
+				((step->cellParameters.audioParams[islct].startSampleDry >= 0) *
+				(step->cellParameters.audioParams[islct].startSampleDry)) +
+					((step->cellParameters.audioParams[islct].startSampleDry == -1) *
+						cellParameters.audioParams[islct].startSampleDry);*/
+
+			que->CellParam.audioParams[islct].startSampleWet = CELLPARAM(audioParams[islct].startSampleWet);
+			/*que->CellParam.audioParams[islct].startSampleWet =
+				((step->cellParameters.audioParams[islct].startSampleWet >= 0) *
+				(step->cellParameters.audioParams[islct].startSampleWet)) +
+					((step->cellParameters.audioParams[islct].startSampleWet == -1) *
+						cellParameters.audioParams[islct].startSampleWet);*/
+
+			que->CellParam.audioParams[islct].endSampleDry = CELLPARAM(audioParams[islct].endSampleDry);
+			/*que->CellParam.audioParams[islct].endSampleDry =
+				((step->cellParameters.audioParams[islct].endSampleDry >= 0) *
+				(step->cellParameters.audioParams[islct].endSampleDry)) +
+					((step->cellParameters.audioParams[islct].endSampleDry == -1) *
+						cellParameters.audioParams[islct].endSampleDry);*/
+
+			que->CellParam.audioParams[islct].endSampleWet = CELLPARAM(audioParams[islct].endSampleWet);
+			/*que->CellParam.audioParams[islct].endSampleWet =
+				((step->cellParameters.audioParams[islct].endSampleWet >= 0) *
+				(step->cellParameters.audioParams[islct].endSampleWet)) +
+					((step->cellParameters.audioParams[islct].endSampleWet == -1) *
+						cellParameters.audioParams[islct].endSampleWet);*/
+
+			que->CellParam.audioParams[islct].startSample = que->CellParam.audioParams[islct].startSampleDry + float(*RandomPosDryWet) * 0.01f * (que->CellParam.audioParams[islct].startSampleWet - que->CellParam.audioParams[islct].startSampleDry);
+			que->CellParam.audioParams[islct].endSample = que->CellParam.audioParams[islct].endSampleDry + float(*RandomPosDryWet) * 0.01f * (que->CellParam.audioParams[islct].endSampleWet - que->CellParam.audioParams[islct].endSampleDry);
+
+			DBG("after random apply: startSample = " << que->CellParam.audioParams[islct].startSample << " endSample = " << que->CellParam.audioParams[islct].endSample);
+			DBG("*******");
+		}
+		
 
 		
+
+		 
 
 		if (que->CellParam.audioParams[que->CellParam.itemSelectedInComboBox - 1].endSample)
 			++currentActive;
