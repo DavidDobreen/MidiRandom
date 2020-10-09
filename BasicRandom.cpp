@@ -113,11 +113,11 @@ void BasicRandom::applyRandomParameter(seqChannel* channel, int effect, bool onl
 			{
 				int r = juce::Random::getSystemRandom().nextInt(juce::Range<int>(0, AmountValue));
 				auto s = channel->steps[n];
-				s->cellParameters.dryPan = 50.0f;
+				//s->cellParameters.dryPan = 50.0f;
 				s->cellParameters.wetPan = float(r);
-				s->cellParameters.Pan = s->cellParameters.dryPan + (s->cellParameters.wetPan - s->cellParameters.dryPan) * (float(DryWetValue) / float(100));
-				if (s->cellParameters.Pan > 100.0f) s->cellParameters.Pan = 100.0f;
-				if (s->cellParameters.Pan < 0.0f) s->cellParameters.Pan = 0.0f;
+				//s->cellParameters.Pan = s->cellParameters.dryPan + (s->cellParameters.wetPan - s->cellParameters.dryPan) * (float(DryWetValue) / float(100));
+				//if (s->cellParameters.Pan > 100.0f) s->cellParameters.Pan = 100.0f;
+				//if (s->cellParameters.Pan < 0.0f) s->cellParameters.Pan = 0.0f;
 			}
 		}	
 		break;
@@ -302,9 +302,9 @@ void BasicRandom::applyDryWetChange(seqChannel* channel, int effect)
 	}
 	case EffectCode::pan:
 	{
-		for (auto& n : channel->steps)
+	/*	for (auto& n : channel->steps)
 			n->cellParameters.Pan = n->cellParameters.dryPan + (n->cellParameters.wetPan - n->cellParameters.dryPan) * (float(DryWetValue) / float(100));
-		break;
+		break;*/
 	}
 	case EffectCode::sampleStart:
 	{

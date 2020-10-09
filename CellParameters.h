@@ -72,7 +72,7 @@ public:
 	int decay = -1; int dryDecay = -1; int wetDecay = -1;
 	float sustain = -1; float drySustain = -1; float wetSustain = -1;
 	int release = -1; int dryRelease = -1; int wetRelease = -1;
-	float Pan = -1; float dryPan = -1; float wetPan = -1;
+	float Pan = 50.0f; float dryPan = 50.0f; float wetPan = 50.0f;
 	int FX_PANEL_SELECTION = -1;
 	int CHANNEL_FILTER = 0;
 	int FilterCutoff = -1; float FilterQ = -1.0; int filterSelection = -1;

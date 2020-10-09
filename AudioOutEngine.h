@@ -110,6 +110,7 @@ public:
 	bool AllowFX = 1;
 
 	int* RandomVelocityDryWet;
+	int* RandomPanDryWet;
 	int* RandomPosDryWet;
 		
 	int currentIndex; //To store startSample+currentIndex when calculating the output

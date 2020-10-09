@@ -25,6 +25,7 @@ void driver::AddEngine()
 	ch->engine = engine;
 	engine->channel = generalBuffer.channels.back()->chNumber;
 	engine->RandomVelocityDryWet = &generalBuffer.channels.back()->VelDryWet;
+	engine->RandomPanDryWet = &generalBuffer.channels.back()->RandomPanDryWet;
 	engine->RandomPosDryWet = &generalBuffer.channels.back()->RandomPosDryWet;
 		
 	fxInstallerMessage.sendSynchronousChangeMessage();

@@ -268,7 +268,7 @@ void AudioOutEngine::addAudioToQue(float velocity, internalStep* step)
 		velocityToMidi = que->velocity;
 
 		if (AllowRandom)
-			que->CellParam.Pan = CELLPARAM(Pan);
+			que->CellParam.Pan = que->CellParam.dryPan + float(*RandomPanDryWet) * 0.01f * (step->cellParameters.wetPan - que->CellParam.dryPan);
 		else
 			que->CellParam.Pan = CELLPARAM(dryPan);
 		 		 		

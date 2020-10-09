@@ -484,16 +484,21 @@ void AnalyzerGrid::FFTlayer::paint(juce::Graphics& g)
 	fftLines[fftLineIndex]->line.clear();
 	//fftLines[fftLineIndex]->line.startNewSubPath(0.0f, getHeight());
 	fftLines[fftLineIndex]->opacity = 1.0;
-	fftLines[fftLineIndex]->line.startNewSubPath(points512[1].xPixels, 9 * heightFactor - (points512[1].yValue * 0.1666667f * 2 * heightFactor));
-
-	for (std::vector<xPoint>::iterator it = points512.begin(); it != points512.end(); ++it)
+	if (points512[1].yValue)  // bug: sometimes yValue is nan
 	{
-		if (it != points512.begin())
-			fftLines[fftLineIndex]->line.lineTo(widthFactor * (it->xPixels), 9 * heightFactor - (((it->yValue >= -24) * (it->yValue * 0.3333334f * heightFactor)) + ((it->yValue < -24) * (-8 * heightFactor + (it->yValue + 24) * 0.08888883f * heightFactor))));
-	}
-			
+		fftLines[fftLineIndex]->line.startNewSubPath(points512[1].xPixels, 9 * heightFactor - (points512[1].yValue * 0.1666667f * 2 * heightFactor));
+
+		for (std::vector<xPoint>::iterator it = points512.begin(); it != points512.end(); ++it)
+		{
+			if (it != points512.begin())
+				fftLines[fftLineIndex]->line.lineTo(widthFactor * (it->xPixels), 9 * heightFactor - (((it->yValue >= -24) * (it->yValue * 0.3333334f * heightFactor)) + ((it->yValue < -24) * (-8 * heightFactor + (it->yValue + 24) * 0.08888883f * heightFactor))));
+		}
+
+
+		g.strokePath(fftLines[fftLineIndex]->line, juce::PathStrokeType(1.5f));
+	} 
 	
-	g.strokePath(fftLines[fftLineIndex]->line, juce::PathStrokeType(1.5f));
+	 
 
 		
 	 

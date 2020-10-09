@@ -336,8 +336,8 @@ public:
             thumb.thumbnail.get()->channelColor = colourPicker.ColourPick;
             thumb.thumbnail.get()->repaint();*/
             
-           /* mainline.bottomLAC.area.textColor = colourPicker.ColourPick;
-            mainline.bottomLAC.area.repaint();*/
+            mainline.bottomLAC.area.textColor = colourPicker.ColourPick;
+            mainline.bottomLAC.area.repaint();
 
             GL.lines[Driver.ActiveLine]->LAC.sendSynchronousChangeMessage();
          

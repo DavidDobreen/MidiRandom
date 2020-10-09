@@ -119,12 +119,12 @@ void CellComponent::changeListenerCallback(juce::ChangeBroadcaster* source)
  
 void CellComponent::sliderValueChanged(juce::Slider* slider)
 {
-   /* CellParameters* params = &Driver.engines[ActiveChannel]->cellParameters;
+    CellParameters* params = &Driver.engines[ActiveChannel]->cellParameters;
     if (slider->getName() == "pan")
     {
         params->Pan = params->dryPan = params->wetPan = float(slider->getValue());
         CentComp.mixer.sliders[Driver.ActiveLine]->panner.setValue(params->Pan, juce::dontSendNotification);
-    }*/
+    }
    
 }
 
@@ -239,9 +239,9 @@ void PanRandomComp::sliderValueChanged(juce::Slider* slider)
     {
         channel->RandomPanDryWet = int(slider->getValue());
 
-        CellParameters* params = &Driver.engines[Driver.ActiveLine]->cellParameters;
+        /*CellParameters* params = &Driver.engines[Driver.ActiveLine]->cellParameters;
         params->Pan = params->dryPan = params->wetPan = float(slider->getValue());
-        CentComp.mixer.sliders[Driver.ActiveLine]->panner.setValue(params->Pan, juce::dontSendNotification);
+        CentComp.mixer.sliders[Driver.ActiveLine]->panner.setValue(params->Pan, juce::dontSendNotification);*/
     }
         
 }

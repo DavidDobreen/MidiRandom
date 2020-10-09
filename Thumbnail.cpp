@@ -109,9 +109,9 @@ ThumbBkgd::ThumbBkgd(int x, int y, int w, int h, juce::AudioFormatManager& Forma
 ThumbSelectionArea::ThumbSelectionArea(int x, int y, int w, int h, juce::Component* parent, pngHandler& Handler)
 	: childComp(x,y,w,h), handled(Handler, parent, this)
 {
-	startLine.min = &dims[0]-5;
-	startLine.max = &endLine.dims[0]-10;
-	endLine.min = &startLine.dims[0]+10;
+	startLine.min = &dims[0];
+	startLine.max = &endLine.dims[0];
+	endLine.min = &startLine.dims[0];
 	endLine.max = &dims[2];
 }
 
