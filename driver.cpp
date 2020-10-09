@@ -27,6 +27,15 @@ void driver::AddEngine()
 	engine->RandomVelocityDryWet = &generalBuffer.channels.back()->VelDryWet;
 	engine->RandomPanDryWet = &generalBuffer.channels.back()->RandomPanDryWet;
 	engine->RandomPosDryWet = &generalBuffer.channels.back()->RandomPosDryWet;
+
+	engine->cellParameters.FilterCutoff = 1000;
+	engine->cellParameters.FilterQ = -1.0;
+	engine->cellParameters.filterSelection = 1;
+
+	engine->cellParameters.delayTime = 3;
+	engine->cellParameters.delayDryWet = 0.25f;
+	engine->cellParameters.delayFeedback = 0.5f;
+	
 		
 	fxInstallerMessage.sendSynchronousChangeMessage();
 }
@@ -60,7 +69,7 @@ void driver::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& mi
 	}
 	
 	for (auto& e : engines)
-		if (e->currentActive)
+		//if (e->currentActive)
 			e->sendToOutput(buffer, midiMessages);
 		
 }

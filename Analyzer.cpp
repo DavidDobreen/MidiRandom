@@ -484,7 +484,7 @@ void AnalyzerGrid::FFTlayer::paint(juce::Graphics& g)
 	fftLines[fftLineIndex]->line.clear();
 	//fftLines[fftLineIndex]->line.startNewSubPath(0.0f, getHeight());
 	fftLines[fftLineIndex]->opacity = 1.0;
-	if (points512[1].yValue)  // bug: sometimes yValue is nan
+	if (points512[1].yValue>=0)  // bug: sometimes yValue is nan
 	{
 		fftLines[fftLineIndex]->line.startNewSubPath(points512[1].xPixels, 9 * heightFactor - (points512[1].yValue * 0.1666667f * 2 * heightFactor));
 

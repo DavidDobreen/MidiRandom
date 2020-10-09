@@ -28,8 +28,12 @@ FilterComp::FilterComp(int x, int y, int w, int h, juce::Component* parent, driv
     selectionList.LS.addChangeListener(this);
     // selectionList.HS.addChangeListener(this);
      
+    CutOff.setValue(1000, juce::dontSendNotification);
+    Frequncy.setValue(45, juce::dontSendNotification);
 
- 
+    selectionBox.Area.setText(1);
+    //selectionBox.repaint();
+    //selectionList.repaint();
      
 }
 

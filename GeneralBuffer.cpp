@@ -31,10 +31,11 @@ void GeneralBuffer::readStep()
 {
 	int x = *currentStep;
 	
-	for (int i = 0; i < activeChannels.size(); ++i)
+	//for (int i = 0; i < activeChannels.size(); ++i)
+	for (int i = 0; i < channels.size(); ++i)
 	{
-		currentChannel = activeChannels[i];
-
+		//currentChannel = activeChannels[i];
+		currentChannel = i;
 		if (channels[currentChannel]->steps[x]->On || channels[currentChannel]->steps[x]->offsetOn)
 		{
 			float offset = float(channels[currentChannel]->steps[x]->offSet);
