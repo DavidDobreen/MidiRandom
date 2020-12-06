@@ -101,9 +101,9 @@ void PythonShell::Matplot()
         PyRun_SimpleString(query);
     }
 
-    lefPanel.grid.MakeGridkwargs();
+    bottomPanel.axesPanel.MakeGridkwargs();
     plotParams.clear();
-    plotParams.insert(plotParams.end(), lefPanel.grid.plotParams.begin(), lefPanel.grid.plotParams.end());
+    plotParams.insert(plotParams.end(), bottomPanel.axesPanel.plotParams.begin(), bottomPanel.axesPanel.plotParams.end());
     
     pltstr1 = "plt.grid(True,";
     int mlc = strlen(pltstr1) + 1;
@@ -123,8 +123,29 @@ void PythonShell::Matplot()
 
     PyRun_SimpleString(query);
 
+    if (bottomPanel.axesPanel.axisValues.text.lbl.getText() != "")
+    {
+        pltstr1 = "plt.axis([";
+        close = "])";
+        mlc = strlen(pltstr1) + 1;
+        mlc += strlen(bottomPanel.axesPanel.axisValues.text.lbl.getText().toUTF8());
+        mlc += strlen(close);
+        query = (char*)malloc(mlc);
+        strcpy(query, pltstr1);
+        strcat(query, bottomPanel.axesPanel.axisValues.text.lbl.getText().toUTF8());
+        strcat(query, close);
+    }
+        
+    PyRun_SimpleString(query);
+
 
     lefPanel.lineList.selectedLbl->sendSynchronousChangeMessage();
+    lefPanel.axesList.selectedLbl->sendSynchronousChangeMessage();
+
+    bottomPanel.line2dPanel.setVisible(false);
+    bottomPanel.axesPanel.setVisible(false);
+    bottomPanel.textPanel.setVisible(false);
+    bottomPanel.selectedPanel->setVisible(true);
     //PyRun_SimpleString("plt.grid(True,color='red',alpha=0.25,marker=4)");
    /* if (lefPanel.XLabel.lblName.IsOn)
     {

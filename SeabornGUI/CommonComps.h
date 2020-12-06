@@ -42,13 +42,14 @@ public:
     MoveContainer(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : moveChildComp(x, y, w, h), handled(handler, parent, this) {}
 };
 
-//A simple draggable lable
+//A simple draggable label
 class MoveLabel : public juce::ChangeBroadcaster, public moveChildComp, public handled
 {
 public:
     juce::String text;
     juce::Colour textColor;
     int fontHight{ 14 };
+    bool manualClick = false; //to indicate if the label was clicked or called by another function
     MoveLabel(int x, int y, int w, int h, juce::String _text, juce::Colour color, juce::Component* parent, pngHandler& handler) : moveChildComp(x, y, w, h), handled(handler, parent, this) {
         text = _text;
         textColor = color;
@@ -214,7 +215,6 @@ public:
     chKnobClassic(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : moveChildComp(x, y, w, h), handled(handler, parent, this) {}
 };
 
-
 class LineStyleComp : public moveChildComp, public handled
 {
     public:
@@ -244,11 +244,100 @@ class LineStyleComp : public moveChildComp, public handled
 
         StyleKnob style{ 0,0,150,80,this,handler };
         LineStyleComp(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : moveChildComp(x, y, w, h), handled(handler, parent, this) {
-            addAndMakeVisible(customLbl);
-            customLbl.setText("custom",juce::dontSendNotification);
-            customLbl.setEditable(true);
-             
-            style.setName("linestyle");
+            addAndMakeVisible(customLbl);           
+            customLbl.setEditable(true);        
         }
         void resized() { customLbl.setBounds(140, 55, 150, 20); }
+};
+
+class namebox : public moveChildComp, public handled
+{
+public:
+    chBgComp bkgd{ "bottom pads name frame2.png",this,handler };
+    MoveLabel lbl{ 0,0,dims[2],dims[3],"",juce::Colours::aqua,this,handler };
+    namebox(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : moveChildComp(x, y, w, h), handled(handler, parent, this) {
+    }
+};
+
+class chToggleButtonAndLabel : public moveChildComp, public handled
+{
+public:
+    MoveLabel lbl{ 0,0,60,25,"",juce::Colours::slategrey,this,handler };
+    chButton btn{ 60, 0, 23, 23,"led_red_on2.png","led_red_off2.png" ,this,handler };
+    chToggleButtonAndLabel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : moveChildComp(x, y, w, h), handled(handler, parent, this) {}
+};
+
+class moveMainTab : public moveChildComp, public handled
+{
+public:
+    chBgComp bkgd{ "main tab cube2.png",this,handler };
+    fxLabel lbl{ 38,21,40,25, "",DEFAULT_LABEL_COLORS,nullptr,this,handler };
+    moveMainTab(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : moveChildComp(x, y, w, h), handled(handler, parent, this) {}
+};
+
+class marker : public childComp, public handled
+{
+public:
+    class markerArea : public juce::ChangeBroadcaster, public childComp, public handled
+    {
+    public:
+        juce::String code;
+        markerArea(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : childComp(x, y, w, h), handled(handler, parent, this) { };
+        void mouseDown(const juce::MouseEvent& event) { sendChangeMessage(); }
+    };
+
+    markerArea area{ 0,0,dims[2],dims[3],this,handler };
+    juce::Image img;
+    marker(int x, int y, int w, int h, juce::String kind, juce::String code, juce::Component* parent, pngHandler& handler) : childComp(x, y, w, h), handled(handler, parent, this) {
+        img = juce::PNGImageFormat::loadFrom("C:\\Users\\David\\Desktop\\markers\\" + kind + ".png");
+        area.code = code;
+    }
+    void paint(juce::Graphics& g);
+};
+
+class markers : public moveChildComp, public handled, public juce::ChangeListener
+{
+public:
+
+    int active = 0;
+    juce::String code;
+    marker point{ 0,0,20,20,"point","'.'",this,handler };
+    marker pixel{ 20,0,20,20,"pixel","','",this,handler };
+    marker circle{ 40,0,20,20,"circle","'o'",this,handler };
+    marker triangle_down{ 60,0,20,20,"triangle_down","'v'",this,handler };
+    marker triangle_up{ 80,0,20,20,"triangle_up","'^'",this,handler };
+    marker triangle_left{ 100,0,20,20,"triangle_left","'<'",this,handler };
+    marker triangle_right{ 120,0,20,20,"triangle_right","'>'",this,handler };
+    marker tri_down{ 140,0,20,20,"tri_down","'1'",this,handler };
+    marker tri_up{ 160,0,20,20,"tri_up","'2'",this,handler };
+    marker tri_left{ 180,0,20,20,"tri_left","'3'",this,handler };
+    marker tri_right{ 200,0,20,20,"tri_right","'4'",this,handler };
+    marker octagon{ 220,0,20,20,"octagon","'8'",this,handler };
+    marker square{ 0,20,20,20,"square","'s'",this,handler };
+    marker pentagon{ 20,20,20,20,"pentagon","'p'",this,handler };
+    marker plus_filled{ 40,20,20,20,"plus_filled","'P'",this,handler };
+    marker hexagon1{ 60,20,20,20,"hexagon1","'h'",this,handler };
+    marker hexagon2{ 80,20,20,20,"hexagon2","'H'",this,handler };
+    marker plus{ 100,20,20,20,"star","'+'",this,handler };
+    marker X{ 120,20,20,20,"star","'X'",this,handler };
+    marker diamond{ 140,20,20,20,"diamond","'D'",this,handler };
+    marker thin_diamond{ 160,20,20,20,"thin_diamond","'d'",this,handler };
+    marker vline{ 180,20,20,20,"vline","'|'",this,handler };
+    marker hline{ 200,20,20,20,"hline","'_'",this,handler };
+    marker tickleft{ 220,20,20,20,"tickleft","0",this,handler };
+    marker tickright{ 0,40,20,20,"tickright","1",this,handler };
+    marker tickup{ 20,40,20,20,"tickup","2",this,handler };
+    marker tickdown{ 40,40,20,20,"tickdown","3",this,handler };
+    marker caretleft{ 60,40,20,20,"caretleft","4",this,handler };
+    marker caretright{ 80,40,20,20,"caretright","5",this,handler };
+    marker caretup{ 100,40,20,20,"caretup","6",this,handler };
+    marker caretdown{ 120,40,20,20,"caretdown","7",this,handler };
+    marker caretleft_centered_at_base{ 140,40,20,20,"caretleft_centered_at_base","8",this,handler };
+    marker caretright_centered_at_base{ 160,40,20,20,"caretright_centered_at_base","9",this,handler };
+    marker caretup_centered_at_base{ 180,40,20,20,"caretup_centered_at_base","10",this,handler };
+    marker caretdown_centered_at_base{ 200,40,20,20,"caretdown_centered_at_base","11",this,handler };
+
+    markers(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler);
+    void changeListenerCallback(juce::ChangeBroadcaster* source);
+
 };

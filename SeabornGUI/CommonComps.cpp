@@ -59,7 +59,9 @@ void MoveLabel::paint(juce::Graphics& g)
 
 void MoveLabel::mouseDown(const juce::MouseEvent& event)
 {
+    manualClick = true;
     sendSynchronousChangeMessage();
+    manualClick = false;
 }
 
 chLabel::chLabel(int x, int y, int w, int h, juce::String name, juce::Component* parent, pngHandler& handler) : childComp(x, y, w, h), handled(handler, parent, this) {
@@ -74,4 +76,56 @@ void chLabel::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
     lblName.IsOn = !lblName.IsOn;
     lblName.repaint();
+}
+
+void marker::paint(juce::Graphics& g)
+{
+    g.drawImage(img, getLocalBounds().toFloat().reduced(2));
+    g.setColour(juce::Colours::slategrey);
+    g.drawRoundedRectangle(getLocalBounds().toFloat().reduced(2), 0.7f, 1.0f);
+}
+
+markers::markers(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : moveChildComp(x, y, w, h), handled(handler, parent, this)
+{
+    point.area.addChangeListener(this);
+    pixel.area.addChangeListener(this);
+    circle.area.addChangeListener(this);
+    triangle_down.area.addChangeListener(this);
+    triangle_up.area.addChangeListener(this);
+    triangle_left.area.addChangeListener(this);
+    triangle_right.area.addChangeListener(this);
+    tri_down.area.addChangeListener(this);
+    tri_up.area.addChangeListener(this);
+    tri_left.area.addChangeListener(this);
+    tri_right.area.addChangeListener(this);
+    octagon.area.addChangeListener(this);
+    square.area.addChangeListener(this);
+    pentagon.area.addChangeListener(this);
+    plus_filled.area.addChangeListener(this);
+    hexagon1.area.addChangeListener(this);
+    hexagon2.area.addChangeListener(this);
+    plus.area.addChangeListener(this);
+    X.area.addChangeListener(this);
+    diamond.area.addChangeListener(this);
+    thin_diamond.area.addChangeListener(this);
+    vline.area.addChangeListener(this);
+    hline.area.addChangeListener(this);
+    tickleft.area.addChangeListener(this);
+    tickright.area.addChangeListener(this);
+    tickup.area.addChangeListener(this);
+    tickdown.area.addChangeListener(this);
+    caretleft.area.addChangeListener(this);
+    caretright.area.addChangeListener(this);
+    caretup.area.addChangeListener(this);
+    caretdown.area.addChangeListener(this);
+    caretleft_centered_at_base.area.addChangeListener(this);
+    caretright_centered_at_base.area.addChangeListener(this);
+    caretup_centered_at_base.area.addChangeListener(this);
+    caretdown_centered_at_base.area.addChangeListener(this);
+}
+
+void markers::changeListenerCallback(juce::ChangeBroadcaster* source)
+{
+    code = static_cast<marker::markerArea*>(source)->code;
+    active = 1;
 }
