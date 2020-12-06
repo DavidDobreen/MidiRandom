@@ -39,7 +39,7 @@ void KeyPressHanlder::getAllCommands(juce::Array<juce::CommandID>& commands)
 
 void KeyPressHanlder::getCommandInfo(juce::CommandID commandID, juce::ApplicationCommandInfo& result)
 {
-	switch (commandID)
+switch (commandID)
 	{
 	case KeyPressCommandIDs::buttonMoveUp:
 		result.setInfo("Move up", "Move selection up", "Button", 0);
