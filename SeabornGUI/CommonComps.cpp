@@ -64,18 +64,20 @@ void MoveLabel::mouseDown(const juce::MouseEvent& event)
     manualClick = false;
 }
 
-chLabel::chLabel(int x, int y, int w, int h, juce::String name, juce::Component* parent, pngHandler& handler) : childComp(x, y, w, h), handled(handler, parent, this) {
+chLabel::chLabel(int x, int y, int w, int h, juce::String name, juce::Component* parent, pngHandler& handler) 
+    : childComp(x, y, w, h), handled(handler, parent, this) {
     lblName.text = name;
     addAndMakeVisible(lbl);
     lblName.addChangeListener(this);
     lblName.fontHight = 15;
-    lbl.setEditable(true);
+    lbl.lbl.setEditable(true);
 }
 
 void chLabel::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
     lblName.IsOn = !lblName.IsOn;
     lblName.repaint();
+    sendSynchronousChangeMessage();
 }
 
 void marker::paint(juce::Graphics& g)
@@ -128,4 +130,51 @@ void markers::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
     code = static_cast<marker::markerArea*>(source)->code;
     active = 1;
+
+    if (params != nullptr)
+        params->marker = code;
+
+    replot.sendSynchronousChangeMessage();
+}
+
+Legends::Legends(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler)
+    : moveChildComp(x, y, w, h), handled(handler, parent, this)
+{
+    best.lbl.text = "best"; best.lbl.addChangeListener(this);
+    upperRight.lbl.text = "upper right"; upperRight.lbl.addChangeListener(this);
+    upperLeft.lbl.text = "upper left"; upperLeft.lbl.addChangeListener(this);
+    lowerLeft.lbl.text = "lower left"; lowerLeft.lbl.addChangeListener(this);
+    lowerRight.lbl.text = "lower right"; lowerRight.lbl.addChangeListener(this);
+    right.lbl.text = "right"; right.lbl.addChangeListener(this);
+    centerLeft.lbl.text = "center left"; centerLeft.lbl.addChangeListener(this);
+    centerRight.lbl.text = "center right"; centerRight.lbl.addChangeListener(this);
+    lowerCenter.lbl.text = "lower center"; lowerCenter.lbl.addChangeListener(this);
+    upperCenter.lbl.text = "upper center"; upperCenter.lbl.addChangeListener(this);
+    center.lbl.text = "center"; center.lbl.addChangeListener(this);
+
+    best.lbl.sendSynchronousChangeMessage();
+}
+
+void Legends::changeListenerCallback(juce::ChangeBroadcaster* source)
+{
+    best.lbl.textColor = juce::Colours::slategrey; best.repaint();  
+    upperRight.lbl.textColor = juce::Colours::slategrey; upperRight.repaint();
+    upperLeft.lbl.textColor = juce::Colours::slategrey; upperLeft.repaint();
+    lowerLeft.lbl.textColor = juce::Colours::slategrey; lowerLeft.repaint();
+    lowerRight.lbl.textColor = juce::Colours::slategrey; lowerRight.repaint();
+    right.lbl.textColor = juce::Colours::slategrey; right.repaint();
+    centerLeft.lbl.textColor = juce::Colours::slategrey; centerLeft.repaint();
+    centerRight.lbl.textColor = juce::Colours::slategrey; centerRight.repaint();
+    lowerCenter.lbl.textColor = juce::Colours::slategrey; lowerCenter.repaint();
+    upperCenter.lbl.textColor = juce::Colours::slategrey; upperCenter.repaint();
+    center.lbl.textColor = juce::Colours::slategrey; center.repaint();
+
+    MoveLabel* lbl = static_cast<MoveLabel*>(source);
+    loc = lbl->text;
+    if (params != nullptr)
+        params->legendLocation = loc;
+    lbl->textColor = juce::Colours::aqua;
+    lbl->repaint();
+    replot.sendSynchronousChangeMessage();
+   
 }

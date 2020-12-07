@@ -12,7 +12,7 @@
 #include "CommonComps.h"
 #include "params.h"
 
-class TextPanel : public childComp, public handled
+class TextPanel : public juce::ChangeListener, public childComp, public handled
 {
     class FontFamilyKnob : public moveChildComp, public handled
     {
@@ -68,6 +68,11 @@ class TextPanel : public childComp, public handled
     };
 
 public:
+    TextParams* params;
+    std::vector<juce::String> plotParams;
+    juce::ChangeBroadcaster replot;
+
+    chLabel value { 600,13,152,35,"Value",this,handler };
 
     chKnobClassic fontSize{ 10,70,70,70,this,handler };
     chKnobClassic fontStretch{ 110,70,70,70,this,handler };
@@ -84,11 +89,36 @@ public:
     chToggleButtonAndLabel fontvariant{ 842,11,85,25,this,handler };
 
     TextPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler);
+
+    void changeListenerCallback(juce::ChangeBroadcaster* source);
+    void MakeGridkwargs();
+    void refresh();
 };
 
 class AxesPanel : public moveChildComp, public handled
 {
 public:
+
+    class LegendBox : public juce::ChangeListener, public moveChildComp, public handled
+    {
+    public:
+
+        chBgComp bkgd{ "wave fx bg and frame and on_off panell2.png",this,handler };
+
+        MoveContainer legendCont1{ 0,0,240,100,this,handler };
+        Legends legends{ 10,10,250,100,&legendCont1,handler };
+
+        MoveContainer legendCont2{ 0,0,240,100,this,handler };
+        chKnobClassic horizontal{ 21,17,70,70,&legendCont2,handler };
+        chKnobClassic vertical{ 91,17,70,70,&legendCont2,handler };
+  
+        MoveContainer markersCompLabels{ 50,120,240,20,this,handler };
+        fxLabel legendLbl{ 0,0,50,20,"Legend", DEFAULT_LABEL_COLORS ,&legendCont1,&markersCompLabels,handler };
+        fxLabel locLbl{ 50,0,50,20,"Loc", DEFAULT_LABEL_COLORS ,&legendCont2,&markersCompLabels,handler };
+         
+        LegendBox(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler);
+        void changeListenerCallback(juce::ChangeBroadcaster* source);
+    };
 
     class whichGridKnob : public moveChildComp, public handled
     {
@@ -140,6 +170,9 @@ public:
     GridParams* params;
     std::vector<juce::String> plotParams;
 
+    LegendBox legendBox { 655,26,260,135,this,handler };
+       
+
     chKnobClassic alpha{ 487,107,70,70,this,handler };
     colorsComponent color{ 409,82,161,25,this,handler };
     
@@ -150,7 +183,7 @@ public:
     axisGridKnob axisKnob{ 220, 15,150,80,this,handler };
     
     std::vector<juce::String>lineStlyeVals = { "'solid'", "'dashed'", "'dashdot'","'dotted'","'None'" };
-    LineStyleComp lineStyleComp{ 119,77,250,150,this,handler };
+    LineStyleComp lineStyleComp{ 140,77,250,150,this,handler };
 
     axisValuesComp axisValues{ 796,19,121,18,this,handler };
 
@@ -162,11 +195,8 @@ public:
         axisKnob.vals.onValueChange = [&] {if (params != nullptr) params->axisKnob = axisKnob.vals.getValue(); };
         lineStyleComp.style.vals.onValueChange = [&] {if (params != nullptr) params->lineStyleComp = lineStyleComp.style.vals.getValue(); };
 
-        whichKnob.setName("whichKnob");
-        axisKnob.setName("axisKnob");
-        color.setName("color");
-        lineStyleComp.setName("lineStyleComp");
-        axisValues.setName("axisValues");
+        legendBox.legends.params = params;
+       
     }
 
     void MakeGridkwargs();
@@ -175,7 +205,7 @@ public:
 
 };
 
-class Line2DPanel : public childComp, public handled
+class Line2DPanel : public juce::ChangeListener, public childComp, public handled
 {
 public:
 
@@ -263,6 +293,7 @@ public:
     };
 
     Line2Dparams* params = nullptr;
+    juce::ChangeBroadcaster replot;
 
     MarkersBox markersBox{ 655,26,260,135,this,handler };
 
@@ -270,24 +301,28 @@ public:
     colorsComponent color{ 409,82,161,25,this,handler };
     chKnobClassic width{ 412,107,70,70,this,handler };
 
-    DashCapstyleKnob dashCapstyleKnob{ 10,30,150,80,this,handler };
+    DashCapstyleKnob dashCapstyleKnob{ 10,30,0,0,this,handler };
     std::vector<juce::String>  CapStyleValues = { "'butt'", "'round'", "'projecting'" };
-    DashJoinstyleKnob dashJoinstyleKnob{ 10,100,150,80,this,handler };
+    DashJoinstyleKnob dashJoinstyleKnob{ 10,100,0,0,this,handler };
     std::vector<juce::String>  JoinStyleValues = { "'miter'", "'round'", "'bevel'" };
 
-    DashCapstyleKnob solidCapstyleKnob{ 270,30,150,80,this,handler };
-    DashJoinstyleKnob solidJoinstyleKnob{ 270,100,150,80,this,handler };
+    DashCapstyleKnob solidCapstyleKnob{ 270,30,0,0,this,handler };
+    DashJoinstyleKnob solidJoinstyleKnob{ 270,100,0,0,this,handler };
+
+    std::vector<juce::String>lineStlyeVals = { "'solid'", "'dashed'", "'dashdot'","'dotted'","'None'" };
+    LineStyleComp lineStyleComp{ 140,77,250,150,this,handler };
 
     std::vector<juce::String>  DrawstyleValues = { "'default'", "'steps'", "'steps-pre'", "'steps-mid'", "'steps-post'" };
-    DrawstyleKnob drawstyleKnob{ 155,64,150,70,this,handler };
+    DrawstyleKnob drawstyleKnob{ 9,77,150,70,this,handler };
 
     chLabel dashes{ 22,12,180,25,"dashes",this,handler };
     chLabel label{ 406,54,180,25,"label",this,handler };
-
+     
     std::vector<juce::String> plotParams;
 
     Line2DPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler);
 
+    void changeListenerCallback(juce::ChangeBroadcaster* source);
     void MakeLine2Dkwargs();
     void refresh();
 

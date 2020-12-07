@@ -10,6 +10,8 @@
 
 #pragma once
 #include "Comps.h"
+#include "params.h"
+ 
 
 class updateSliderComp : public SliderComp
 {
@@ -19,7 +21,10 @@ public:
         SliderComp(_name, min, max, interval, x, y, w, h, parent, Handler, style, lookAndFeelClass) {}
 
     ~updateSliderComp() { stopper.removeAllChangeListeners(); }
-    void stoppedDragging() { stopper.sendSynchronousChangeMessage(); }
+    void stoppedDragging() { 
+        
+        //stopper.sendSynchronousChangeMessage();
+    }
 
 private:
 };
@@ -105,16 +110,27 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ColourSelectorWindow)
 };
 
-class chLabel : public childComp, public handled, public juce::ChangeListener
+class chLabel : public childComp, public handled, public juce::ChangeListener, public juce::ChangeBroadcaster
 {
 public:
 
-    juce::String text;
-    fxLabel lblName{ 0,5,60,25, "",DEFAULT_LABEL_COLORS,nullptr,this,handler };
-    juce::Label lbl;
+    class labelTextBox : public moveChildComp, public handled
+    {
+    public:
+        chBgComp frame{ "bottom pads name frame3.png",this ,handler };
+        juce::Label lbl;
+        labelTextBox(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler)
+            : moveChildComp(x, y, w, h), handled(handler, parent, this) {
+            addAndMakeVisible(lbl);
+        }
+        void resized() { lbl.setBounds(getLocalBounds()); };
+    };
+
+    juce::String text;   
+    fxLabel lblName{ 0,-1,60,18, "",DEFAULT_LABEL_COLORS,nullptr,this,handler };
+    labelTextBox lbl{ 60,0,136,18,this,handler };
 
     chLabel(int x, int y, int w, int h, juce::String name, juce::Component* parent, pngHandler& handler);
-    void resized() { lbl.setBounds(60, 0, 95, 25); }
     void changeListenerCallback(juce::ChangeBroadcaster* source);
 };
 
@@ -301,6 +317,9 @@ public:
 
     int active = 0;
     juce::String code;
+    Line2Dparams* params = nullptr;
+    juce::ChangeBroadcaster replot;
+
     marker point{ 0,0,20,20,"point","'.'",this,handler };
     marker pixel{ 20,0,20,20,"pixel","','",this,handler };
     marker circle{ 40,0,20,20,"circle","'o'",this,handler };
@@ -340,4 +359,39 @@ public:
     markers(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler);
     void changeListenerCallback(juce::ChangeBroadcaster* source);
 
+};
+
+class Legends : public juce::ChangeListener, public moveChildComp, public handled
+{
+public:
+
+    class item : public moveChildComp, public handled
+    {
+    public:
+        chBgComp frame{ "bottom pads name frame3.png",this ,handler };
+        MoveLabel lbl{ 0,-1,dims[2],dims[3],"",juce::Colours::aqua,this,handler };
+        item(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler)
+            : moveChildComp(x, y, w, h), handled(handler, parent, this) {}
+    };
+
+    juce::String loc = "";
+    GridParams* params = nullptr;
+    juce::ChangeBroadcaster replot;
+
+    item best{ 9, 4, 80, 20, this, handler };
+    item upperRight{ 89, 4, 80, 20, this, handler };
+    item upperLeft{ 169, 4, 80, 20, this, handler };
+    item lowerLeft{ 9, 24, 80, 20, this, handler };
+    item lowerRight{ 89, 24, 80, 20, this, handler };
+    item right{ 169, 24, 80, 20, this, handler };
+    item centerLeft{ 9, 44, 80, 20, this, handler };
+    item centerRight{ 89, 44, 80, 20, this, handler };
+    item lowerCenter{ 169, 44, 80, 20, this, handler };
+    item upperCenter{ 9, 64, 80, 20, this, handler };
+    item center{ 89, 64, 80, 20, this, handler };
+
+    Legends(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler);
+    ~Legends() { replot.removeAllChangeListeners(); }
+
+    void changeListenerCallback(juce::ChangeBroadcaster* source);
 };

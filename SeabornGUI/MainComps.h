@@ -70,6 +70,40 @@ public:
 
 };
 
+class TextList : public juce::ChangeListener, public moveChildComp, public handled
+{
+public:
+    class item : public moveChildComp, public handled
+    {
+    public:
+        TextParams params;
+        juce::String xLabel;
+        juce::String yLabel;
+        juce::String Title;
+
+        chBgComp frame{ "bottom pads name frame3.png",this ,handler };
+        MoveLabel lbl{ 0,-1,dims[2],dims[3],"",juce::Colours::aqua,this,handler };
+        item(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler)
+            : moveChildComp(x, y, w, h), handled(handler, parent, this) {}
+
+    };
+    Axes& axes;
+
+    chBgComp frame{ "small eq frame3.png",this ,handler };
+    chBgComp bkgd{ "BLACK MAIN BG2.png",this ,handler };
+
+    juce::OwnedArray<item> items;
+    MoveLabel* selectedLbl = nullptr;
+
+    BottomPanel& bottomPanel;
+    TextList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler);
+        
+    void resized();
+    void changeListenerCallback(juce::ChangeBroadcaster* source);
+
+
+};
+
 class LineList : public juce::ChangeListener, public moveChildComp, public handled
 {
 public:
@@ -162,6 +196,7 @@ public:
         lbl->textColor = juce::Colours::aqua;
 
         bottomPanel.axesPanel.params = &item->params;
+        bottomPanel.axesPanel.legendBox.legends.params = &item->params;
         bottomPanel.axesPanel.refresh();
 
         //What should go here?
@@ -182,6 +217,7 @@ public:
     Axes axes{ 0,0,dims[2],dims[3],this,handler };
     AxesList axesList{ 30,120,93,236,axes, bottomPanel,this,handler };
     LineList lineList{ 130,120,93,236,axes, bottomPanel,this,handler };  
+    TextList textList{ 30,360,93,236,axes, bottomPanel,this,handler };
     
     /*chLabel XLabel{ 45,50,180,25,"X-LAbel",this,handler };
     chLabel YLabel{ 45,85,180,25,"Y-LAbel",this,handler };

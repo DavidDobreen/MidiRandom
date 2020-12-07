@@ -47,7 +47,7 @@ void PythonShell::Matplot()
     
 
     const char* pltstr1 = "plt.plot(";
-    const char* close = ")";
+    const char* close = ");"; //use ";" to supress output
      
 
     for (auto& i : lefPanel.lineList.items)
@@ -138,7 +138,78 @@ void PythonShell::Matplot()
         
     PyRun_SimpleString(query);
 
+    //XLabel
+    bottomPanel.textPanel.params = &lefPanel.textList.items[0]->params;
+    if (bottomPanel.textPanel.params->valueIsVisible)
+        if (bottomPanel.textPanel.params->value != "")
+        {
+            pltstr1 = "plt.xlabel('";
+            close = "')";
+            mlc = strlen(pltstr1) + 1;
+            mlc += strlen(bottomPanel.textPanel.params->value.toUTF8());
+            mlc += strlen(close);
+            query = (char*)malloc(mlc);
+            strcpy(query, pltstr1);
+            strcat(query, bottomPanel.textPanel.params->value.toUTF8());
+            strcat(query, close);
 
+            PyRun_SimpleString(query);
+        }
+
+    
+
+    bottomPanel.textPanel.params = &lefPanel.textList.items[1]->params;
+    if (bottomPanel.textPanel.params->valueIsVisible)
+        if (bottomPanel.textPanel.params->value != "")
+        {
+            pltstr1 = "plt.ylabel('";
+            close = "')";
+            mlc = strlen(pltstr1) + 1;
+            mlc += strlen(bottomPanel.textPanel.params->value.toUTF8());
+            mlc += strlen(close);
+            query = (char*)malloc(mlc);
+            strcpy(query, pltstr1);
+            strcat(query, bottomPanel.textPanel.params->value.toUTF8());
+            strcat(query, close);
+
+            PyRun_SimpleString(query);
+        }
+
+    bottomPanel.textPanel.params = &lefPanel.textList.items[2]->params;
+    if (bottomPanel.textPanel.params->valueIsVisible)
+        if (bottomPanel.textPanel.params->value != "")
+        {
+            pltstr1 = "plt.title('";
+            close = "')";
+            mlc = strlen(pltstr1) + 1;
+            mlc += strlen(bottomPanel.textPanel.params->value.toUTF8());
+            mlc += strlen(close);
+            query = (char*)malloc(mlc);
+            strcpy(query, pltstr1);
+            strcat(query, bottomPanel.textPanel.params->value.toUTF8());
+            strcat(query, close);
+
+            PyRun_SimpleString(query);
+        }
+
+   
+    pltstr1 = "plt.legend(loc='";
+    close = "')";
+    mlc = strlen(pltstr1) + 1;
+    mlc += strlen(bottomPanel.axesPanel.params->legendLocation.toUTF8());
+    mlc += strlen(close);
+    query = (char*)malloc(mlc);
+    strcpy(query, pltstr1);
+    strcat(query, bottomPanel.axesPanel.params->legendLocation.toUTF8());
+    strcat(query, close);
+
+    PyRun_SimpleString(query);
+
+     
+
+
+
+    lefPanel.textList.selectedLbl->sendSynchronousChangeMessage();
     lefPanel.lineList.selectedLbl->sendSynchronousChangeMessage();
     lefPanel.axesList.selectedLbl->sendSynchronousChangeMessage();
 
@@ -206,5 +277,5 @@ void PythonShell::Matplot()
     
         
           
-    PyRun_SimpleString("plt.savefig('output.png')");     
+    PyRun_SimpleString("plt.savefig('output.png',transparent=True)");     
 }

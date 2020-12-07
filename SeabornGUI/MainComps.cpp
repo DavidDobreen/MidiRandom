@@ -101,6 +101,10 @@ void LineList::changeListenerCallback(juce::ChangeBroadcaster* source)
     lbl->textColor= juce::Colours::aqua;
 
     bottomPanel.line2dPanel.params = &item->params;
+    bottomPanel.line2dPanel.markersBox.markers.params = &item->params;
+    bottomPanel.line2dPanel.markersBox.markeredgecolor.area.param = &item->params.markeredgecolor;
+    bottomPanel.line2dPanel.markersBox.markerfacecolor.area.param = &item->params.markerColor;
+     
     bottomPanel.line2dPanel.refresh();
 
     axes.xValues.targetLineListItemVals = &item->xValues;
@@ -111,3 +115,56 @@ void LineList::changeListenerCallback(juce::ChangeBroadcaster* source)
 LineList::item::item(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler)
     : moveChildComp(x, y, w, h), handled(handler, parent, this) {}
  
+TextList::TextList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler)
+    : axes(_axes), bottomPanel(_bottomPanel), moveChildComp(x, y, w, h), handled(handler, parent, this)
+{
+    auto xLabel = new item(9, 8, 76, 18, this, handler);
+    xLabel->lbl.text = "xLabel";
+    xLabel->lbl.addChangeListener(this);
+    items.add(xLabel);
+
+    auto yLabel = new item(9, 26, 76, 18, this, handler);
+    yLabel->lbl.text = "yLabel";
+    yLabel->lbl.addChangeListener(this);
+    items.add(yLabel);
+
+    auto title = new item(9, 44, 76, 18, this, handler);
+    title->lbl.text = "Title";
+    title->lbl.addChangeListener(this);
+    items.add(title);
+}
+
+void TextList::resized()
+{
+    for (auto& i : items)
+        i->setBounds(i->dims[0], i->dims[1], i->dims[2], i->dims[3]);
+}
+
+void TextList::changeListenerCallback(juce::ChangeBroadcaster* source)
+{
+    bottomPanel.line2dPanel.setVisible(false);
+    bottomPanel.axesPanel.setVisible(false);
+    bottomPanel.textPanel.setVisible(true);
+
+
+    MoveLabel* lbl = static_cast<MoveLabel*>(source);
+    selectedLbl = lbl;
+    TextList::item* item = static_cast<TextList::item*>(lbl->getParentComponent());
+    if (lbl->manualClick) bottomPanel.selectedPanel = &bottomPanel.textPanel;
+
+    bottomPanel.namebox.lbl.text = lbl->text;
+    bottomPanel.namebox.repaint();
+
+    for (auto i : items)
+    {
+        i->lbl.textColor = juce::Colours::slategrey;
+        i->repaint();
+    }
+
+    lbl->textColor = juce::Colours::aqua;
+
+    bottomPanel.textPanel.params = &item->params;
+    bottomPanel.textPanel.refresh();
+
+     
+}
