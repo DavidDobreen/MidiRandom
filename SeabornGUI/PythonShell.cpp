@@ -140,17 +140,17 @@ void PythonShell::Matplot()
 
     //XLabel
     bottomPanel.textPanel.params = &lefPanel.textList.items[0]->params;
-    if (bottomPanel.textPanel.params->valueIsVisible)
-        if (bottomPanel.textPanel.params->value != "")
+    if (bottomPanel.textPanel.params->tvalueIsVisible)
+        if (bottomPanel.textPanel.params->tvalue != "")
         {
             pltstr1 = "plt.xlabel('";
             close = "')";
             mlc = strlen(pltstr1) + 1;
-            mlc += strlen(bottomPanel.textPanel.params->value.toUTF8());
+            mlc += strlen(bottomPanel.textPanel.params->tvalue.toUTF8());
             mlc += strlen(close);
             query = (char*)malloc(mlc);
             strcpy(query, pltstr1);
-            strcat(query, bottomPanel.textPanel.params->value.toUTF8());
+            strcat(query, bottomPanel.textPanel.params->tvalue.toUTF8());
             strcat(query, close);
 
             PyRun_SimpleString(query);
@@ -159,34 +159,34 @@ void PythonShell::Matplot()
     
 
     bottomPanel.textPanel.params = &lefPanel.textList.items[1]->params;
-    if (bottomPanel.textPanel.params->valueIsVisible)
-        if (bottomPanel.textPanel.params->value != "")
+    if (bottomPanel.textPanel.params->tvalueIsVisible)
+        if (bottomPanel.textPanel.params->tvalue != "")
         {
             pltstr1 = "plt.ylabel('";
             close = "')";
             mlc = strlen(pltstr1) + 1;
-            mlc += strlen(bottomPanel.textPanel.params->value.toUTF8());
+            mlc += strlen(bottomPanel.textPanel.params->tvalue.toUTF8());
             mlc += strlen(close);
             query = (char*)malloc(mlc);
             strcpy(query, pltstr1);
-            strcat(query, bottomPanel.textPanel.params->value.toUTF8());
+            strcat(query, bottomPanel.textPanel.params->tvalue.toUTF8());
             strcat(query, close);
 
             PyRun_SimpleString(query);
         }
 
     bottomPanel.textPanel.params = &lefPanel.textList.items[2]->params;
-    if (bottomPanel.textPanel.params->valueIsVisible)
-        if (bottomPanel.textPanel.params->value != "")
+    if (bottomPanel.textPanel.params->tvalueIsVisible)
+        if (bottomPanel.textPanel.params->tvalue != "")
         {
             pltstr1 = "plt.title('";
             close = "')";
             mlc = strlen(pltstr1) + 1;
-            mlc += strlen(bottomPanel.textPanel.params->value.toUTF8());
+            mlc += strlen(bottomPanel.textPanel.params->tvalue.toUTF8());
             mlc += strlen(close);
             query = (char*)malloc(mlc);
             strcpy(query, pltstr1);
-            strcat(query, bottomPanel.textPanel.params->value.toUTF8());
+            strcat(query, bottomPanel.textPanel.params->tvalue.toUTF8());
             strcat(query, close);
 
             PyRun_SimpleString(query);

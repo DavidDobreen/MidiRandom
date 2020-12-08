@@ -12,7 +12,7 @@
 #include "CommonComps.h"
 #include "params.h"
 
-class TextPanel : public juce::ChangeListener, public childComp, public handled
+class TextPanel : public juce::ChangeListener, public childComp, public paramed, public handled, public drvrShellNotifer
 {
     class FontFamilyKnob : public moveChildComp, public handled
     {
@@ -68,15 +68,14 @@ class TextPanel : public juce::ChangeListener, public childComp, public handled
     };
 
 public:
-    TextParams* params;
+    Params* params;
     std::vector<juce::String> plotParams;
-    juce::ChangeBroadcaster replot;
+    
+    chLabel value { 600,13,152,35,"Value",this,handler};
 
-    chLabel value { 600,13,152,35,"Value",this,handler };
-
-    chKnobClassic fontSize{ 10,70,70,70,this,handler };
-    chKnobClassic fontStretch{ 110,70,70,70,this,handler };
-    chKnobClassic fontWeight{ 210,70,70,70,this,handler };
+    chKnobClassic fontSize{ 10,70,70,70,this,paramSetter,handler ,drvr};
+    chKnobClassic fontStretch{ 110,70,70,70,this,paramSetter,handler,drvr };
+    chKnobClassic fontWeight{ 210,70,70,70,this,paramSetter,handler,drvr };
 
     colorsComponent background{ 179,18,121,25,this,handler };
     colorsComponent color{ 27,18,121,25,this,handler };
@@ -88,62 +87,62 @@ public:
 
     chToggleButtonAndLabel fontvariant{ 842,11,85,25,this,handler };
 
-    TextPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler);
+    TextPanel(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr);
 
     void changeListenerCallback(juce::ChangeBroadcaster* source);
     void MakeGridkwargs();
     void refresh();
 };
 
-class AxesPanel : public moveChildComp, public handled
+class AxesPanel : public moveChildComp, public paramed, public handled, public drvred
 {
 public:
 
-    class LegendBox : public juce::ChangeListener, public moveChildComp, public handled
+    class LegendBox : public juce::ChangeListener, public moveChildComp, public paramed, public handled, public drvred
     {
     public:
 
         chBgComp bkgd{ "wave fx bg and frame and on_off panell2.png",this,handler };
 
         MoveContainer legendCont1{ 0,0,240,100,this,handler };
-        Legends legends{ 10,10,250,100,&legendCont1,handler };
+        Legends legends{ 10,10,250,100,&legendCont1,handler,drvr };
 
         MoveContainer legendCont2{ 0,0,240,100,this,handler };
-        chKnobClassic horizontal{ 21,17,70,70,&legendCont2,handler };
-        chKnobClassic vertical{ 91,17,70,70,&legendCont2,handler };
+        chKnobClassic horizontal{ 21,17,70,70,&legendCont2,paramSetter,handler,drvr };
+        chKnobClassic vertical{ 91,17,70,70,&legendCont2,paramSetter,handler,drvr };
   
         MoveContainer markersCompLabels{ 50,120,240,20,this,handler };
         fxLabel legendLbl{ 0,0,50,20,"Legend", DEFAULT_LABEL_COLORS ,&legendCont1,&markersCompLabels,handler };
         fxLabel locLbl{ 50,0,50,20,"Loc", DEFAULT_LABEL_COLORS ,&legendCont2,&markersCompLabels,handler };
          
-        LegendBox(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler);
+        LegendBox(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& drvr);
         void changeListenerCallback(juce::ChangeBroadcaster* source);
     };
 
-    class whichGridKnob : public moveChildComp, public handled
+    class whichGridKnob : public moveChildComp, public paramed, public handled, public drvred
     {
     public:
-        MoveLabel none{ 28,54,45,20,"none",juce::Colours::slategrey,this,handler };
-        MoveLabel major{ 18,13,45,20,"major",juce::Colours::slategrey,this,handler };
+        MoveLabel none{ 28,54,45,20,"none",juce::Colours::slategrey,this,handler  };
+        MoveLabel major{ 18,13,45,20,"major",juce::Colours::slategrey,this,handler  };
         MoveLabel minor{ 90,13,45,20,"minor",juce::Colours::slategrey,this,handler };
         MoveLabel both{ 71,54,60,20,"both",juce::Colours::slategrey,this,handler };
 
-        updateSliderComp vals{ "vals",0,3,1,55,20,39,41,this,handler };
-        whichGridKnob(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler);
+        updateSliderComp<int> vals{ "vals",0,3,1,55,20,39,41,this,paramSetter, handler ,drvr};
+        whichGridKnob(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr);
     };
 
-    class axisGridKnob : public moveChildComp, public handled
+    class axisGridKnob : public moveChildComp, public paramed, public handled, public drvred
     {
     public:
         MoveLabel both{ 31,53,45,20,"both",juce::Colours::slategrey,this,handler };
         MoveLabel X{ 54,1,45,20,"X",juce::Colours::slategrey,this,handler };
         MoveLabel Y{ 66,53,45,20,"Y",juce::Colours::slategrey,this,handler };
 
-        updateSliderComp vals{ "vals",0,2,1,55,20,39,41,this,handler };
-        axisGridKnob(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler);
+        updateSliderComp<int> vals{ "vals",0,2,1,55,20,39,41,this, paramSetter, handler,drvr };
+        axisGridKnob(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr);
     };
 
-    class axisValuesComp : public moveChildComp, public handled
+    class axisValuesComp : public moveChildComp, public handled, public drvred
     {
     public:
 
@@ -162,38 +161,39 @@ public:
         axisValuesTextbox text { 45,0,76,18,this,handler };
         MoveLabel lbl{ 0,-1,45,18,"axis",juce::Colours::slategrey,this,handler };
 
-        axisValuesComp(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler);
+        axisValuesComp(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
         
         
     };
 
-    GridParams* params;
+    Params* params;
     std::vector<juce::String> plotParams;
 
-    LegendBox legendBox { 655,26,260,135,this,handler };
+    LegendBox legendBox { 655,26,260,135,this,paramSetter, handler,drvr };
        
 
-    chKnobClassic alpha{ 487,107,70,70,this,handler };
+    chKnobClassic alpha{ 487,107,70,70,this,paramSetter, handler,drvr };
     colorsComponent color{ 409,82,161,25,this,handler };
     
 
     std::vector<juce::String> whichKnobVals = { "'none'","'major'", "'minor'", "'both'" };
-    whichGridKnob whichKnob{ 0, 15,150,80,this,handler };
+    whichGridKnob whichKnob{ 0, 15,150,80,this,paramSetter, handler,drvr };
     std::vector<juce::String>axisKnobVals = { "'both'", "'x'", "'y'" };
-    axisGridKnob axisKnob{ 220, 15,150,80,this,handler };
+    axisGridKnob axisKnob{ 220, 15,150,80,this,paramSetter, handler,drvr };
     
     std::vector<juce::String>lineStlyeVals = { "'solid'", "'dashed'", "'dashdot'","'dotted'","'None'" };
-    LineStyleComp lineStyleComp{ 140,77,250,150,this,handler };
+    LineStyleComp lineStyleComp{ 140,77,250,150,this,paramSetter, handler,drvr };
 
-    axisValuesComp axisValues{ 796,19,121,18,this,handler };
+    axisValuesComp axisValues{ 796,19,121,18,this,handler, drvr};
 
 
-    AxesPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : moveChildComp(x, y, w, h), handled(handler, parent, this) {
+    AxesPanel(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr) 
+        : moveChildComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this), drvred(_drvr) {
 
-        alpha.sldr.onValueChange = [&] {if (params != nullptr) params->alpha = alpha.sldr.getValue(); };
-        whichKnob.vals.onValueChange = [&] {if (params != nullptr) params->whichKnob = whichKnob.vals.getValue(); };
-        axisKnob.vals.onValueChange = [&] {if (params != nullptr) params->axisKnob = axisKnob.vals.getValue(); };
-        lineStyleComp.style.vals.onValueChange = [&] {if (params != nullptr) params->lineStyleComp = lineStyleComp.style.vals.getValue(); };
+        alpha.sldr.onValueChange = [&] {if (params != nullptr) params->galpha = alpha.sldr.getValue(); };
+        whichKnob.vals.onValueChange = [&] {if (params != nullptr) params->gwhichKnob = whichKnob.vals.getValue(); };
+        axisKnob.vals.onValueChange = [&] {if (params != nullptr) params->gaxisKnob = axisKnob.vals.getValue(); };
+        lineStyleComp.style.vals.onValueChange = [&] {if (params != nullptr) params->glineStyleComp = lineStyleComp.style.vals.getValue(); };
 
         legendBox.legends.params = params;
        
@@ -205,11 +205,11 @@ public:
 
 };
 
-class Line2DPanel : public juce::ChangeListener, public childComp, public handled
+class Line2DPanel : public juce::ChangeListener, public childComp, public paramed, public handled, public drvrShellNotifer
 {
 public:
 
-    class DashCapstyleKnob : public moveChildComp, public handled
+    class DashCapstyleKnob : public moveChildComp, public paramed, public handled
     {
     public:
         MoveLabel none{ 31,53,45,20,"none",juce::Colours::slategrey,this,handler };
@@ -218,10 +218,10 @@ public:
         MoveLabel projecting{ 83,52,60,20,"projecting",juce::Colours::slategrey,this,handler };
 
         SliderComp vals{ "vals",0,3,1,55,20,39,41,this,handler };
-        DashCapstyleKnob(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler);
+        DashCapstyleKnob(int x, int y, int w, int h,  juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler);
     };
 
-    class DashJoinstyleKnob : public moveChildComp, public handled
+    class DashJoinstyleKnob : public moveChildComp, public paramed, public handled
     {
     public:
         MoveLabel none{ 31,53,45,20,"none",juce::Colours::slategrey,this,handler };
@@ -230,10 +230,10 @@ public:
         MoveLabel bevel{ 65,56,60,20,"bevel",juce::Colours::slategrey,this,handler };
 
         SliderComp vals{ "vals",0,3,1,55,20,39,41,this,handler };
-        DashJoinstyleKnob(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler);
+        DashJoinstyleKnob(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler);
     };
 
-    class DrawstyleKnob : public moveChildComp, public handled
+    class DrawstyleKnob : public moveChildComp, public paramed, public handled
     {
     public:
         MoveLabel Default{ 11,26,43,20,"default",juce::Colours::slategrey,this,handler };
@@ -243,10 +243,10 @@ public:
         MoveLabel stepsPost{ 32,0,80,20,"steps-post",juce::Colours::slategrey,this,handler };
 
         SliderComp vals{ "vals",0,4,1,55,20,39,41,this,handler };
-        DrawstyleKnob(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler);
+        DrawstyleKnob(int x, int y, int w, int h,  juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler);
     };
 
-    class MarkerFillstyleKnob : public moveChildComp, public handled
+    class MarkerFillstyleKnob : public moveChildComp, public paramed, public handled
     {
     public:
         MoveLabel none{ 16,32,43,20,"none",juce::Colours::slategrey,this,handler };
@@ -257,10 +257,10 @@ public:
         MoveLabel top{ 38,8,0,0,"top",juce::Colours::slategrey,this,handler };
 
         SliderComp vals{ "vals",0,4,1,55,20,39,41,this,handler };
-        MarkerFillstyleKnob(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler);
+        MarkerFillstyleKnob(int x, int y, int w, int h,  juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler);
     };
 
-    class MarkersBox : public juce::ChangeListener, public moveChildComp, public handled
+    class MarkersBox : public juce::ChangeListener, public moveChildComp, public paramed, public handled, public drvred
     {
     public:
 
@@ -271,16 +271,16 @@ public:
         markers markers{ 10,10,250,100,&markersCont1,handler };
 
         MoveContainer markersCont2{ 0,0,240,100,this,handler };
-        chKnobClassic markerSize{ 21,17,70,70,&markersCont2,handler };
+        chKnobClassic markerSize{ 21,17,70,70,&markersCont2,paramSetter,handler,drvr };
         colorsComponent markerfacecolor{ 90,41,161,25,&markersCont2,handler };
 
         MoveContainer markersCont3{ 0,0,240,100,this,handler };
-        chKnobClassic markerEdgeWith{ 10,0,70,70,&markersCont3,handler };
+        chKnobClassic markerEdgeWith{ 10,0,70,70,&markersCont3,paramSetter,handler,drvr };
         colorsComponent markeredgecolor{ 27,0,121,25,&markersCont3,handler };
 
         MoveContainer markersCont4{ 0,0,240,100,this,handler };
         std::vector<juce::String>  FillStyleVals = { "'none'", "'full'", "'left'","'right'" ,"'bottom'" ,"'top'" };
-        MarkerFillstyleKnob markerFillstyleKnob{ 0,30,120,70,&markersCont4,handler };
+        MarkerFillstyleKnob markerFillstyleKnob{ 0,30,120,70,&markersCont4,paramSetter,handler };
 
         MoveContainer markersCompLabels{ 50,120,240,20,this,handler };
         fxLabel MarkerKindLbl{ 0,0,50,20,"kind", DEFAULT_LABEL_COLORS ,&markersCont1,&markersCompLabels,handler };
@@ -288,39 +288,40 @@ public:
         fxLabel MarkerEdgeLbl{ 100,0,50,20,"edge", DEFAULT_LABEL_COLORS ,&markersCont3,&markersCompLabels,handler };
         fxLabel MarkerFileLbl{ 150,0,50,20,"fill", DEFAULT_LABEL_COLORS ,&markersCont4,&markersCompLabels,handler };
 
-        MarkersBox(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler);
+        MarkersBox(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr);
         void changeListenerCallback(juce::ChangeBroadcaster* source);
     };
 
-    Line2Dparams* params = nullptr;
-    juce::ChangeBroadcaster replot;
+    Params dummy;
+    Params* params = &dummy;
+    
+    MarkersBox markersBox{ 655,26,260,135,this,paramSetter, handler ,drvr};
 
-    MarkersBox markersBox{ 655,26,260,135,this,handler };
-
-    chKnobClassic alpha{ 487,107,70,70,this,handler };
+    //chKnobClassic alpha{ 487,107,70,70,this,paramSetter,handler,drvr,1,1 };
+    chKnobClassicBeta alpha { params, 487,107,70,70,this , paramSetter ,handler,drvr ,1,1 };
     colorsComponent color{ 409,82,161,25,this,handler };
-    chKnobClassic width{ 412,107,70,70,this,handler };
+    chKnobClassic width{ 412,107,70,70,this,paramSetter,handler,drvr };
 
-    DashCapstyleKnob dashCapstyleKnob{ 10,30,0,0,this,handler };
+    DashCapstyleKnob dashCapstyleKnob{ 10,30,0,0,this,paramSetter,handler };
     std::vector<juce::String>  CapStyleValues = { "'butt'", "'round'", "'projecting'" };
-    DashJoinstyleKnob dashJoinstyleKnob{ 10,100,0,0,this,handler };
+    DashJoinstyleKnob dashJoinstyleKnob{ 10,100,0,0,this,paramSetter,handler };
     std::vector<juce::String>  JoinStyleValues = { "'miter'", "'round'", "'bevel'" };
 
-    DashCapstyleKnob solidCapstyleKnob{ 270,30,0,0,this,handler };
-    DashJoinstyleKnob solidJoinstyleKnob{ 270,100,0,0,this,handler };
+    DashCapstyleKnob solidCapstyleKnob{ 270,30,0,0,this,paramSetter,handler };
+    DashJoinstyleKnob solidJoinstyleKnob{ 270,100,0,0,this,paramSetter,handler };
 
     std::vector<juce::String>lineStlyeVals = { "'solid'", "'dashed'", "'dashdot'","'dotted'","'None'" };
-    LineStyleComp lineStyleComp{ 140,77,250,150,this,handler };
+    LineStyleComp lineStyleComp{ 140,77,250,150,this,paramSetter,handler,drvr };
 
     std::vector<juce::String>  DrawstyleValues = { "'default'", "'steps'", "'steps-pre'", "'steps-mid'", "'steps-post'" };
-    DrawstyleKnob drawstyleKnob{ 9,77,150,70,this,handler };
+    DrawstyleKnob drawstyleKnob{ 9,77,150,70,this,paramSetter,handler };
 
     chLabel dashes{ 22,12,180,25,"dashes",this,handler };
     chLabel label{ 406,54,180,25,"label",this,handler };
      
     std::vector<juce::String> plotParams;
 
-    Line2DPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler);
+    Line2DPanel(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr);
 
     void changeListenerCallback(juce::ChangeBroadcaster* source);
     void MakeLine2Dkwargs();

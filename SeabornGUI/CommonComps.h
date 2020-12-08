@@ -11,19 +11,46 @@
 #pragma once
 #include "Comps.h"
 #include "params.h"
- 
+#include "GuiDriver.h"
 
-class updateSliderComp : public SliderComp
+template <class T>
+class updateSliderComp : public SliderComp, public paramed, public drvrShellNotifer
+{
+public:       
+    
+    updateSliderComp(juce::String _name, int min, int max, int interval, int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& Handler, Drvr& _drvr ,int style = 0, int lookAndFeelClass = 0) :
+        SliderComp(_name, min, max, interval, x, y, w, h, parent, Handler, style, lookAndFeelClass) , paramed(_paramSetter),drvrShellNotifer(_drvr) {
+       
+    }
+
+    ~updateSliderComp() {}
+    
+    void stoppedDragging() {  
+       
+        if (t != nullptr)
+            *t = getValue() * 0.01f;
+        sendSynchronousChangeMessage();
+    }
+
+private:
+};
+
+class updateSliderCompBeta : public SliderComp,  public paramed, public drvrShellNotifer
 {
 public:
-    juce::ChangeBroadcaster stopper;
-    updateSliderComp(juce::String _name, int min, int max, int interval, int x, int y, int w, int h, juce::Component* parent, pngHandler& Handler, int style = 0, int lookAndFeelClass = 0) :
-        SliderComp(_name, min, max, interval, x, y, w, h, parent, Handler, style, lookAndFeelClass) {}
+    Params*& pparams;
 
-    ~updateSliderComp() { stopper.removeAllChangeListeners(); }
-    void stoppedDragging() { 
+    updateSliderCompBeta( Params*&  params, juce::String _name, int min, int max, int interval, int x, int y, int w, int h, juce::Component* parent,  ParamSetter& _paramSetter,  pngHandler& Handler, Drvr& _drvr, int style = 0, int lookAndFeelClass = 0) :
+        pparams(params), SliderComp(_name, min, max, interval, x, y, w, h, parent, Handler, style, lookAndFeelClass), paramed(_paramSetter),  drvrShellNotifer(_drvr) {
         
-        //stopper.sendSynchronousChangeMessage();
+      
+    }
+    void stoppedDragging() {
+
+        
+        auto val = getValue() * 0.01f;
+        update(getValue() * 0.01f, pparams);
+        sendSynchronousChangeMessage();
     }
 
 private:
@@ -211,30 +238,48 @@ public:
 
 };
 
-class chKnobSelection : public childComp, public handled
+class chKnobSelection : public childComp, public paramed, public handled, public drvred
 {
 public:
-    updateSliderComp vals{ "vals",0,100,1,0,3,39,41,this,handler };
+    updateSliderComp<int> vals{ "vals",0,100,1,0,3,39,41,this,paramSetter, handler,drvr };
     juce::OwnedArray<juce::Label> lbls;
-    chKnobSelection(int x, int y, int w, int h, std::vector<juce::String> options, juce::Component* parent, pngHandler& handler) : childComp(x, y, w, h), handled(handler, parent, this) {
+    chKnobSelection(int x, int y, int w, int h, std::vector<juce::String> options, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr)
+        : childComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this), drvred(_drvr) {
         vals.setRange(0, options.size() - 1, 1);
     }
 };
 
-class chKnobClassic : public moveChildComp, public handled
+class chKnobClassic : public moveChildComp, public paramed, public handled, public drvred
 {
 public:
-
-    updateSliderComp sldr{ "vals",0,100,1,15,15,39,41,this,handler };
+    updateSliderComp<float> sldr{ "vals",0,100,1,15,15,39,41,this,paramSetter, handler,drvr };
     fxLabel LblName{ 14,60,70,30, "",juce::Colours::slategrey,juce::Colours::slategrey,nullptr,this,handler };
 
-    chKnobClassic(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : moveChildComp(x, y, w, h), handled(handler, parent, this) {}
+    chKnobClassic(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr, int _panel=0,int _param=0)
+        : moveChildComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this), drvred(_drvr) {}
 };
 
-class LineStyleComp : public moveChildComp, public handled
+class chKnobClassicBeta : public moveChildComp,  public paramed, public handled, public drvred
+{
+public:
+    Params*& pparams;
+   ;
+
+    updateSliderCompBeta sldr{ pparams, "vals",0,100,1,15,15,39,41,this, paramSetter,  handler,drvr };
+    fxLabel LblName{ 14,60,70,30, "",juce::Colours::slategrey,juce::Colours::slategrey,nullptr,this,handler };
+
+    chKnobClassicBeta(Params*& params, int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr, int panel, int param )
+        : pparams(params),moveChildComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this), drvred(_drvr) {
+        
+        sldr.panel =  panel;
+        sldr.panel =  param;
+    }
+};
+
+class LineStyleComp : public moveChildComp, public paramed, public handled, public drvred
 {
     public:
-        class StyleKnob : public moveChildComp, public handled
+        class StyleKnob : public moveChildComp, public paramed, public handled, public drvred
         {
         public:
             MoveLabel solid{ 34,56,45,20,"solid",juce::Colours::slategrey,this,handler };
@@ -243,8 +288,9 @@ class LineStyleComp : public moveChildComp, public handled
             MoveLabel dotted{ 98,25,45,20,"dotted",juce::Colours::slategrey,this,handler };
             MoveLabel custom{ 80,55,60,20,"custom",juce::Colours::slategrey,this,handler };
 
-            updateSliderComp vals{ "vals",0,4,1,55,20,39,41,this,handler };
-            StyleKnob(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : moveChildComp(x, y, w, h), handled(handler, parent, this) {
+            updateSliderComp<int> vals{ "vals",0,4,1,55,20,39,41,this,paramSetter, handler ,drvr};
+            StyleKnob(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr)
+                : moveChildComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this) , drvred(_drvr) {
         
                 solid.setName("solid");
                 dashed.setName("dashed");
@@ -258,8 +304,9 @@ class LineStyleComp : public moveChildComp, public handled
 
         juce::Label customLbl;
 
-        StyleKnob style{ 0,0,150,80,this,handler };
-        LineStyleComp(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : moveChildComp(x, y, w, h), handled(handler, parent, this) {
+        StyleKnob style{ 0,0,150,80,this,paramSetter, handler,drvr };
+        LineStyleComp(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr)
+            : moveChildComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this), drvred(_drvr) {
             addAndMakeVisible(customLbl);           
             customLbl.setEditable(true);        
         }
@@ -317,7 +364,7 @@ public:
 
     int active = 0;
     juce::String code;
-    Line2Dparams* params = nullptr;
+    Params* params = nullptr;
     juce::ChangeBroadcaster replot;
 
     marker point{ 0,0,20,20,"point","'.'",this,handler };
@@ -361,7 +408,7 @@ public:
 
 };
 
-class Legends : public juce::ChangeListener, public moveChildComp, public handled
+class Legends : public juce::ChangeListener, public moveChildComp, public handled, public drvrShellNotifer
 {
 public:
 
@@ -375,8 +422,8 @@ public:
     };
 
     juce::String loc = "";
-    GridParams* params = nullptr;
-    juce::ChangeBroadcaster replot;
+    Params* params = nullptr;
+      
 
     item best{ 9, 4, 80, 20, this, handler };
     item upperRight{ 89, 4, 80, 20, this, handler };
@@ -390,8 +437,8 @@ public:
     item upperCenter{ 9, 64, 80, 20, this, handler };
     item center{ 89, 64, 80, 20, this, handler };
 
-    Legends(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler);
-    ~Legends() { replot.removeAllChangeListeners(); }
+    Legends(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler,Drvr& _drvr);
+    ~Legends() {}
 
     void changeListenerCallback(juce::ChangeBroadcaster* source);
 };

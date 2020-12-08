@@ -65,12 +65,14 @@ void MoveLabel::mouseDown(const juce::MouseEvent& event)
 }
 
 chLabel::chLabel(int x, int y, int w, int h, juce::String name, juce::Component* parent, pngHandler& handler) 
-    : childComp(x, y, w, h), handled(handler, parent, this) {
+    : childComp(x, y, w, h), handled(handler, parent, this)  {
     lblName.text = name;
     addAndMakeVisible(lbl);
     lblName.addChangeListener(this);
     lblName.fontHight = 15;
     lbl.lbl.setEditable(true);
+    //Lambda is set from parent contructor
+    //lbl.lbl.onTextChange = [&] {sendSynchronousChangeMessage(); };
 }
 
 void chLabel::changeListenerCallback(juce::ChangeBroadcaster* source)
@@ -132,13 +134,13 @@ void markers::changeListenerCallback(juce::ChangeBroadcaster* source)
     active = 1;
 
     if (params != nullptr)
-        params->marker = code;
+        params->lmarker = code;
 
     replot.sendSynchronousChangeMessage();
 }
 
-Legends::Legends(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler)
-    : moveChildComp(x, y, w, h), handled(handler, parent, this)
+Legends::Legends(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : moveChildComp(x, y, w, h), handled(handler, parent, this), drvrShellNotifer(_drvr)
 {
     best.lbl.text = "best"; best.lbl.addChangeListener(this);
     upperRight.lbl.text = "upper right"; upperRight.lbl.addChangeListener(this);
@@ -175,6 +177,6 @@ void Legends::changeListenerCallback(juce::ChangeBroadcaster* source)
         params->legendLocation = loc;
     lbl->textColor = juce::Colours::aqua;
     lbl->repaint();
-    replot.sendSynchronousChangeMessage();
+    sendSynchronousChangeMessage();
    
 }

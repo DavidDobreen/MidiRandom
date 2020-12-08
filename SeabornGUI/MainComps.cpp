@@ -102,8 +102,8 @@ void LineList::changeListenerCallback(juce::ChangeBroadcaster* source)
 
     bottomPanel.line2dPanel.params = &item->params;
     bottomPanel.line2dPanel.markersBox.markers.params = &item->params;
-    bottomPanel.line2dPanel.markersBox.markeredgecolor.area.param = &item->params.markeredgecolor;
-    bottomPanel.line2dPanel.markersBox.markerfacecolor.area.param = &item->params.markerColor;
+    bottomPanel.line2dPanel.markersBox.markeredgecolor.area.param = &item->params.lmarkeredgecolor;
+    bottomPanel.line2dPanel.markersBox.markerfacecolor.area.param = &item->params.lmarkerColor;
      
     bottomPanel.line2dPanel.refresh();
 

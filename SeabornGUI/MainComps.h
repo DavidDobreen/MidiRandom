@@ -11,6 +11,7 @@
 #pragma once
 #include "Panels.h"
 #include "params.h"
+#include "GuiDriver.h"
 
 class MainTabsPanel : public juce::ChangeListener, public moveChildComp, public handled
 {
@@ -52,18 +53,19 @@ public:
     };
 };
 
-class BottomPanel : public childComp, public handled
+class BottomPanel : public childComp, public paramed, public handled, public drvred
 {
-public:
+public:     
     chBgComp bkgd{ "SAMPLE GRAY PANEL2.png",this,handler };
     namebox namebox{ 407,13,152,35,this,handler };
-    TextPanel textPanel{ 0,0,dims[2],dims[3],this,handler };
-    Line2DPanel line2dPanel{ 0,0,dims[2],dims[3],this,handler };
-    AxesPanel axesPanel{ 0,0,dims[2],dims[3],this,handler };
+    TextPanel textPanel{ 0,0,dims[2],dims[3],this,paramSetter,handler ,drvr};
+    Line2DPanel line2dPanel{ 0,0,dims[2],dims[3],this,paramSetter,handler,drvr };
+    AxesPanel axesPanel{ 0,0,dims[2],dims[3],this,paramSetter,handler,drvr };
 
     juce::Component* selectedPanel = nullptr;
 
-    BottomPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : childComp(x, y, w, h), handled(handler, parent, this) {
+    BottomPanel(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr) 
+        : childComp(x, y, w, h), paramed(_paramSetter),handled(handler, parent, this) , drvred(_drvr) {
         namebox.lbl.text = "text panel";
         namebox.setName("namebox");
     }
@@ -76,7 +78,7 @@ public:
     class item : public moveChildComp, public handled
     {
     public:
-        TextParams params;
+        Params params;
         juce::String xLabel;
         juce::String yLabel;
         juce::String Title;
@@ -111,7 +113,7 @@ public:
     class item : public moveChildComp, public handled
     {
     public:
-        Line2Dparams params;
+        Params params;
         juce::String xValues;
         juce::String yValues;
 
@@ -142,7 +144,7 @@ public:
     class item : public moveChildComp, public handled
     {
     public:
-        GridParams params;
+        Params params;
          
         chBgComp frame{ "bottom pads name frame3.png",this ,handler };
         MoveLabel lbl{ 0,-1,dims[2],dims[3],"",juce::Colours::aqua,this,handler };

@@ -10,42 +10,42 @@
 
 #include "Panels.h"
 
-Line2DPanel::Line2DPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : childComp(x, y, w, h), handled(handler, parent, this) {
+Line2DPanel::Line2DPanel(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr)
+    : childComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this), drvrShellNotifer(_drvr) {
 
     markersBox.markers.params = params;
-    markersBox.markeredgecolor.area.param = &params->markeredgecolor;
-    markersBox.markerfacecolor.area.param = &params->markerColor;
+    markersBox.markeredgecolor.area.param = &params->lmarkeredgecolor;
+    markersBox.markerfacecolor.area.param = &params->lmarkerColor;
 
     alpha.sldr.setValue(100, juce::dontSendNotification);
-    alpha.sldr.onValueChange = [&] {if (params != nullptr) params->alpha = alpha.sldr.getValue() * 0.01f; };
+    //alpha.sldr.onValueChange = [&] {if (params != nullptr) params->alpha = alpha.sldr.getValue() * 0.01f; };
+    //alpha.sldr.setT(&params->alpha);
     width.sldr.setRange(0, 500, 1);
     width.sldr.setValue(100);
-    width.sldr.onValueChange = [&] {if (params != nullptr) params->width = width.sldr.getValue() * 0.01f; };
+    width.sldr.onValueChange = [&] {if (params != nullptr) params->lwidth = width.sldr.getValue() * 0.01f; };
 
-    label .lbl.lbl.onTextChange = [&] {params->label = label.lbl.lbl.getText();
-    replot.sendSynchronousChangeMessage();
-    };
+    label.lbl.lbl.onTextChange = [&] {params->llabel = label.lbl.lbl.getText(); sendSynchronousChangeMessage(); };
     label.addChangeListener(this);
 
-    lineStyleComp.style.vals.onValueChange = [&] {if (params != nullptr) params->lineStyleComp = lineStyleComp.style.vals.getValue(); };
+    lineStyleComp.style.vals.onValueChange = [&] {if (params != nullptr) params->llineStyleComp = lineStyleComp.style.vals.getValue(); };
 
     markersBox.markerSize.sldr.setRange(0, 500, 1);
     markersBox.markerSize.sldr.setValue(100, juce::dontSendNotification);
-    markersBox.markerSize.sldr.onValueChange = [&] {markersBox.markers.params->markerSize = markersBox.markerSize.sldr.getValue() * 0.05f;};
+    markersBox.markerSize.sldr.onValueChange = [&] {markersBox.markers.params->lmarkerSize = markersBox.markerSize.sldr.getValue() * 0.05f;};
 
     markersBox.markerEdgeWith.sldr.setRange(0, 100, 1);
     markersBox.markerEdgeWith.sldr.setValue(100, juce::dontSendNotification);
-    markersBox.markerEdgeWith.sldr.onValueChange = [&] {markersBox.markers.params->markerEdgeWith = markersBox.markerEdgeWith.sldr.getValue() * 0.05f; };
+    markersBox.markerEdgeWith.sldr.onValueChange = [&] {markersBox.markers.params->lmarkerEdgeWith = markersBox.markerEdgeWith.sldr.getValue() * 0.05f; };
 
-    color.area.param = &params->color;
+    color.area.param = &params->lcolor;
 }
 
 void Line2DPanel::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
     if (source == &label)
     {
-        params->valueIsVisible = label.lblName.IsOn;
-        replot.sendSynchronousChangeMessage();
+        params->lvalueIsVisible = label.lblName.IsOn;
+        sendSynchronousChangeMessage();
     }
 }
 
@@ -54,30 +54,30 @@ void Line2DPanel::MakeLine2Dkwargs()
 
     plotParams.clear();
 
-    if (params->alpha != 1.0f)
-        plotParams.push_back(", alpha=" + juce::String(params->alpha));
+    if (params->lalpha != 1.0f)
+        plotParams.push_back(", alpha=" + juce::String(params->lalpha));
 
-    if (params->width != 1.0f)
-        plotParams.push_back(", lw=" + juce::String(params->width));
+    if (params->lwidth != 1.0f)
+        plotParams.push_back(", lw=" + juce::String(params->lwidth));
 
-    if (params->color != "")
-        plotParams.push_back(", c='" + params->color + "'");
+    if (params->lcolor != "")
+        plotParams.push_back(", c='" + params->lcolor + "'");
 
-    if (params->lineStyleComp)
-        plotParams.push_back(", ls=" + lineStlyeVals[params->lineStyleComp]);
+    if (params->llineStyleComp)
+        plotParams.push_back(", ls=" + lineStlyeVals[params->llineStyleComp]);
 
-    if (params->valueIsVisible)
-        plotParams.push_back(", label='" + params->label + "'");
+    if (params->tvalueIsVisible)
+        plotParams.push_back(", label='" + params->llabel + "'");
 
-    if (params->marker != "")
+    if (params->lmarker != "")
     {
-        plotParams.push_back(", marker=" + params->marker);
-        plotParams.push_back(", markersize=" + juce::String(params->markerSize));
-        plotParams.push_back(", markeredgewidth=" + juce::String(params->markerEdgeWith));
-        if (params->markerColor != "")
-            plotParams.push_back(", markerfacecolor=" + juce::String(params->markerColor));
-        if (params->markeredgecolor != "")
-            plotParams.push_back(", markeredgecolor=" + juce::String(params->markeredgecolor));
+        plotParams.push_back(", marker=" + params->lmarker);
+        plotParams.push_back(", markersize=" + juce::String(params->lmarkerSize));
+        plotParams.push_back(", markeredgewidth=" + juce::String(params->lmarkerEdgeWith));
+        if (params->lmarkerColor != "")
+            plotParams.push_back(", markerfacecolor=" + juce::String(params->lmarkerColor));
+        if (params->lmarkeredgecolor != "")
+            plotParams.push_back(", markeredgecolor=" + juce::String(params->lmarkeredgecolor));
     }
         
 
@@ -124,42 +124,43 @@ void Line2DPanel::MakeLine2Dkwargs()
 void Line2DPanel::refresh()
 {
 
-    label.lbl.lbl.setText(params->label, juce::dontSendNotification);
-    label.lblName.IsOn = params->valueIsVisible;
+    label.lbl.lbl.setText(params->llabel, juce::dontSendNotification);
+    label.lblName.IsOn = params->lvalueIsVisible;
     label.lblName.repaint();
 
     //Colours
-    color.area.param = &params->color;
-    color.selection.setText(params->color, juce::dontSendNotification);
+    color.area.param = &params->lcolor;
+    color.selection.setText(params->lcolor, juce::dontSendNotification);
 
     //Sliders
-    alpha.sldr.setValue(params->alpha * 100, juce::dontSendNotification);
-    width.sldr.setValue(params->width * 100, juce::dontSendNotification);
-    lineStyleComp.style.vals.setValue(params->lineStyleComp, juce::dontSendNotification);
+    alpha.sldr.setValue(params->lalpha * 100, juce::dontSendNotification);
+    width.sldr.setValue(params->lwidth * 100, juce::dontSendNotification);
+    lineStyleComp.style.vals.setValue(params->llineStyleComp, juce::dontSendNotification);
 
     //markers
-    markersBox.markerSize.sldr.setValue(params->markerSize, juce::dontSendNotification);
-    markersBox.markerEdgeWith.sldr.setValue(params->markerEdgeWith, juce::dontSendNotification);
-    markersBox.markeredgecolor.selection.setText(params->markeredgecolor, juce::dontSendNotification);
-    markersBox.markerfacecolor.selection.setText(params->markerColor, juce::dontSendNotification);
+    markersBox.markerSize.sldr.setValue(params->lmarkerSize, juce::dontSendNotification);
+    markersBox.markerEdgeWith.sldr.setValue(params->lmarkerEdgeWith, juce::dontSendNotification);
+    markersBox.markeredgecolor.selection.setText(params->lmarkeredgecolor, juce::dontSendNotification);
+    markersBox.markerfacecolor.selection.setText(params->lmarkerColor, juce::dontSendNotification);
      
 
-    dashCapstyleKnob.vals.setValue(params->dashCapstyleKnob, juce::dontSendNotification);
-    dashJoinstyleKnob.vals.setValue(params->dashJoinstyleKnob, juce::dontSendNotification);
-    solidCapstyleKnob.vals.setValue(params->solidCapstyleKnob, juce::dontSendNotification);
-    solidJoinstyleKnob.vals.setValue(params->solidJoinstyleKnob, juce::dontSendNotification);
-    drawstyleKnob.vals.setValue(params->drawstyleKnob, juce::dontSendNotification);
-    dashes.lbl.lbl.setText(params->dashes, juce::dontSendNotification);
-    label.lbl.lbl.setText(params->label, juce::dontSendNotification);
-    markersBox.markers.code = params->marker;
-    markersBox.markerSize.sldr.setValue(params->markerSize * 100, juce::dontSendNotification);
+    dashCapstyleKnob.vals.setValue(params->ldashCapstyleKnob, juce::dontSendNotification);
+    dashJoinstyleKnob.vals.setValue(params->ldashJoinstyleKnob, juce::dontSendNotification);
+    solidCapstyleKnob.vals.setValue(params->lsolidCapstyleKnob, juce::dontSendNotification);
+    solidJoinstyleKnob.vals.setValue(params->lsolidJoinstyleKnob, juce::dontSendNotification);
+    drawstyleKnob.vals.setValue(params->ldrawstyleKnob, juce::dontSendNotification);
+    dashes.lbl.lbl.setText(params->ldashes, juce::dontSendNotification);
+    label.lbl.lbl.setText(params->llabel, juce::dontSendNotification);
+    markersBox.markers.code = params->lmarker;
+    markersBox.markerSize.sldr.setValue(params->lmarkerSize * 100, juce::dontSendNotification);
     juce::Colour markerColor;
-    markersBox.markerEdgeWith.sldr.setValue(params->markerEdgeWith * 100, juce::dontSendNotification);
+    markersBox.markerEdgeWith.sldr.setValue(params->lmarkerEdgeWith * 100, juce::dontSendNotification);
     juce::Colour markeredgecolor;
-    markersBox.markerFillstyleKnob.vals.setValue(params->markerFillstyleKnob, juce::dontSendNotification);
+    markersBox.markerFillstyleKnob.vals.setValue(params->lmarkerFillstyleKnob, juce::dontSendNotification);
 }
 
-Line2DPanel::MarkersBox::MarkersBox(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : moveChildComp(x, y, w, h), handled(handler, parent, this) {
+Line2DPanel::MarkersBox::MarkersBox(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr)
+    : moveChildComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this), drvred(_drvr) {
 
     MarkerKindLbl.addChangeListener(this);
     MarkerSizeLbl.addChangeListener(this);
@@ -191,29 +192,35 @@ void Line2DPanel::MarkersBox::changeListenerCallback(juce::ChangeBroadcaster* so
     }
 }
 
-Line2DPanel::MarkerFillstyleKnob::MarkerFillstyleKnob(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : moveChildComp(x, y, w, h), handled(handler, parent, this) {
+Line2DPanel::MarkerFillstyleKnob::MarkerFillstyleKnob(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler) 
+    : moveChildComp(x, y, w, h), paramed(_paramSetter),handled(handler, parent, this)
+{
 
 
 }
 
-Line2DPanel::DrawstyleKnob::DrawstyleKnob(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : moveChildComp(x, y, w, h), handled(handler, parent, this) {
+Line2DPanel::DrawstyleKnob::DrawstyleKnob(int x, int y, int w, int h,  juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler)
+    : moveChildComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this) {
 
 
 }
 
-Line2DPanel::DashJoinstyleKnob::DashJoinstyleKnob(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : moveChildComp(x, y, w, h), handled(handler, parent, this) {
+Line2DPanel::DashJoinstyleKnob::DashJoinstyleKnob(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler)
+    : moveChildComp(x, y, w, h), paramed(_paramSetter) , handled(handler, parent, this) {
 
 }
 
-Line2DPanel::DashCapstyleKnob::DashCapstyleKnob(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : moveChildComp(x, y, w, h), handled(handler, parent, this) {
+Line2DPanel::DashCapstyleKnob::DashCapstyleKnob(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler) 
+    : moveChildComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this) {
 
 }
 
 
-TextPanel::TextPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : childComp(x, y, w, h), handled(handler, parent, this) {
+TextPanel::TextPanel(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr)
+    : childComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this) , drvrShellNotifer(_drvr) {
 
-    value.lbl.lbl.onTextChange = [&] {params->value = value.lbl.lbl.getText();
-    replot.sendSynchronousChangeMessage();
+    value.lbl.lbl.onTextChange = [&] {params->tvalue = value.lbl.lbl.getText();
+    sendSynchronousChangeMessage();
     };
     value.addChangeListener(this);
     
@@ -243,8 +250,8 @@ void TextPanel::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
     if (source == &value)
     {        
-        params->valueIsVisible = value.lblName.IsOn;         
-        replot.sendSynchronousChangeMessage();
+        params->tvalueIsVisible = value.lblName.IsOn;         
+        sendSynchronousChangeMessage();
     }
          
 }
@@ -256,8 +263,8 @@ void TextPanel::MakeGridkwargs()
 
 void TextPanel::refresh()
 {
-    value.lbl.lbl.setText(params->value,juce::dontSendNotification);
-    value.lblName.IsOn = params->valueIsVisible;
+    value.lbl.lbl.setText(params->tvalue,juce::dontSendNotification);
+    value.lblName.IsOn = params->tvalueIsVisible;
     value.lblName.repaint();
     ////Colours
     //color.area.param = &params->color;
@@ -268,15 +275,15 @@ void TextPanel::refresh()
     //width.sldr.setValue(params->width * 100, juce::dontSendNotification);
 }
 
-AxesPanel::whichGridKnob::whichGridKnob(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler)
-    : moveChildComp(x, y, w, h), handled(handler, parent, this)
+AxesPanel::whichGridKnob::whichGridKnob(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr)
+    : moveChildComp(x, y, w, h), paramed(_paramSetter),handled(handler, parent, this), drvred(_drvr)
 {
 
 
 }
 
-AxesPanel::axisGridKnob::axisGridKnob(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler)
-    : moveChildComp(x, y, w, h), handled(handler, parent, this)
+AxesPanel::axisGridKnob::axisGridKnob(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr)
+    : moveChildComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this), drvred(_drvr)
 {
 
 
@@ -285,13 +292,13 @@ AxesPanel::axisGridKnob::axisGridKnob(int x, int y, int w, int h, juce::Componen
 void AxesPanel::refresh()
 {
     //Colours
-    color.area.param = &params->color;
-    color.selection.setText(params->color, juce::dontSendNotification);
+    color.area.param = &params->gcolor;
+    color.selection.setText(params->gcolor, juce::dontSendNotification);
 
     //Sliders
-    whichKnob.vals.setValue(params->whichKnob, juce::dontSendNotification);
-    axisKnob.vals.setValue(params->axisKnob, juce::dontSendNotification);
-    lineStyleComp.style.vals.setValue(params->lineStyleComp, juce::dontSendNotification);
+    whichKnob.vals.setValue(params->gwhichKnob, juce::dontSendNotification);
+    axisKnob.vals.setValue(params->gaxisKnob, juce::dontSendNotification);
+    lineStyleComp.style.vals.setValue(params->glineStyleComp, juce::dontSendNotification);
 
 
 }
@@ -301,34 +308,34 @@ void AxesPanel::MakeGridkwargs()
     plotParams.clear();
 
 
-    plotParams.push_back(" which=" + whichKnobVals[params->whichKnob]);
+    plotParams.push_back(" which=" + whichKnobVals[params->gwhichKnob]);
 
-    if (params->axisKnob)
-        plotParams.push_back(", axis=" + axisKnobVals[params->axisKnob]);
+    if (params->gaxisKnob)
+        plotParams.push_back(", axis=" + axisKnobVals[params->gaxisKnob]);
 
-    if (params->lineStyleComp)
-        plotParams.push_back(", ls=" + lineStlyeVals[params->lineStyleComp]);
+    if (params->glineStyleComp)
+        plotParams.push_back(", ls=" + lineStlyeVals[params->glineStyleComp]);
 
-    if (params->alpha != 1.0f)
-        plotParams.push_back(", alpha=" + juce::String(params->alpha));
+    if (params->galpha != 1.0f)
+        plotParams.push_back(", alpha=" + juce::String(params->galpha));
 
-    if (params->width != 1.0f)
-        plotParams.push_back(", lw=" + juce::String(params->width));
+    if (params->gwidth != 1.0f)
+        plotParams.push_back(", lw=" + juce::String(params->gwidth));
 
-    if (params->color != "")
-        plotParams.push_back(", c='" + params->color + "'");
+    if (params->gcolor != "")
+        plotParams.push_back(", c='" + params->gcolor + "'");
 
 }
 
-AxesPanel::axisValuesComp::axisValuesComp(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler)
-    : moveChildComp(x, y, w, h), handled(handler, parent, this)
+AxesPanel::axisValuesComp::axisValuesComp(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : moveChildComp(x, y, w, h), handled(handler, parent, this), drvred(_drvr)
 {
     text.lbl.setEditable(true);
 
 }
 
-AxesPanel::LegendBox::LegendBox(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler)
-    : moveChildComp(x, y, w, h), handled(handler, parent, this)
+AxesPanel::LegendBox::LegendBox(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr)
+    : moveChildComp(x, y, w, h), paramed(_paramSetter),handled(handler, parent, this), drvred(_drvr)
 {
     legendLbl.addChangeListener(this);
     locLbl.addChangeListener(this);
