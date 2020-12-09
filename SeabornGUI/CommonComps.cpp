@@ -50,6 +50,8 @@ void MoveLabel::paint(juce::Graphics& g)
     g.setFont(r);
     g.drawFittedText(text, getLocalBounds(), juce::Justification::centred, 1);
 
+     
+
     if (EditLocation)
     {
         g.setColour(juce::Colours::red);
@@ -64,20 +66,22 @@ void MoveLabel::mouseDown(const juce::MouseEvent& event)
     manualClick = false;
 }
 
-chLabel::chLabel(int x, int y, int w, int h, juce::String name, juce::Component* parent, pngHandler& handler) 
-    : childComp(x, y, w, h), handled(handler, parent, this)  {
+chLabel::chLabel(int x, int y, int w, int h, juce::String name, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr, int _param)
+    : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvrShellNotifer(drvr)  {
     lblName.text = name;
     addAndMakeVisible(lbl);
     lblName.addChangeListener(this);
     lblName.fontHight = 15;
-    lbl.lbl.setEditable(true);
-    //Lambda is set from parent contructor
-    //lbl.lbl.onTextChange = [&] {sendSynchronousChangeMessage(); };
+    lbl.lbl.setEditable(true); 
+    param = _param;
+    lbl.param = _param - 1;
+    
 }
 
 void chLabel::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
     lblName.IsOn = !lblName.IsOn;
+    update(lblName.IsOn);
     lblName.repaint();
     sendSynchronousChangeMessage();
 }
@@ -89,7 +93,8 @@ void marker::paint(juce::Graphics& g)
     g.drawRoundedRectangle(getLocalBounds().toFloat().reduced(2), 0.7f, 1.0f);
 }
 
-markers::markers(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : moveChildComp(x, y, w, h), handled(handler, parent, this)
+markers::markers(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr) 
+    : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvrShellNotifer(drvr)
 {
     point.area.addChangeListener(this);
     pixel.area.addChangeListener(this);
@@ -136,7 +141,7 @@ void markers::changeListenerCallback(juce::ChangeBroadcaster* source)
     if (params != nullptr)
         params->lmarker = code;
 
-    replot.sendSynchronousChangeMessage();
+    sendSynchronousChangeMessage();
 }
 
 Legends::Legends(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr)

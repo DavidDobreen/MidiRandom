@@ -12,41 +12,9 @@
 
 Line2DPanel::Line2DPanel(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr)
     : childComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this), drvrShellNotifer(_drvr) {
-
-    markersBox.markers.params = params;
-    markersBox.markeredgecolor.area.param = &params->lmarkeredgecolor;
-    markersBox.markerfacecolor.area.param = &params->lmarkerColor;
-
-    alpha.sldr.setValue(100, juce::dontSendNotification);
-    //alpha.sldr.onValueChange = [&] {if (params != nullptr) params->alpha = alpha.sldr.getValue() * 0.01f; };
-    //alpha.sldr.setT(&params->alpha);
+        
     width.sldr.setRange(0, 500, 1);
-    width.sldr.setValue(100);
-    width.sldr.onValueChange = [&] {if (params != nullptr) params->lwidth = width.sldr.getValue() * 0.01f; };
-
-    label.lbl.lbl.onTextChange = [&] {params->llabel = label.lbl.lbl.getText(); sendSynchronousChangeMessage(); };
-    label.addChangeListener(this);
-
-    lineStyleComp.style.vals.onValueChange = [&] {if (params != nullptr) params->llineStyleComp = lineStyleComp.style.vals.getValue(); };
-
-    markersBox.markerSize.sldr.setRange(0, 500, 1);
-    markersBox.markerSize.sldr.setValue(100, juce::dontSendNotification);
-    markersBox.markerSize.sldr.onValueChange = [&] {markersBox.markers.params->lmarkerSize = markersBox.markerSize.sldr.getValue() * 0.05f;};
-
-    markersBox.markerEdgeWith.sldr.setRange(0, 100, 1);
-    markersBox.markerEdgeWith.sldr.setValue(100, juce::dontSendNotification);
-    markersBox.markerEdgeWith.sldr.onValueChange = [&] {markersBox.markers.params->lmarkerEdgeWith = markersBox.markerEdgeWith.sldr.getValue() * 0.05f; };
-
-    color.area.param = &params->lcolor;
-}
-
-void Line2DPanel::changeListenerCallback(juce::ChangeBroadcaster* source)
-{
-    if (source == &label)
-    {
-        params->lvalueIsVisible = label.lblName.IsOn;
-        sendSynchronousChangeMessage();
-    }
+    width.sldr.setValue(100,juce::dontSendNotification);            
 }
 
 void Line2DPanel::MakeLine2Dkwargs()
@@ -123,51 +91,36 @@ void Line2DPanel::MakeLine2Dkwargs()
 
 void Line2DPanel::refresh()
 {
-
     label.lbl.lbl.setText(params->llabel, juce::dontSendNotification);
     label.lblName.IsOn = params->lvalueIsVisible;
     label.lblName.repaint();
 
     //Colours
-    color.area.param = &params->lcolor;
     color.selection.setText(params->lcolor, juce::dontSendNotification);
 
     //Sliders
     alpha.sldr.setValue(params->lalpha * 100, juce::dontSendNotification);
     width.sldr.setValue(params->lwidth * 100, juce::dontSendNotification);
-    lineStyleComp.style.vals.setValue(params->llineStyleComp, juce::dontSendNotification);
+    lineStyleComp.style.vals.sldr.setValue(params->llineStyleComp, juce::dontSendNotification);
 
     //markers
-    markersBox.markerSize.sldr.setValue(params->lmarkerSize, juce::dontSendNotification);
-    markersBox.markerEdgeWith.sldr.setValue(params->lmarkerEdgeWith, juce::dontSendNotification);
+    markersBox.markerSize.sldr.setValue(params->lmarkerSize*4, juce::dontSendNotification);
+    markersBox.markerEdgeWith.sldr.setValue(params->lmarkerEdgeWith*10, juce::dontSendNotification);
     markersBox.markeredgecolor.selection.setText(params->lmarkeredgecolor, juce::dontSendNotification);
     markersBox.markerfacecolor.selection.setText(params->lmarkerColor, juce::dontSendNotification);
      
 
-    dashCapstyleKnob.vals.setValue(params->ldashCapstyleKnob, juce::dontSendNotification);
-    dashJoinstyleKnob.vals.setValue(params->ldashJoinstyleKnob, juce::dontSendNotification);
-    solidCapstyleKnob.vals.setValue(params->lsolidCapstyleKnob, juce::dontSendNotification);
-    solidJoinstyleKnob.vals.setValue(params->lsolidJoinstyleKnob, juce::dontSendNotification);
-    drawstyleKnob.vals.setValue(params->ldrawstyleKnob, juce::dontSendNotification);
-    dashes.lbl.lbl.setText(params->ldashes, juce::dontSendNotification);
-    label.lbl.lbl.setText(params->llabel, juce::dontSendNotification);
-    markersBox.markers.code = params->lmarker;
-    markersBox.markerSize.sldr.setValue(params->lmarkerSize * 100, juce::dontSendNotification);
-    juce::Colour markerColor;
-    markersBox.markerEdgeWith.sldr.setValue(params->lmarkerEdgeWith * 100, juce::dontSendNotification);
-    juce::Colour markeredgecolor;
-    markersBox.markerFillstyleKnob.vals.setValue(params->lmarkerFillstyleKnob, juce::dontSendNotification);
+     
 }
 
-Line2DPanel::MarkersBox::MarkersBox(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr)
-    : moveChildComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this), drvred(_drvr) {
+Line2DPanel::MarkersBox::MarkersBox(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr)
+    : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvred(_drvr) {
 
     MarkerKindLbl.addChangeListener(this);
     MarkerSizeLbl.addChangeListener(this);
     MarkerEdgeLbl.addChangeListener(this);
     MarkerFileLbl.addChangeListener(this);
-
-    markerSize.LblName.text = "size";
+   
     markerfacecolor.name.text = "color";
 }
 
@@ -192,29 +145,22 @@ void Line2DPanel::MarkersBox::changeListenerCallback(juce::ChangeBroadcaster* so
     }
 }
 
-Line2DPanel::MarkerFillstyleKnob::MarkerFillstyleKnob(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler) 
-    : moveChildComp(x, y, w, h), paramed(_paramSetter),handled(handler, parent, this)
+Line2DPanel::MarkerFillstyleKnob::MarkerFillstyleKnob(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr)
+    : moveChildComp(x, y, w, h), paramedBeta(params),handled(handler, parent, this),drvred(drvr)
 {
-
-
+    vals.sldr.setRange(0, 5, 1);
 }
 
-Line2DPanel::DrawstyleKnob::DrawstyleKnob(int x, int y, int w, int h,  juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler)
-    : moveChildComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this) {
-
-
+Line2DPanel::DrawstyleKnob::DrawstyleKnob(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr)
+    : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvred(drvr) {
+    vals.sldr.setRange(0, 5, 1);
 }
 
 Line2DPanel::DashJoinstyleKnob::DashJoinstyleKnob(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler)
-    : moveChildComp(x, y, w, h), paramed(_paramSetter) , handled(handler, parent, this) {
+    : moveChildComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this) {}
 
-}
-
-Line2DPanel::DashCapstyleKnob::DashCapstyleKnob(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler) 
-    : moveChildComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this) {
-
-}
-
+Line2DPanel::DashCapstyleKnob::DashCapstyleKnob(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler)
+    : moveChildComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this) {}
 
 TextPanel::TextPanel(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr)
     : childComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this) , drvrShellNotifer(_drvr) {
@@ -236,13 +182,11 @@ TextPanel::TextPanel(int x, int y, int w, int h, juce::Component* parent, ParamS
 
     fontvariant.lbl.text = "small caps";
 
-    background.UpdateText("Text Background");
+    //background.UpdateText("Text Background");
 
-    background.name.fontHight = 14;
-    color.UpdateText("Text Color");
-    color.name.fontHight = 14;
-
-
+    //background.name.fontHight = 14;
+    //color.UpdateText("Text Color");
+    //color.name.fontHight = 14;
 
 }
 
@@ -276,37 +220,25 @@ void TextPanel::refresh()
 }
 
 AxesPanel::whichGridKnob::whichGridKnob(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr)
-    : moveChildComp(x, y, w, h), paramed(_paramSetter),handled(handler, parent, this), drvred(_drvr)
-{
-
-
-}
+    : moveChildComp(x, y, w, h), paramed(_paramSetter),handled(handler, parent, this), drvred(_drvr){}
 
 AxesPanel::axisGridKnob::axisGridKnob(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr)
-    : moveChildComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this), drvred(_drvr)
-{
-
-
-}
+    : moveChildComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this), drvred(_drvr){}
 
 void AxesPanel::refresh()
 {
-    //Colours
-    color.area.param = &params->gcolor;
+    //Colours    
     color.selection.setText(params->gcolor, juce::dontSendNotification);
 
     //Sliders
     whichKnob.vals.setValue(params->gwhichKnob, juce::dontSendNotification);
     axisKnob.vals.setValue(params->gaxisKnob, juce::dontSendNotification);
-    lineStyleComp.style.vals.setValue(params->glineStyleComp, juce::dontSendNotification);
-
-
+    lineStyleComp.style.vals.sldr.setValue(params->glineStyleComp, juce::dontSendNotification);
 }
 
 void AxesPanel::MakeGridkwargs()
 {
     plotParams.clear();
-
 
     plotParams.push_back(" which=" + whichKnobVals[params->gwhichKnob]);
 
@@ -331,7 +263,6 @@ AxesPanel::axisValuesComp::axisValuesComp(int x, int y, int w, int h, juce::Comp
     : moveChildComp(x, y, w, h), handled(handler, parent, this), drvred(_drvr)
 {
     text.lbl.setEditable(true);
-
 }
 
 AxesPanel::LegendBox::LegendBox(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr)

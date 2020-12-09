@@ -19,21 +19,25 @@ enum enumParmas {
 
 };
 
+ 
+
+
 class Params
 {
 public:
     Params() {}
+    std::vector<juce::String>lineStlyeVals = { "'solid'", "'dashed'", "'dashdot'","'dotted'","'None'" };
+    std::vector<juce::String>FillStyleVals = { "'none'", "'full'", "'left'","'right'" ,"'bottom'" ,"'top'" };
+
 
     juce::String llabel = "";
-    bool lvalueIsVisible = false;
-    
+    bool lvalueIsVisible = false;  
     juce::String lmarker = "";
-    float lmarkerSize = 1;
+    float lmarkerSize = 7.0;
     juce::String lmarkerColor;
     float lmarkerEdgeWith = 1;
     juce::String lmarkeredgecolor;
     int lmarkerFillstyleKnob = 0;
-
     float lalpha = 1.0f;
     juce::String lcolor;
     float lwidth = 1.0f;
@@ -45,8 +49,6 @@ public:
     int ldrawstyleKnob = 0;
     juce::String ldashes = "";
 
-
-
     float galpha = 1;
     juce::String gcolor;
     float gwidth = 1;
@@ -55,10 +57,37 @@ public:
     int glineStyleComp = 0;
     juce::String legendLocation = "best";
 
-
     juce::String tvalue;
     bool tvalueIsVisible = false;
 
+
+    juce::String PlotKwargs;
+    juce::String MakePlotKwargs()
+    {
+        PlotKwargs = "";
+         
+        if (lalpha != 1.0f) PlotKwargs += ", alpha=" + juce::String(lalpha);
+        if (lwidth != 1.0f) PlotKwargs += ", lw=" + juce::String(lwidth);
+        if (lcolor != "") PlotKwargs += ", c='" + lcolor + "'";
+        if (llineStyleComp) PlotKwargs += ", ls=" + lineStlyeVals[llineStyleComp];  
+        if (lvalueIsVisible)
+            if (llabel != "") PlotKwargs += ", label='" + llabel + "'";
+        if (lmarker != "")  
+        {             
+            PlotKwargs += ", marker=" + lmarker ;
+            if (lmarkerSize != 1.0) PlotKwargs += ", markersize=" + juce::String(lmarkerSize);
+            if (lmarkerEdgeWith != 1.0) PlotKwargs += ", markeredgewidth=" + juce::String(lmarkerEdgeWith);
+            if (lmarkerColor != "") PlotKwargs += ", markerfacecolor='" + lmarkerColor  + "'";
+            if (lmarkeredgecolor != "") PlotKwargs += ", markeredgecolor='" + lmarkeredgecolor +"'";
+            if (lmarkerFillstyleKnob) PlotKwargs += ", fillstyle=" + FillStyleVals[lmarkerFillstyleKnob];
+        }
+
+
+
+        return PlotKwargs;
+    }
+
+    
 };
 
 
@@ -130,7 +159,8 @@ public:
 class paramed
 {
 public:   
-    float* t;
+    
+    
     ParamSetter& paramSetter;
     Params* params;
     int panel;
@@ -148,6 +178,101 @@ public:
             {
                prs->lalpha = float(val);
             }
+        }
+    }
+};
+
+class paramedBeta
+{
+     
+public:
+     
+     
+    Params*&  params;
+    int param;
+
+    paramedBeta(Params*& pparams) : params(pparams){}
+
+    void update(double val) {
+        switch (param)
+        {
+            case enumParmas::lalpha:
+            {
+                params->lalpha = float(val) * 0.01f;;
+                return;
+            }
+            case enumParmas::lwidth:
+            {
+                params->lwidth = float(val)*0.01f;
+                return;
+            }
+            case enumParmas::llineStyleComp:
+            {
+                params->llineStyleComp = int(val);
+                return;
+            }
+            case enumParmas::lmarkerSize:
+            {
+                params->lmarkerSize = val*0.25;
+                return;
+            }
+            case enumParmas::lmarkerEdgeWith:
+            {
+                params->lmarkerEdgeWith = val * 0.10;
+                return;
+            }
+            case enumParmas::lmarkerFillstyleKnob:
+            {
+                params->lmarkerFillstyleKnob = int(val);
+                return;
+            }
+
+             
+        default:
+            break;
+        }
+                  
+    }
+
+    void update(juce::String text) {
+        switch (param)
+        {
+        case enumParmas::llabel:
+        {
+            params->llabel = text;
+            return;
+        }
+
+        case enumParmas::lcolor:
+        {
+            params->lcolor = text;
+            return;
+        }
+        case enumParmas::lmarkerColor:
+        {
+            params->lmarkerColor = text;
+            return;
+        }
+        case enumParmas::lmarkeredgecolor:
+        {
+            params->lmarkeredgecolor = text;
+            return;
+        }
+        default:
+            break;
+        }
+    }
+
+    void update(bool isOn) {
+        switch (param)
+        {
+        case enumParmas::lvalueIsVisible:
+        {
+            params->lvalueIsVisible = isOn;
+            return;
+        }
+        default:
+            break;
         }
     }
 };

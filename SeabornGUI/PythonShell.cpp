@@ -32,74 +32,47 @@ void PythonShell::Matplot()
 {
     
     plotParams.clear();
-
-   // PyRun_SimpleString("%matplotlib inline");
-    
+   
     PyRun_SimpleString("fig, ax = plt.subplots(figsize=(8,5))");
-    
-   // PyRun_SimpleString("plt.figsize=(10,4)");
-    
-
-    //PyRun_SimpleString("ax.plot([1, 2, 3, 4], [1, 4, 2, 3])");
-
-   // const char* pltstr1 = "ax.plot([1, 2, 3, 4], [1, 4, 2, 3]";
-
-    
-
     const char* pltstr1 = "plt.plot(";
     const char* close = ");"; //use ";" to supress output
      
-
     for (auto& i : lefPanel.lineList.items)
     {
         plotParams.clear();
-        //i->lbl.sendSynchronousChangeMessage();
         bottomPanel.line2dPanel.params = &i->params;
         lefPanel.axes.xValues.targetLineListItemVals = &i->xValues;
         lefPanel.axes.yValues.targetLineListItemVals = &i->yValues;
         lefPanel.axes.makeArgs();
-        bottomPanel.line2dPanel.MakeLine2Dkwargs();
-
-        // (1, 2, 3, 4), (1, 4, 2, 3)";
-
-       // if (lefPanel.Alpha.lblName.IsOn)              
-           // plotParams.push_back(", alpha=" + lefPanel.Alpha.lbl.getText());
-
-        /*if (lefPanel.lineStyle.vals.getValue())
-            plotParams.push_back(", linestyle='" + lefPanel.intervals[lefPanel.lineStyle.vals.getValue()] + "'");
-
-        if (int(lefPanel.lineWidth.getValue()) != 100)
-            plotParams.push_back(", linewidth=" + juce::String(float(lefPanel.lineWidth.getValue()) * 0.01f));
-
-        if (int(lefPanel.lineAlpha.getValue()) != 100)
-            plotParams.push_back(", alpha=" + juce::String(float(lefPanel.lineAlpha.getValue()) * 0.01f));
-
-        if (lefPanel.markers.active)
-            plotParams.push_back(", marker=" + lefPanel.markers.code);*/
-
-        
+       
         plotParams.insert(plotParams.end(), lefPanel.axes.plotParams.begin(), lefPanel.axes.plotParams.end());
-        plotParams.insert(plotParams.end(), bottomPanel.line2dPanel.plotParams.begin(), bottomPanel.line2dPanel.plotParams.end());
-        //plotParams = buttomPanel.line2dPanel.plotParams;
-
+ 
         //calculate space for parameters
         int mlc = strlen(pltstr1) + 1;
         for (auto& p : plotParams)
             mlc += strlen(p.toUTF8());
         mlc += strlen(close);
 
+        juce::String lineParams = bottomPanel.line2dPanel.params->MakePlotKwargs();
+        mlc += strlen(lineParams.toUTF8());
+       
         //allocate space for parameters
         char* query = (char*)malloc(mlc);
+
         strcpy(query, pltstr1);
 
         //convert strings to chars and append
         for (auto& p : plotParams)
             strcat(query, p.toUTF8());
 
+        strcat(query, lineParams.toUTF8());
+
         strcat(query, close);
 
         PyRun_SimpleString(query);
     }
+
+
 
     bottomPanel.axesPanel.MakeGridkwargs();
     plotParams.clear();
@@ -205,10 +178,6 @@ void PythonShell::Matplot()
 
     PyRun_SimpleString(query);
 
-     
-
-
-
     lefPanel.textList.selectedLbl->sendSynchronousChangeMessage();
     lefPanel.lineList.selectedLbl->sendSynchronousChangeMessage();
     lefPanel.axesList.selectedLbl->sendSynchronousChangeMessage();
@@ -273,9 +242,6 @@ void PythonShell::Matplot()
 
         PyRun_SimpleString(str4);
     }*/
-
-    
-        
-          
+            
     PyRun_SimpleString("plt.savefig('output.png',transparent=True)");     
 }

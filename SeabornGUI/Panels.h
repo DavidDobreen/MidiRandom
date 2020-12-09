@@ -71,14 +71,14 @@ public:
     Params* params;
     std::vector<juce::String> plotParams;
     
-    chLabel value { 600,13,152,35,"Value",this,handler};
+    chLabel value { 600,13,152,35,"Value",this,params,handler,drvr, enumParmas::llabel };
 
     chKnobClassic fontSize{ 10,70,70,70,this,paramSetter,handler ,drvr};
     chKnobClassic fontStretch{ 110,70,70,70,this,paramSetter,handler,drvr };
     chKnobClassic fontWeight{ 210,70,70,70,this,paramSetter,handler,drvr };
 
-    colorsComponent background{ 179,18,121,25,this,handler };
-    colorsComponent color{ 27,18,121,25,this,handler };
+   // colorsComponent background{ 179,18,121,25,this,handler,  };
+    //colorsComponent color{ 27,18,121,25,this,handler, };
 
     FontFamilyKnob fontFamily{ 304,70,150,75,this,handler };
     FontStyleKnob fontStyle{ 455,70,150,75,this,handler };
@@ -173,7 +173,7 @@ public:
        
 
     chKnobClassic alpha{ 487,107,70,70,this,paramSetter, handler,drvr };
-    colorsComponent color{ 409,82,161,25,this,handler };
+    colorsComponent color{ 409,82,161,25,this,params,handler,enumParmas::gcolor };
     
 
     std::vector<juce::String> whichKnobVals = { "'none'","'major'", "'minor'", "'both'" };
@@ -182,7 +182,7 @@ public:
     axisGridKnob axisKnob{ 220, 15,150,80,this,paramSetter, handler,drvr };
     
     std::vector<juce::String>lineStlyeVals = { "'solid'", "'dashed'", "'dashdot'","'dotted'","'None'" };
-    LineStyleComp lineStyleComp{ 140,77,250,150,this,paramSetter, handler,drvr };
+    LineStyleComp lineStyleComp{ 140,77,250,150,this,params,handler,drvr };
 
     axisValuesComp axisValues{ 796,19,121,18,this,handler, drvr};
 
@@ -193,7 +193,7 @@ public:
         alpha.sldr.onValueChange = [&] {if (params != nullptr) params->galpha = alpha.sldr.getValue(); };
         whichKnob.vals.onValueChange = [&] {if (params != nullptr) params->gwhichKnob = whichKnob.vals.getValue(); };
         axisKnob.vals.onValueChange = [&] {if (params != nullptr) params->gaxisKnob = axisKnob.vals.getValue(); };
-        lineStyleComp.style.vals.onValueChange = [&] {if (params != nullptr) params->glineStyleComp = lineStyleComp.style.vals.getValue(); };
+        //lineStyleComp.style.vals.onValueChange = [&] {if (params != nullptr) params->glineStyleComp = lineStyleComp.style.vals.getValue(); };
 
         legendBox.legends.params = params;
        
@@ -205,7 +205,7 @@ public:
 
 };
 
-class Line2DPanel : public juce::ChangeListener, public childComp, public paramed, public handled, public drvrShellNotifer
+class Line2DPanel : public childComp, public paramed, public handled, public drvrShellNotifer
 {
 public:
 
@@ -233,7 +233,7 @@ public:
         DashJoinstyleKnob(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler);
     };
 
-    class DrawstyleKnob : public moveChildComp, public paramed, public handled
+    class DrawstyleKnob : public moveChildComp, public paramedBeta, public handled, public drvred
     {
     public:
         MoveLabel Default{ 11,26,43,20,"default",juce::Colours::slategrey,this,handler };
@@ -242,11 +242,11 @@ public:
         MoveLabel stepsMid{ 85,52,45,23,"steps-mid",juce::Colours::slategrey,this,handler };
         MoveLabel stepsPost{ 32,0,80,20,"steps-post",juce::Colours::slategrey,this,handler };
 
-        SliderComp vals{ "vals",0,4,1,55,20,39,41,this,handler };
-        DrawstyleKnob(int x, int y, int w, int h,  juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler);
+        chKnobClassicBeta vals{ 55,20,39,41,"",this,params,handler,drvr,enumParmas::ldrawstyleKnob };
+        DrawstyleKnob(int x, int y, int w, int h,  juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr);
     };
 
-    class MarkerFillstyleKnob : public moveChildComp, public paramed, public handled
+    class MarkerFillstyleKnob : public moveChildComp, public paramedBeta, public handled, public drvred
     {
     public:
         MoveLabel none{ 16,32,43,20,"none",juce::Colours::slategrey,this,handler };
@@ -256,11 +256,11 @@ public:
         MoveLabel bottom{ 38,8,80,20,"bottom",juce::Colours::slategrey,this,handler };
         MoveLabel top{ 38,8,0,0,"top",juce::Colours::slategrey,this,handler };
 
-        SliderComp vals{ "vals",0,4,1,55,20,39,41,this,handler };
-        MarkerFillstyleKnob(int x, int y, int w, int h,  juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler);
+        chKnobClassicBeta vals{ 41,14,70,70,"",this,params,handler,drvr,enumParmas::lmarkerFillstyleKnob };
+        MarkerFillstyleKnob(int x, int y, int w, int h,  juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr);
     };
 
-    class MarkersBox : public juce::ChangeListener, public moveChildComp, public paramed, public handled, public drvred
+    class MarkersBox : public juce::ChangeListener, public moveChildComp, public paramedBeta, public handled, public drvred
     {
     public:
 
@@ -268,19 +268,19 @@ public:
         chBgComp bkgd{ "wave fx bg and frame and on_off panell2.png",this,handler };
 
         MoveContainer markersCont1{ 0,0,240,100,this,handler };
-        markers markers{ 10,10,250,100,&markersCont1,handler };
+        markers markers{ 10,10,250,100,&markersCont1,params,handler ,drvr};
 
         MoveContainer markersCont2{ 0,0,240,100,this,handler };
-        chKnobClassic markerSize{ 21,17,70,70,&markersCont2,paramSetter,handler,drvr };
-        colorsComponent markerfacecolor{ 90,41,161,25,&markersCont2,handler };
+        chKnobClassicBeta markerSize{ 21,17,70,70,"Size",&markersCont2,params,handler,drvr,enumParmas::lmarkerSize };
+        colorsComponent markerfacecolor{ 90,41,161,25,&markersCont2,params,handler,enumParmas::lmarkerColor };
 
         MoveContainer markersCont3{ 0,0,240,100,this,handler };
-        chKnobClassic markerEdgeWith{ 10,0,70,70,&markersCont3,paramSetter,handler,drvr };
-        colorsComponent markeredgecolor{ 27,0,121,25,&markersCont3,handler };
+        chKnobClassicBeta markerEdgeWith{ 10,0,70,70,"Edge",&markersCont3,params,handler,drvr,enumParmas::lmarkerEdgeWith };
+        colorsComponent markeredgecolor{ 90,41,161,25,&markersCont3,params, handler ,enumParmas::lmarkeredgecolor };
 
         MoveContainer markersCont4{ 0,0,240,100,this,handler };
         std::vector<juce::String>  FillStyleVals = { "'none'", "'full'", "'left'","'right'" ,"'bottom'" ,"'top'" };
-        MarkerFillstyleKnob markerFillstyleKnob{ 0,30,120,70,&markersCont4,paramSetter,handler };
+        MarkerFillstyleKnob markerFillstyleKnob{ 0,20,250,150,&markersCont4,params,handler,drvr};
 
         MoveContainer markersCompLabels{ 50,120,240,20,this,handler };
         fxLabel MarkerKindLbl{ 0,0,50,20,"kind", DEFAULT_LABEL_COLORS ,&markersCont1,&markersCompLabels,handler };
@@ -288,19 +288,19 @@ public:
         fxLabel MarkerEdgeLbl{ 100,0,50,20,"edge", DEFAULT_LABEL_COLORS ,&markersCont3,&markersCompLabels,handler };
         fxLabel MarkerFileLbl{ 150,0,50,20,"fill", DEFAULT_LABEL_COLORS ,&markersCont4,&markersCompLabels,handler };
 
-        MarkersBox(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr);
+        MarkersBox(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr);
         void changeListenerCallback(juce::ChangeBroadcaster* source);
     };
 
     Params dummy;
     Params* params = &dummy;
     
-    MarkersBox markersBox{ 655,26,260,135,this,paramSetter, handler ,drvr};
+    MarkersBox markersBox{ 655,26,260,135,this,params, handler ,drvr};
 
     //chKnobClassic alpha{ 487,107,70,70,this,paramSetter,handler,drvr,1,1 };
-    chKnobClassicBeta alpha { params, 487,107,70,70,this , paramSetter ,handler,drvr ,1,1 };
-    colorsComponent color{ 409,82,161,25,this,handler };
-    chKnobClassic width{ 412,107,70,70,this,paramSetter,handler,drvr };
+    chKnobClassicBeta alpha{ 487,107,70,70,"Alpha",this , params ,handler,drvr , enumParmas::lalpha};
+    colorsComponent color{ 409,82,161,25,this,params,handler,enumParmas::lcolor };
+    chKnobClassicBeta width{ 412,107,70,70,"Width", this,params,handler,drvr, enumParmas::lwidth };
 
     DashCapstyleKnob dashCapstyleKnob{ 10,30,0,0,this,paramSetter,handler };
     std::vector<juce::String>  CapStyleValues = { "'butt'", "'round'", "'projecting'" };
@@ -311,19 +311,18 @@ public:
     DashJoinstyleKnob solidJoinstyleKnob{ 270,100,0,0,this,paramSetter,handler };
 
     std::vector<juce::String>lineStlyeVals = { "'solid'", "'dashed'", "'dashdot'","'dotted'","'None'" };
-    LineStyleComp lineStyleComp{ 140,77,250,150,this,paramSetter,handler,drvr };
+    LineStyleComp lineStyleComp{ 140,77,250,150,this,params,handler,drvr };
 
     std::vector<juce::String>  DrawstyleValues = { "'default'", "'steps'", "'steps-pre'", "'steps-mid'", "'steps-post'" };
-    DrawstyleKnob drawstyleKnob{ 9,77,150,70,this,paramSetter,handler };
+    //DrawstyleKnob drawstyleKnob { 9,77,250,150,this,params,handler,drvr };
 
-    chLabel dashes{ 22,12,180,25,"dashes",this,handler };
-    chLabel label{ 406,54,180,25,"label",this,handler };
+    //chLabel dashes{ 22,12,180,25,"dashes",this,params,handler,drvr};
+    chLabel label { 406,54,180,25,"label",this,params,handler, drvr ,enumParmas::lvalueIsVisible };
      
     std::vector<juce::String> plotParams;
 
     Line2DPanel(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr);
-
-    void changeListenerCallback(juce::ChangeBroadcaster* source);
+   
     void MakeLine2Dkwargs();
     void refresh();
 

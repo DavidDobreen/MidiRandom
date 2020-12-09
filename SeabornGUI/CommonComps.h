@@ -27,29 +27,22 @@ public:
     
     void stoppedDragging() {  
        
-        if (t != nullptr)
-            *t = getValue() * 0.01f;
+         
         sendSynchronousChangeMessage();
     }
 
 private:
 };
 
-class updateSliderCompBeta : public SliderComp,  public paramed, public drvrShellNotifer
+class updateSliderCompBeta : public SliderComp,  public paramedBeta, public drvrShellNotifer
 {
 public:
-    Params*& pparams;
 
-    updateSliderCompBeta( Params*&  params, juce::String _name, int min, int max, int interval, int x, int y, int w, int h, juce::Component* parent,  ParamSetter& _paramSetter,  pngHandler& Handler, Drvr& _drvr, int style = 0, int lookAndFeelClass = 0) :
-        pparams(params), SliderComp(_name, min, max, interval, x, y, w, h, parent, Handler, style, lookAndFeelClass), paramed(_paramSetter),  drvrShellNotifer(_drvr) {
-        
-      
-    }
-    void stoppedDragging() {
-
-        
-        auto val = getValue() * 0.01f;
-        update(getValue() * 0.01f, pparams);
+    updateSliderCompBeta(juce::String _name, int min, int max, int interval, int x, int y, int w, int h, juce::Component* parent, Params*& _params,  pngHandler& Handler, Drvr& _drvr, int style = 0, int lookAndFeelClass = 0) :
+       SliderComp(_name, min, max, interval, x, y, w, h, parent, Handler, style, lookAndFeelClass), paramedBeta(_params),  drvrShellNotifer(_drvr) {}
+    void stoppedDragging() {       
+        auto val = getValue() ;
+        update(getValue());
         sendSynchronousChangeMessage();
     }
 
@@ -80,7 +73,7 @@ class MoveLabel : public juce::ChangeBroadcaster, public moveChildComp, public h
 public:
     juce::String text;
     juce::Colour textColor;
-    int fontHight{ 14 };
+    int fontHight{ 16 };
     bool manualClick = false; //to indicate if the label was clicked or called by another function
     MoveLabel(int x, int y, int w, int h, juce::String _text, juce::Colour color, juce::Component* parent, pngHandler& handler) : moveChildComp(x, y, w, h), handled(handler, parent, this) {
         text = _text;
@@ -137,31 +130,34 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ColourSelectorWindow)
 };
 
-class chLabel : public childComp, public handled, public juce::ChangeListener, public juce::ChangeBroadcaster
+class chLabel : public moveChildComp, public juce::ChangeListener, public paramedBeta, public handled,  public drvrShellNotifer
 {
 public:
 
-    class labelTextBox : public moveChildComp, public handled
+    class labelTextBox : public moveChildComp, public paramedBeta, public handled, public drvrShellNotifer
     {
     public:
         chBgComp frame{ "bottom pads name frame3.png",this ,handler };
         juce::Label lbl;
-        labelTextBox(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler)
-            : moveChildComp(x, y, w, h), handled(handler, parent, this) {
+        labelTextBox(int x, int y, int w, int h, juce::Component* parent, Params*& params,pngHandler& handler,Drvr& drvr)
+            : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvrShellNotifer(drvr){
             addAndMakeVisible(lbl);
+            lbl.onTextChange = [&] {update(lbl.getText()); sendSynchronousChangeMessage(); };
+
         }
         void resized() { lbl.setBounds(getLocalBounds()); };
+        
     };
 
     juce::String text;   
     fxLabel lblName{ 0,-1,60,18, "",DEFAULT_LABEL_COLORS,nullptr,this,handler };
-    labelTextBox lbl{ 60,0,136,18,this,handler };
+    labelTextBox lbl{ 60,0,136,18,this,params,handler,drvr};
 
-    chLabel(int x, int y, int w, int h, juce::String name, juce::Component* parent, pngHandler& handler);
+    chLabel(int x, int y, int w, int h, juce::String name, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr, int param);
     void changeListenerCallback(juce::ChangeBroadcaster* source);
 };
 
-class colorsComponent : public moveChildComp, public handled
+class colorsComponent : public moveChildComp, public paramedBeta, public handled
 {
 public:
     class icon : public moveChildComp, public handled
@@ -171,17 +167,18 @@ public:
         icon(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : moveChildComp(x, y, w, h), handled(handler, parent, this) {}
     };
 
-    class iconArea : public juce::ChangeListener, public moveChildComp, public handled
+    class iconArea : public juce::ChangeListener, public paramedBeta, public moveChildComp, public handled
     {
     public:
-        juce::String* param = nullptr; //Where you store the color value
+        //juce::String* param = nullptr; //Where you store the color value
         juce::String WindowTitle = "window";
         juce::Array<Component::SafePointer<Component>> windows;
         juce::Label& selection;
 
         SafePointer<Component> win;
 
-        iconArea(int x, int y, int w, int h, juce::Label& _selection, juce::Component* parent, pngHandler& handler) : selection(_selection), moveChildComp(x, y, w, h), handled(handler, parent, this) {}
+        iconArea(int x, int y, int w, int h, juce::Label& _selection, juce::Component* parent, Params*& params, pngHandler& handler) 
+            : selection(_selection), moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this) {}
         void mouseDown(const juce::MouseEvent& event) {
 
             if (win == NULL)
@@ -215,19 +212,20 @@ public:
         void changeListenerCallback(juce::ChangeBroadcaster* source) {
 
             selection.setText("#" + static_cast<ColourSelectorWindow*>(source)->currentColor, juce::dontSendNotification);
-            *param = selection.getText();
+            update(selection.getText());           
         }
 
     };
 
-
     juce::Label selection;
     colorsComponent::icon icon{ 40,0,41,25,this,handler };
-    colorsComponent::iconArea area{ 40,0,41,25,selection,this,handler };
+    colorsComponent::iconArea area{ 40,0,41,25,selection,this,params,handler };
     fxLabel name{ 0,0,40,25,"",juce::Colours::slategrey,juce::Colours::slategrey,nullptr,this,handler };
 
-    colorsComponent(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : moveChildComp(x, y, w, h), handled(handler, parent, this) {
+    colorsComponent(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, int param)
+        : moveChildComp(x, y, w, h), paramedBeta(params),handled(handler, parent, this) {
         addAndMakeVisible(selection);
+        area.param = param;
     }
     void resized() { selection.setBounds(80, 0, 70, 25); }
 
@@ -259,54 +257,51 @@ public:
         : moveChildComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this), drvred(_drvr) {}
 };
 
-class chKnobClassicBeta : public moveChildComp,  public paramed, public handled, public drvred
+class chKnobClassicBeta : public moveChildComp,  public paramedBeta, public handled , public drvred
 {
 public:
-    Params*& pparams;
-   ;
+    
+    updateSliderCompBeta sldr{ "vals",0,100,1,15,15,39,41,this, params,  handler,  drvr };
+    MoveLabel LblName{ 0,51,70,18, "",juce::Colours::slategrey,this,handler };
 
-    updateSliderCompBeta sldr{ pparams, "vals",0,100,1,15,15,39,41,this, paramSetter,  handler,drvr };
-    fxLabel LblName{ 14,60,70,30, "",juce::Colours::slategrey,juce::Colours::slategrey,nullptr,this,handler };
-
-    chKnobClassicBeta(Params*& params, int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr, int panel, int param )
-        : pparams(params),moveChildComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this), drvred(_drvr) {
-        
-        sldr.panel =  panel;
-        sldr.panel =  param;
+    chKnobClassicBeta( int x, int y, int w, int h, juce::String lblText, juce::Component* parent, Params*& _params, pngHandler& handler, Drvr& _drvr, int param )
+        :  moveChildComp(x, y, w, h), paramedBeta(_params), handled(handler, parent, this), drvred(_drvr) {       
+        LblName.text = lblText;
+        LblName.repaint();
+        sldr.param =  param;
     }
 };
 
-class LineStyleComp : public moveChildComp, public paramed, public handled, public drvred
+class LineStyleComp : public moveChildComp, public paramedBeta, public handled, public drvred
 {
     public:
-        class StyleKnob : public moveChildComp, public paramed, public handled, public drvred
+        class StyleKnob : public moveChildComp, public paramedBeta, public handled, public drvred
         {
         public:
+
             MoveLabel solid{ 34,56,45,20,"solid",juce::Colours::slategrey,this,handler };
             MoveLabel dashed{ 4,25,50,20,"dashed",juce::Colours::slategrey,this,handler };
             MoveLabel dashdot{ 53,5,45,20,"dashdot",juce::Colours::slategrey,this,handler };
             MoveLabel dotted{ 98,25,45,20,"dotted",juce::Colours::slategrey,this,handler };
             MoveLabel custom{ 80,55,60,20,"custom",juce::Colours::slategrey,this,handler };
 
-            updateSliderComp<int> vals{ "vals",0,4,1,55,20,39,41,this,paramSetter, handler ,drvr};
-            StyleKnob(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr)
-                : moveChildComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this) , drvred(_drvr) {
-        
+            chKnobClassicBeta vals{47,6,70,70,"", this, params, handler ,drvr,enumParmas::llineStyleComp};
+            StyleKnob(int x, int y, int w, int h, juce::Component* parent, Params*& params , pngHandler& handler, Drvr& _drvr)
+                : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this) , drvred(_drvr) {
+                vals.sldr.setRange(0, 4, 1);  
                 solid.setName("solid");
                 dashed.setName("dashed");
                 dashdot.setName("dashdot");
                 dotted.setName("dotted");
                 custom.setName("custom");
-
             }
-
         };
 
         juce::Label customLbl;
 
-        StyleKnob style{ 0,0,150,80,this,paramSetter, handler,drvr };
-        LineStyleComp(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr)
-            : moveChildComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this), drvred(_drvr) {
+        StyleKnob style{ 0,0,150,80,this,params, handler,drvr };
+        LineStyleComp(int x, int y, int w, int h, juce::Component* parent, Params*& params , pngHandler& handler, Drvr& _drvr)
+            : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvred(_drvr) {
             addAndMakeVisible(customLbl);           
             customLbl.setEditable(true);        
         }
@@ -358,15 +353,13 @@ public:
     void paint(juce::Graphics& g);
 };
 
-class markers : public moveChildComp, public handled, public juce::ChangeListener
+class markers : public paramedBeta, public drvrShellNotifer, public juce::ChangeListener, public moveChildComp, public handled 
 {
 public:
 
     int active = 0;
     juce::String code;
-    Params* params = nullptr;
-    juce::ChangeBroadcaster replot;
-
+    
     marker point{ 0,0,20,20,"point","'.'",this,handler };
     marker pixel{ 20,0,20,20,"pixel","','",this,handler };
     marker circle{ 40,0,20,20,"circle","'o'",this,handler };
@@ -403,7 +396,7 @@ public:
     marker caretup_centered_at_base{ 180,40,20,20,"caretup_centered_at_base","10",this,handler };
     marker caretdown_centered_at_base{ 200,40,20,20,"caretdown_centered_at_base","11",this,handler };
 
-    markers(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler);
+    markers(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr);
     void changeListenerCallback(juce::ChangeBroadcaster* source);
 
 };

@@ -101,9 +101,9 @@ void LineList::changeListenerCallback(juce::ChangeBroadcaster* source)
     lbl->textColor= juce::Colours::aqua;
 
     bottomPanel.line2dPanel.params = &item->params;
-    bottomPanel.line2dPanel.markersBox.markers.params = &item->params;
-    bottomPanel.line2dPanel.markersBox.markeredgecolor.area.param = &item->params.lmarkeredgecolor;
-    bottomPanel.line2dPanel.markersBox.markerfacecolor.area.param = &item->params.lmarkerColor;
+    //bottomPanel.line2dPanel.markersBox.markers.params = &item->params;
+    //bottomPanel.line2dPanel.markersBox.markeredgecolor.area.param = &item->params.lmarkeredgecolor;
+    //bottomPanel.line2dPanel.markersBox.markerfacecolor.area.param = &item->params.lmarkerColor;
      
     bottomPanel.line2dPanel.refresh();
 
