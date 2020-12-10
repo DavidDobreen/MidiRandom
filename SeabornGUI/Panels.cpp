@@ -10,17 +10,19 @@
 
 #include "Panels.h"
 
-Line2DPanel::Line2DPanel(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr)
-    : childComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this), drvrShellNotifer(_drvr) {
+Line2DPanel::Line2DPanel(int x, int y, int w, int h, juce::Component* parent,   pngHandler& handler, Drvr& _drvr)
+    : childComp(x, y, w, h),  handled(handler, parent, this), drvrShellNotifer(_drvr) {
         
-    width.sldr.setRange(0, 500, 1);
-    width.sldr.setValue(100,juce::dontSendNotification);            
+    LineBox.width.sldr.setRange(0, 500, 1);
+    LineBox.width.sldr.setValue(100,juce::dontSendNotification);
+
+    
 }
 
 void Line2DPanel::MakeLine2Dkwargs()
 {
 
-    plotParams.clear();
+    /*plotParams.clear();
 
     if (params->lalpha != 1.0f)
         plotParams.push_back(", alpha=" + juce::String(params->lalpha));
@@ -46,7 +48,7 @@ void Line2DPanel::MakeLine2Dkwargs()
             plotParams.push_back(", markerfacecolor=" + juce::String(params->lmarkerColor));
         if (params->lmarkeredgecolor != "")
             plotParams.push_back(", markeredgecolor=" + juce::String(params->lmarkeredgecolor));
-    }
+    }*/
         
 
     /*if (color.selection.getText() != "")
@@ -99,9 +101,9 @@ void Line2DPanel::refresh()
     color.selection.setText(params->lcolor, juce::dontSendNotification);
 
     //Sliders
-    alpha.sldr.setValue(params->lalpha * 100, juce::dontSendNotification);
-    width.sldr.setValue(params->lwidth * 100, juce::dontSendNotification);
-    lineStyleComp.style.vals.sldr.setValue(params->llineStyleComp, juce::dontSendNotification);
+    LineBox.alpha.sldr.setValue(params->lalpha * 100, juce::dontSendNotification);
+    LineBox.width.sldr.setValue(params->lwidth * 100, juce::dontSendNotification);
+    LineBox.lineStyleComp.style.vals.sldr.setValue(params->llineStyleComp, juce::dontSendNotification);
 
     //markers
     markersBox.markerSize.sldr.setValue(params->lmarkerSize*4, juce::dontSendNotification);
@@ -156,28 +158,26 @@ Line2DPanel::DrawstyleKnob::DrawstyleKnob(int x, int y, int w, int h, juce::Comp
     vals.sldr.setRange(0, 5, 1);
 }
 
-Line2DPanel::DashJoinstyleKnob::DashJoinstyleKnob(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler)
-    : moveChildComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this) {}
+Line2DPanel::DashJoinstyleKnob::DashJoinstyleKnob(int x, int y, int w, int h, juce::Component* parent,  pngHandler& handler)
+    : moveChildComp(x, y, w, h), handled(handler, parent, this) {}
 
-Line2DPanel::DashCapstyleKnob::DashCapstyleKnob(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler)
-    : moveChildComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this) {}
+Line2DPanel::DashCapstyleKnob::DashCapstyleKnob(int x, int y, int w, int h, juce::Component* parent,  pngHandler& handler)
+    : moveChildComp(x, y, w, h),   handled(handler, parent, this) {}
 
-TextPanel::TextPanel(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr)
-    : childComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this) , drvrShellNotifer(_drvr) {
+TextPanel::TextPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : childComp(x, y, w, h),  handled(handler, parent, this) , drvrShellNotifer(_drvr) {
 
-    value.lbl.lbl.onTextChange = [&] {params->tvalue = value.lbl.lbl.getText();
-    sendSynchronousChangeMessage();
-    };
-    value.addChangeListener(this);
+     
+     
     
-    fontSize.sldr.setRange(0, 1000, 1);
+    /*fontSize.sldr.setRange(0, 1000, 1);
     fontSize.LblName.text = "Size";
 
     fontStretch.sldr.setRange(0, 1000, 1);
     fontStretch.LblName.text = "Stretch";
 
     fontWeight.sldr.setRange(0, 1000, 1);
-    fontWeight.LblName.text = "weight";
+    fontWeight.LblName.text = "weight";*/
 
 
     fontvariant.lbl.text = "small caps";
@@ -200,30 +200,42 @@ void TextPanel::changeListenerCallback(juce::ChangeBroadcaster* source)
          
 }
 
-void TextPanel::MakeGridkwargs()
-{
-    
-}
-
 void TextPanel::refresh()
 {
     value.lbl.lbl.setText(params->tvalue,juce::dontSendNotification);
     value.lblName.IsOn = params->tvalueIsVisible;
     value.lblName.repaint();
-    ////Colours
-    //color.area.param = &params->color;
-    //color.selection.setText(params->color, juce::dontSendNotification);
 
-    ////Sliders
-    //alpha.sldr.setValue(params->alpha * 100, juce::dontSendNotification);
-    //width.sldr.setValue(params->width * 100, juce::dontSendNotification);
+    if (TickPanel)
+    {
+        lbls.setVisible(true);
+        lbls.lbl.lbl.setText(params->tickLbls, juce::dontSendNotification);
+        lbls.lblName.IsOn = params->tickLblsEnabled;
+        lbls.lblName.repaint();
+    }
+    else
+    {
+        lbls.setVisible(false);
+    }
+    
+
+    fontSize.sldr.setValue(params->tsize , juce::dontSendNotification);
+    fontFamily.vals.sldr.setValue(params->tfontfamily , juce::dontSendNotification);
+   
 }
 
-AxesPanel::whichGridKnob::whichGridKnob(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr)
-    : moveChildComp(x, y, w, h), paramed(_paramSetter),handled(handler, parent, this), drvred(_drvr){}
+AxesPanel::whichGridKnob::whichGridKnob(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr)
+    : moveChildComp(x, y, w, h), paramedBeta(params),handled(handler, parent, this), drvred(_drvr){
+    vals.sldr.setRange(0, 3, 1);
+    vals.setName("whichAxisSlider");
+}
 
-AxesPanel::axisGridKnob::axisGridKnob(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr)
-    : moveChildComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this), drvred(_drvr){}
+
+AxesPanel::axisGridKnob::axisGridKnob(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr)
+    : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvred(_drvr){
+    vals.sldr.setRange(0, 2, 1);
+    vals.setName("AxisSlider");
+}
 
 void AxesPanel::refresh()
 {
@@ -231,14 +243,19 @@ void AxesPanel::refresh()
     color.selection.setText(params->gcolor, juce::dontSendNotification);
 
     //Sliders
-    whichKnob.vals.setValue(params->gwhichKnob, juce::dontSendNotification);
-    axisKnob.vals.setValue(params->gaxisKnob, juce::dontSendNotification);
-    lineStyleComp.style.vals.sldr.setValue(params->glineStyleComp, juce::dontSendNotification);
+    styleBox.whichKnob.vals.sldr.setValue(params->gwhichKnob, juce::dontSendNotification);
+    styleBox.axisKnob.vals.sldr.setValue(params->gaxisKnob, juce::dontSendNotification);
+    styleBox.lineStyleComp.style.vals.sldr.setValue(params->glineStyleComp, juce::dontSendNotification);
+}
+
+AxesPanel::AxesPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : moveChildComp(x, y, w, h), handled(handler, parent, this), drvred(_drvr) {
+
 }
 
 void AxesPanel::MakeGridkwargs()
 {
-    plotParams.clear();
+   /* plotParams.clear();
 
     plotParams.push_back(" which=" + whichKnobVals[params->gwhichKnob]);
 
@@ -255,28 +272,19 @@ void AxesPanel::MakeGridkwargs()
         plotParams.push_back(", lw=" + juce::String(params->gwidth));
 
     if (params->gcolor != "")
-        plotParams.push_back(", c='" + params->gcolor + "'");
+        plotParams.push_back(", c='" + params->gcolor + "'");*/
 
 }
 
-AxesPanel::axisValuesComp::axisValuesComp(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
-    : moveChildComp(x, y, w, h), handled(handler, parent, this), drvred(_drvr)
-{
-    text.lbl.setEditable(true);
-}
-
-AxesPanel::LegendBox::LegendBox(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr)
-    : moveChildComp(x, y, w, h), paramed(_paramSetter),handled(handler, parent, this), drvred(_drvr)
+AxesPanel::LegendBox::LegendBox(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr)
+    : moveChildComp(x, y, w, h), paramedBeta(params),handled(handler, parent, this), drvred(drvr)
 {
     legendLbl.addChangeListener(this);
     locLbl.addChangeListener(this);
      
     horizontal.sldr.setRange(0, 500, 1);
     horizontal.sldr.setValue(100, juce::dontSendNotification);
-
-    vertical.sldr.setRange(0, 100, 1);
-    vertical.sldr.setValue(100, juce::dontSendNotification);
-
+    
     horizontal.LblName.text = "horizontal";
     vertical.LblName.text = "vertical";
 
@@ -298,4 +306,68 @@ void AxesPanel::LegendBox::changeListenerCallback(juce::ChangeBroadcaster* sourc
         lbl->repaint();
         lbl->comp->setVisible(true);
     }
+}
+
+Line2DPanel::LineStyleBox::LineStyleBox(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr)
+    : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvred(_drvr) {
+
+    lineLbl1.addChangeListener(this);
+    lineLbl2.addChangeListener(this);
+     
+   
+}
+
+void Line2DPanel::LineStyleBox::changeListenerCallback(juce::ChangeBroadcaster* source)
+{
+    lineLbl1.IsOn = false; lineLbl1.repaint();
+    lineLbl2.IsOn = false; lineLbl2.repaint();
+    
+    lineCont1.setVisible(false);
+    lineCont2.setVisible(false);
+    
+    fxLabel* lbl = dynamic_cast<fxLabel*>(source);
+    if (lbl != nullptr)
+    {
+        lbl->IsOn = true;
+        lbl->repaint();
+        lbl->comp->setVisible(true);
+    }
+}
+
+AxesPanel::StyleBox::StyleBox(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr)
+    : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvred(drvr) {
+
+    styleLbl1.addChangeListener(this);
+    styleLbl2.addChangeListener(this);
+    styleLbl3.addChangeListener(this);
+
+}
+
+void AxesPanel::StyleBox::changeListenerCallback(juce::ChangeBroadcaster* source)
+{
+    styleLbl1.IsOn = false; styleLbl1.repaint();
+    styleLbl2.IsOn = false; styleLbl2.repaint();
+    styleLbl3.IsOn = false; styleLbl3.repaint();
+
+    styleCont1.setVisible(false);
+    styleCont2.setVisible(false);
+    styleCont3.setVisible(false);
+
+    fxLabel* lbl = dynamic_cast<fxLabel*>(source);
+    if (lbl != nullptr)
+    {
+        lbl->IsOn = true;
+        lbl->repaint();
+        lbl->comp->setVisible(true);
+    }
+}
+
+TextPanel::FontFamilyKnob::FontFamilyKnob(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr)
+    : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvred(drvr) {
+    vals.sldr.setRange(0, 5, 1);
+}
+
+TextPanel::FontStyleKnob::FontStyleKnob(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr)
+    : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvred(drvr) {
+    vals.sldr.setRange(0, 2, 1);
 }

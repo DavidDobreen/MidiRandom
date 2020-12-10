@@ -132,6 +132,16 @@ TextList::TextList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottom
     title->lbl.text = "Title";
     title->lbl.addChangeListener(this);
     items.add(title);
+
+    auto xTicks = new item(9, 62, 76, 18, this, handler);
+    xTicks->lbl.text = "xTicks";
+    xTicks->lbl.addChangeListener(this);
+    items.add(xTicks);
+
+    auto yTicks = new item(9, 80, 76, 18, this, handler);
+    yTicks->lbl.text = "yTicks";
+    yTicks->lbl.addChangeListener(this);
+    items.add(yTicks);
 }
 
 void TextList::resized()
@@ -145,12 +155,16 @@ void TextList::changeListenerCallback(juce::ChangeBroadcaster* source)
     bottomPanel.line2dPanel.setVisible(false);
     bottomPanel.axesPanel.setVisible(false);
     bottomPanel.textPanel.setVisible(true);
-
-
+    
     MoveLabel* lbl = static_cast<MoveLabel*>(source);
     selectedLbl = lbl;
     TextList::item* item = static_cast<TextList::item*>(lbl->getParentComponent());
     if (lbl->manualClick) bottomPanel.selectedPanel = &bottomPanel.textPanel;
+
+    if (lbl->text == "xTicks" || lbl->text == "yTicks")
+        bottomPanel.textPanel.TickPanel = true;
+    else
+        bottomPanel.textPanel.TickPanel = false;
 
     bottomPanel.namebox.lbl.text = lbl->text;
     bottomPanel.namebox.repaint();

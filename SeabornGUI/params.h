@@ -14,13 +14,12 @@
 enum enumParmas {
     llabel, lvalueIsVisible, lmarker, lmarkerSize, lmarkerColor, lmarkerEdgeWith, lmarkeredgecolor, lmarkerFillstyleKnob, lalpha, lcolor, 
     lwidth, llineStyleComp, ldashCapstyleKnob, ldashJoinstyleKnob, lsolidCapstyleKnob, lsolidJoinstyleKnob, ldrawstyleKnob,ldashes, llabelvalueIsVisible,
-    galpha, gcolor, gwidth, gwhichKnob, gaxisKnob, glineStyleComp, glegendLocation,
-    tvalue, tvalueIsVisible
+    
+    galpha, gcolor, gwidth, gwhichKnob, gaxisKnob, glineStyleComp, glegendLocation, gXrange, applyXrange, gYrange, applyYrange,
+    
+    tvalue, tvalueIsVisible, tcolor, tsize, tfontfamily , tfontstyle, tickLbls, tickLblsEnabled
 
 };
-
- 
-
 
 class Params
 {
@@ -28,7 +27,10 @@ public:
     Params() {}
     std::vector<juce::String>lineStlyeVals = { "'solid'", "'dashed'", "'dashdot'","'dotted'","'None'" };
     std::vector<juce::String>FillStyleVals = { "'none'", "'full'", "'left'","'right'" ,"'bottom'" ,"'top'" };
-
+    std::vector<juce::String> whichKnobVals = { "'none'","'major'", "'minor'", "'both'" };
+    std::vector<juce::String>axisKnobVals = { "'both'", "'x'", "'y'" };    
+    std::vector<juce::String>fontFamilyVals = { "'serif'", "'sans-serif'", "'cursive'", "'fantasy'", "'monospace'" };
+    std::vector<juce::String>fontStyleVals = { "'normal'","'italic'", "'oblique'" };
 
     juce::String llabel = "";
     bool lvalueIsVisible = false;  
@@ -56,40 +58,30 @@ public:
     int gaxisKnob = 0;
     int glineStyleComp = 0;
     juce::String legendLocation = "best";
+    juce::String xRange = "";
+    bool applyXrange = false;
+    juce::String yRange = "";
+    bool applyYrange = false;
 
     juce::String tvalue;
+    juce::String tcolor;
     bool tvalueIsVisible = false;
-
+    float tsize = 1.0f;
+    int tfontfamily = 0;
+    int tfontstyle = 0;
+    juce::String tickLbls;
+    bool tickLblsEnabled = false;
+     
 
     juce::String PlotKwargs;
-    juce::String MakePlotKwargs()
-    {
-        PlotKwargs = "";
-         
-        if (lalpha != 1.0f) PlotKwargs += ", alpha=" + juce::String(lalpha);
-        if (lwidth != 1.0f) PlotKwargs += ", lw=" + juce::String(lwidth);
-        if (lcolor != "") PlotKwargs += ", c='" + lcolor + "'";
-        if (llineStyleComp) PlotKwargs += ", ls=" + lineStlyeVals[llineStyleComp];  
-        if (lvalueIsVisible)
-            if (llabel != "") PlotKwargs += ", label='" + llabel + "'";
-        if (lmarker != "")  
-        {             
-            PlotKwargs += ", marker=" + lmarker ;
-            if (lmarkerSize != 1.0) PlotKwargs += ", markersize=" + juce::String(lmarkerSize);
-            if (lmarkerEdgeWith != 1.0) PlotKwargs += ", markeredgewidth=" + juce::String(lmarkerEdgeWith);
-            if (lmarkerColor != "") PlotKwargs += ", markerfacecolor='" + lmarkerColor  + "'";
-            if (lmarkeredgecolor != "") PlotKwargs += ", markeredgecolor='" + lmarkeredgecolor +"'";
-            if (lmarkerFillstyleKnob) PlotKwargs += ", fillstyle=" + FillStyleVals[lmarkerFillstyleKnob];
-        }
 
-
-
-        return PlotKwargs;
-    }
-
-    
+    juce::String MakePlotKwargs();       
+    juce::String MakeGridParams();
+    juce::String MakeGridRangeParams(bool x=true);
+    juce::String MakeTextParams();
+    juce::String MakeTicksParams();
+     
 };
-
 
 //class Line2Dparams  
 //{
@@ -141,138 +133,17 @@ public:
 //    TextParams() {}
 //};
 
-
-class ParamSetter
-{
-public:
-    Params* param;
-
-    /*Line2Dparams* lineParams;
-    GridParams* gridParams;
-    TextParams* textParams;*/
-
-    ParamSetter() {}
-};
-
-
-
-class paramed
-{
-public:   
-    
-    
-    ParamSetter& paramSetter;
-    Params* params;
-    int panel;
-    int param;
-    
-     
-    paramed(ParamSetter& _paramSetter ) : paramSetter(_paramSetter) {             
-        
-    }
-
-    void update(double val, Params*& prs) {
-        if (panel == 1)
-        {
-            if (param = 1)
-            {
-               prs->lalpha = float(val);
-            }
-        }
-    }
-};
-
 class paramedBeta
 {
      
 public:
-     
-     
+       
     Params*&  params;
     int param;
 
     paramedBeta(Params*& pparams) : params(pparams){}
 
-    void update(double val) {
-        switch (param)
-        {
-            case enumParmas::lalpha:
-            {
-                params->lalpha = float(val) * 0.01f;;
-                return;
-            }
-            case enumParmas::lwidth:
-            {
-                params->lwidth = float(val)*0.01f;
-                return;
-            }
-            case enumParmas::llineStyleComp:
-            {
-                params->llineStyleComp = int(val);
-                return;
-            }
-            case enumParmas::lmarkerSize:
-            {
-                params->lmarkerSize = val*0.25;
-                return;
-            }
-            case enumParmas::lmarkerEdgeWith:
-            {
-                params->lmarkerEdgeWith = val * 0.10;
-                return;
-            }
-            case enumParmas::lmarkerFillstyleKnob:
-            {
-                params->lmarkerFillstyleKnob = int(val);
-                return;
-            }
-
-             
-        default:
-            break;
-        }
-                  
-    }
-
-    void update(juce::String text) {
-        switch (param)
-        {
-        case enumParmas::llabel:
-        {
-            params->llabel = text;
-            return;
-        }
-
-        case enumParmas::lcolor:
-        {
-            params->lcolor = text;
-            return;
-        }
-        case enumParmas::lmarkerColor:
-        {
-            params->lmarkerColor = text;
-            return;
-        }
-        case enumParmas::lmarkeredgecolor:
-        {
-            params->lmarkeredgecolor = text;
-            return;
-        }
-        default:
-            break;
-        }
-    }
-
-    void update(bool isOn) {
-        switch (param)
-        {
-        case enumParmas::lvalueIsVisible:
-        {
-            params->lvalueIsVisible = isOn;
-            return;
-        }
-        default:
-            break;
-        }
-    }
+    void update(double val);
+    void update(juce::String text);    
+    void update(bool isOn);
 };

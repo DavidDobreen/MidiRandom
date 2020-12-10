@@ -53,19 +53,19 @@ public:
     };
 };
 
-class BottomPanel : public childComp, public paramed, public handled, public drvred
+class BottomPanel : public childComp,  public handled, public drvred
 {
 public:     
     chBgComp bkgd{ "SAMPLE GRAY PANEL2.png",this,handler };
     namebox namebox{ 407,13,152,35,this,handler };
-    TextPanel textPanel{ 0,0,dims[2],dims[3],this,paramSetter,handler ,drvr};
-    Line2DPanel line2dPanel{ 0,0,dims[2],dims[3],this,paramSetter,handler,drvr };
-    AxesPanel axesPanel{ 0,0,dims[2],dims[3],this,paramSetter,handler,drvr };
+    TextPanel textPanel{ 0,0,dims[2],dims[3],this,handler ,drvr};
+    Line2DPanel line2dPanel{ 0,0,dims[2],dims[3],this,handler,drvr };
+    AxesPanel axesPanel{ 0,0,dims[2],dims[3],this,handler,drvr };
 
     juce::Component* selectedPanel = nullptr;
 
-    BottomPanel(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr) 
-        : childComp(x, y, w, h), paramed(_paramSetter),handled(handler, parent, this) , drvred(_drvr) {
+    BottomPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr) 
+        : childComp(x, y, w, h),handled(handler, parent, this) , drvred(_drvr) {
         namebox.lbl.text = "text panel";
         namebox.setName("namebox");
     }

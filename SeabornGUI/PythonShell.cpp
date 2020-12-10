@@ -72,100 +72,143 @@ void PythonShell::Matplot()
         PyRun_SimpleString(query);
     }
 
-
-
-    bottomPanel.axesPanel.MakeGridkwargs();
     plotParams.clear();
-    plotParams.insert(plotParams.end(), bottomPanel.axesPanel.plotParams.begin(), bottomPanel.axesPanel.plotParams.end());
+
+
+    juce::String GridParams = bottomPanel.axesPanel.params->MakeGridParams();
+    if (GridParams.isNotEmpty())
+    {
+        char* query = (char*)malloc(strlen(GridParams.toUTF8()));
+        strcpy(query, GridParams.toUTF8());
+        PyRun_SimpleString(query);
+    }
+
+     
+    juce::String RangeParams = bottomPanel.axesPanel.params->MakeGridRangeParams(true);
+    if (RangeParams.isNotEmpty())
+    {
+        char* query = (char*)malloc(strlen(RangeParams.toUTF8()));
+        strcpy(query, RangeParams.toUTF8());
+        PyRun_SimpleString(query);
+    }
+
+    RangeParams = bottomPanel.axesPanel.params->MakeGridRangeParams(false);
+    if (RangeParams.isNotEmpty())
+    {
+        char* query = (char*)malloc(strlen(RangeParams.toUTF8()));
+        strcpy(query, RangeParams.toUTF8());
+        PyRun_SimpleString(query);
+    }
+
     
-    pltstr1 = "plt.grid(True,";
+    /*pltstr1 = "plt.grid(True,";
     int mlc = strlen(pltstr1) + 1;
     for (auto& p : plotParams)
         mlc += strlen(p.toUTF8());
-    mlc += strlen(close);
+    mlc += strlen(close);*/
 
     //allocate space for parameters
-    char* query = (char*)malloc(mlc);
-    strcpy(query, pltstr1);
+   /* char* query = (char*)malloc(mlc);
+    strcpy(query, pltstr1);*/
 
     //convert strings to chars and append
-    for (auto& p : plotParams)
-        strcat(query, p.toUTF8());
+    /*for (auto& p : plotParams)
+        strcat(query, p.toUTF8());*/
 
-    strcat(query, close);
+    /*strcat(query, close);
 
-    PyRun_SimpleString(query);
+    PyRun_SimpleString(query);*/
 
-    if (bottomPanel.axesPanel.axisValues.text.lbl.getText() != "")
-    {
-        pltstr1 = "plt.axis([";
-        close = "])";
-        mlc = strlen(pltstr1) + 1;
-        mlc += strlen(bottomPanel.axesPanel.axisValues.text.lbl.getText().toUTF8());
-        mlc += strlen(close);
-        query = (char*)malloc(mlc);
-        strcpy(query, pltstr1);
-        strcat(query, bottomPanel.axesPanel.axisValues.text.lbl.getText().toUTF8());
-        strcat(query, close);
-    }
-        
-    PyRun_SimpleString(query);
+    int mlc = strlen(pltstr1) + 1;
+    char* query = (char*)malloc(mlc);
+
 
     //XLabel
     bottomPanel.textPanel.params = &lefPanel.textList.items[0]->params;
     if (bottomPanel.textPanel.params->tvalueIsVisible)
-        if (bottomPanel.textPanel.params->tvalue != "")
-        {
-            pltstr1 = "plt.xlabel('";
-            close = "')";
-            mlc = strlen(pltstr1) + 1;
-            mlc += strlen(bottomPanel.textPanel.params->tvalue.toUTF8());
-            mlc += strlen(close);
-            query = (char*)malloc(mlc);
-            strcpy(query, pltstr1);
-            strcat(query, bottomPanel.textPanel.params->tvalue.toUTF8());
-            strcat(query, close);
+    {
+        juce::String res = bottomPanel.textPanel.params->MakeTextParams();
+        pltstr1 = "plt.xlabel(";
+        close = ")";
+        mlc = strlen(pltstr1) + 1;
+        mlc += strlen(res.toUTF8());
+        mlc += strlen(close);
+        query = (char*)malloc(mlc);
+        strcpy(query, pltstr1);
+        strcat(query, res.toUTF8());
+        strcat(query, close);
 
-            PyRun_SimpleString(query);
-        }
-
-    
+        PyRun_SimpleString(query);
+    }
 
     bottomPanel.textPanel.params = &lefPanel.textList.items[1]->params;
     if (bottomPanel.textPanel.params->tvalueIsVisible)
-        if (bottomPanel.textPanel.params->tvalue != "")
-        {
-            pltstr1 = "plt.ylabel('";
-            close = "')";
-            mlc = strlen(pltstr1) + 1;
-            mlc += strlen(bottomPanel.textPanel.params->tvalue.toUTF8());
-            mlc += strlen(close);
-            query = (char*)malloc(mlc);
-            strcpy(query, pltstr1);
-            strcat(query, bottomPanel.textPanel.params->tvalue.toUTF8());
-            strcat(query, close);
+    {
+        juce::String res = bottomPanel.textPanel.params->MakeTextParams();
+        pltstr1 = "plt.ylabel(";
+        close = ")";
+        mlc = strlen(pltstr1) + 1;
+        mlc += strlen(res.toUTF8());
+        mlc += strlen(close);
+        query = (char*)malloc(mlc);
+        strcpy(query, pltstr1);
+        strcat(query, res.toUTF8());
+        strcat(query, close);
 
-            PyRun_SimpleString(query);
-        }
+        PyRun_SimpleString(query);
+    }
 
     bottomPanel.textPanel.params = &lefPanel.textList.items[2]->params;
     if (bottomPanel.textPanel.params->tvalueIsVisible)
-        if (bottomPanel.textPanel.params->tvalue != "")
-        {
-            pltstr1 = "plt.title('";
-            close = "')";
-            mlc = strlen(pltstr1) + 1;
-            mlc += strlen(bottomPanel.textPanel.params->tvalue.toUTF8());
-            mlc += strlen(close);
-            query = (char*)malloc(mlc);
-            strcpy(query, pltstr1);
-            strcat(query, bottomPanel.textPanel.params->tvalue.toUTF8());
-            strcat(query, close);
+    {
+        juce::String res = bottomPanel.textPanel.params->MakeTextParams();
+        pltstr1 = "plt.title(";
+        close = ")";
+        mlc = strlen(pltstr1) + 1;
+        mlc += strlen(res.toUTF8());
+        mlc += strlen(close);
+        query = (char*)malloc(mlc);
+        strcpy(query, pltstr1);
+        strcat(query, res.toUTF8());
+        strcat(query, close);
 
-            PyRun_SimpleString(query);
-        }
+        PyRun_SimpleString(query);
+    }
 
-   
+    bottomPanel.textPanel.params = &lefPanel.textList.items[3]->params;
+    if (bottomPanel.textPanel.params->tvalueIsVisible)
+    {
+        juce::String res = bottomPanel.textPanel.params->MakeTicksParams();
+        pltstr1 = "plt.xticks(";
+        close = ")";
+        mlc = strlen(pltstr1) + 1;
+        mlc += strlen(res.toUTF8());
+        mlc += strlen(close);
+        query = (char*)malloc(mlc);
+        strcpy(query, pltstr1);
+        strcat(query, res.toUTF8());
+        strcat(query, close);
+
+        PyRun_SimpleString(query);
+    }
+
+    bottomPanel.textPanel.params = &lefPanel.textList.items[4]->params;
+    if (bottomPanel.textPanel.params->tvalueIsVisible)
+    {
+        juce::String res = bottomPanel.textPanel.params->MakeTicksParams();
+        pltstr1 = "plt.yticks(";
+        close = ")";
+        mlc = strlen(pltstr1) + 1;
+        mlc += strlen(res.toUTF8());
+        mlc += strlen(close);
+        query = (char*)malloc(mlc);
+        strcpy(query, pltstr1);
+        strcat(query, res.toUTF8());
+        strcat(query, close);
+
+        PyRun_SimpleString(query);
+    }
+    
     pltstr1 = "plt.legend(loc='";
     close = "')";
     mlc = strlen(pltstr1) + 1;
@@ -243,5 +286,6 @@ void PythonShell::Matplot()
         PyRun_SimpleString(str4);
     }*/
             
-    PyRun_SimpleString("plt.savefig('output.png',transparent=True)");     
+   //PyRun_SimpleString("plt.savefig('output.png',transparent=True)");
+   PyRun_SimpleString("plt.savefig('output.png')");
 }

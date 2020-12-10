@@ -13,26 +13,6 @@
 #include "params.h"
 #include "GuiDriver.h"
 
-template <class T>
-class updateSliderComp : public SliderComp, public paramed, public drvrShellNotifer
-{
-public:       
-    
-    updateSliderComp(juce::String _name, int min, int max, int interval, int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& Handler, Drvr& _drvr ,int style = 0, int lookAndFeelClass = 0) :
-        SliderComp(_name, min, max, interval, x, y, w, h, parent, Handler, style, lookAndFeelClass) , paramed(_paramSetter),drvrShellNotifer(_drvr) {
-       
-    }
-
-    ~updateSliderComp() {}
-    
-    void stoppedDragging() {  
-       
-         
-        sendSynchronousChangeMessage();
-    }
-
-private:
-};
 
 class updateSliderCompBeta : public SliderComp,  public paramedBeta, public drvrShellNotifer
 {
@@ -138,20 +118,40 @@ public:
     {
     public:
         chBgComp frame{ "bottom pads name frame3.png",this ,handler };
-        juce::Label lbl;
-        labelTextBox(int x, int y, int w, int h, juce::Component* parent, Params*& params,pngHandler& handler,Drvr& drvr)
-            : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvrShellNotifer(drvr){
-            addAndMakeVisible(lbl);
-            lbl.onTextChange = [&] {update(lbl.getText()); sendSynchronousChangeMessage(); };
+        fxLabel& lblName;
+        
 
+        juce::Label lbl;
+        labelTextBox(int x, int y, int w, int h, fxLabel& _lblName, juce::Component* parent, Params*& params,pngHandler& handler,Drvr& drvr)
+            : moveChildComp(x, y, w, h), lblName(_lblName), paramedBeta(params), handled(handler, parent, this), drvrShellNotifer(drvr){
+            addAndMakeVisible(lbl);
+            lbl.onTextChange = [&] {
+                update(lbl.getText());                
+                
+
+                if (lblName.IsOn && lbl.getText() == "")
+                {
+                    lblName.sendSynchronousChangeMessage();
+                    return;
+                }
+                
+                else if (!lblName.IsOn && lbl.getText() != "")
+                {
+                    lblName.sendSynchronousChangeMessage();
+                    return;
+                }
+               
+
+            sendSynchronousChangeMessage();
+            };
         }
         void resized() { lbl.setBounds(getLocalBounds()); };
         
     };
 
     juce::String text;   
-    fxLabel lblName{ 0,-1,60,18, "",DEFAULT_LABEL_COLORS,nullptr,this,handler };
-    labelTextBox lbl{ 60,0,136,18,this,params,handler,drvr};
+    fxLabel lblName{ 0,0,30,18, "",DEFAULT_LABEL_COLORS,nullptr,this,handler };
+    labelTextBox lbl{ 60,0,136,18,lblName,this,params,handler,drvr};
 
     chLabel(int x, int y, int w, int h, juce::String name, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr, int param);
     void changeListenerCallback(juce::ChangeBroadcaster* source);
@@ -236,26 +236,26 @@ public:
 
 };
 
-class chKnobSelection : public childComp, public paramed, public handled, public drvred
-{
-public:
-    updateSliderComp<int> vals{ "vals",0,100,1,0,3,39,41,this,paramSetter, handler,drvr };
-    juce::OwnedArray<juce::Label> lbls;
-    chKnobSelection(int x, int y, int w, int h, std::vector<juce::String> options, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr)
-        : childComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this), drvred(_drvr) {
-        vals.setRange(0, options.size() - 1, 1);
-    }
-};
+//class chKnobSelection : public childComp, public paramed, public handled, public drvred
+//{
+//public:
+//    updateSliderComp<int> vals{ "vals",0,100,1,0,3,39,41,this,paramSetter, handler,drvr };
+//    juce::OwnedArray<juce::Label> lbls;
+//    chKnobSelection(int x, int y, int w, int h, std::vector<juce::String> options, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr)
+//        : childComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this), drvred(_drvr) {
+//        vals.setRange(0, options.size() - 1, 1);
+//    }
+//};
 
-class chKnobClassic : public moveChildComp, public paramed, public handled, public drvred
-{
-public:
-    updateSliderComp<float> sldr{ "vals",0,100,1,15,15,39,41,this,paramSetter, handler,drvr };
-    fxLabel LblName{ 14,60,70,30, "",juce::Colours::slategrey,juce::Colours::slategrey,nullptr,this,handler };
-
-    chKnobClassic(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr, int _panel=0,int _param=0)
-        : moveChildComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this), drvred(_drvr) {}
-};
+//class chKnobClassic : public moveChildComp, public paramed, public handled, public drvred
+//{
+//public:
+//    updateSliderComp<float> sldr{ "vals",0,100,1,15,15,39,41,this,paramSetter, handler,drvr };
+//    fxLabel LblName{ 14,60,70,30, "",juce::Colours::slategrey,juce::Colours::slategrey,nullptr,this,handler };
+//
+//    chKnobClassic(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr, int _panel=0,int _param=0)
+//        : moveChildComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this), drvred(_drvr) {}
+//};
 
 class chKnobClassicBeta : public moveChildComp,  public paramedBeta, public handled , public drvred
 {
@@ -417,7 +417,6 @@ public:
     juce::String loc = "";
     Params* params = nullptr;
       
-
     item best{ 9, 4, 80, 20, this, handler };
     item upperRight{ 89, 4, 80, 20, this, handler };
     item upperLeft{ 169, 4, 80, 20, this, handler };
