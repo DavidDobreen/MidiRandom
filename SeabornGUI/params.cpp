@@ -39,11 +39,11 @@ juce::String Params::MakeGridParams()
 {
     
     PlotKwargs = "";
-    if (gwhichKnob)
+    if (gridOn)
     {
-        PlotKwargs += "plt.grid(True, which=" + whichKnobVals[gwhichKnob];
-        if (gaxisKnob) PlotKwargs += ", axis=" + axisKnobVals[gaxisKnob];
-        if (glineStyleComp) PlotKwargs += ", ls=" + lineStlyeVals[glineStyleComp];
+        PlotKwargs = "plt.grid(True, which='" + gwhichKnob + "'";
+        if (gaxisKnob != "both") PlotKwargs += ", axis='" + gaxisKnob + "'";
+        if (glineStyleComp != "") PlotKwargs += ", ls='" + glineStyleComp + "'";
         if (galpha != 1.0) PlotKwargs += ", alpha=" + juce::String(galpha);
         if (gwidth != 1.0) PlotKwargs += ", lw=" + juce::String(gwidth);
         if (gcolor != "") PlotKwargs += ", c='" + gcolor + "'";
@@ -109,6 +109,18 @@ juce::String Params::MakeTicksParams()
     return PlotKwargs;
 }
 
+juce::String Params::MakeHistKwargs()
+{
+
+    PlotKwargs = "";
+     
+     
+    if (bins != "" ) PlotKwargs += ",bins=" + bins;
+     
+
+    return PlotKwargs;
+}
+
 
 void paramedBeta::update(double val)
 {
@@ -144,16 +156,16 @@ void paramedBeta::update(double val)
         params->lmarkerFillstyleKnob = int(val);
         return;
     }
-    case enumParmas::gwhichKnob:
+    /*case enumParmas::gwhichKnob:
     {
         params->gwhichKnob = int(val);
         return;
-    }
-    case enumParmas::gaxisKnob:
+    }*/
+   /* case enumParmas::gaxisKnob:
     {
         params->gaxisKnob = int(val);
         return;
-    }
+    }*/
     case enumParmas::tsize:
     {
         params->tsize = val;
@@ -203,6 +215,16 @@ void paramedBeta::update(bool isOn)
     case enumParmas::tickLblsEnabled:
     {
         params->tickLblsEnabled = isOn;
+        return;
+    }
+    case enumParmas::gridOn:
+    {
+        params->gridOn = isOn;
+        return;
+    }
+    case enumParmas::binsEnabled:
+    {
+        params->binsEnabled = isOn;
         return;
     }
 
@@ -266,6 +288,27 @@ void paramedBeta::update(juce::String text)
     case enumParmas::tickLbls:
     {
         params->tickLbls = text;
+        return;
+    }
+    case enumParmas::gwhichKnob:
+    {
+        params->gwhichKnob = text;
+        return;
+    }
+    case enumParmas::gaxisKnob:
+    {
+        params->gaxisKnob = text;
+        return;
+    }
+    case enumParmas::glineStyleComp:
+    {
+        params->glineStyleComp = text;
+        return;
+    }
+
+    case enumParmas::bins:
+    {
+        params->bins = text;
         return;
     }
     default:

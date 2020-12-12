@@ -224,18 +224,10 @@ void TextPanel::refresh()
    
 }
 
-AxesPanel::whichGridKnob::whichGridKnob(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr)
-    : moveChildComp(x, y, w, h), paramedBeta(params),handled(handler, parent, this), drvred(_drvr){
-    vals.sldr.setRange(0, 3, 1);
-    vals.setName("whichAxisSlider");
-}
 
 
-AxesPanel::axisGridKnob::axisGridKnob(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr)
-    : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvred(_drvr){
-    vals.sldr.setRange(0, 2, 1);
-    vals.setName("AxisSlider");
-}
+
+
 
 void AxesPanel::refresh()
 {
@@ -243,9 +235,9 @@ void AxesPanel::refresh()
     color.selection.setText(params->gcolor, juce::dontSendNotification);
 
     //Sliders
-    styleBox.whichKnob.vals.sldr.setValue(params->gwhichKnob, juce::dontSendNotification);
-    styleBox.axisKnob.vals.sldr.setValue(params->gaxisKnob, juce::dontSendNotification);
-    styleBox.lineStyleComp.style.vals.sldr.setValue(params->glineStyleComp, juce::dontSendNotification);
+    //styleBox.whichKnob.vals.sldr.setValue(params->gwhichKnob, juce::dontSendNotification);
+    //styleBox.axisKnob.vals.sldr.setValue(params->gaxisKnob, juce::dontSendNotification);
+    //styleBox.lineStyleComp.style.vals.sldr.setValue(params->glineStyleComp, juce::dontSendNotification);
 }
 
 AxesPanel::AxesPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
@@ -370,4 +362,13 @@ TextPanel::FontFamilyKnob::FontFamilyKnob(int x, int y, int w, int h, juce::Comp
 TextPanel::FontStyleKnob::FontStyleKnob(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr)
     : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvred(drvr) {
     vals.sldr.setRange(0, 2, 1);
+}
+
+HistPanel::HistPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : moveChildComp(x, y, w, h), handled(handler, parent, this), drvred(_drvr) {
+ 
+}
+
+void HistPanel::refresh()
+{
 }

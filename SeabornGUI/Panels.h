@@ -117,29 +117,6 @@ public:
         void changeListenerCallback(juce::ChangeBroadcaster* source);
     };
 
-    class whichGridKnob : public moveChildComp, public paramedBeta, public handled, public drvred
-    {
-    public:
-        MoveLabel none{ 28,54,45,20,"none",juce::Colours::slategrey,this,handler  };
-        MoveLabel major{ 18,13,45,20,"major",juce::Colours::slategrey,this,handler  };
-        MoveLabel minor{ 90,13,45,20,"minor",juce::Colours::slategrey,this,handler };
-        MoveLabel both{ 71,54,60,20,"both",juce::Colours::slategrey,this,handler };
-
-        chKnobClassicBeta vals {55,20,70,70,"",this,params, handler ,drvr, enumParmas::gwhichKnob};
-        whichGridKnob(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr);
-    };
-
-    class axisGridKnob : public moveChildComp, public paramedBeta, public handled, public drvred
-    {
-    public:
-        MoveLabel both{ 31,53,45,20,"both",juce::Colours::slategrey,this,handler };
-        MoveLabel X{ 54,1,45,20,"X",juce::Colours::slategrey,this,handler };
-        MoveLabel Y{ 66,53,45,20,"Y",juce::Colours::slategrey,this,handler };
-
-        chKnobClassicBeta vals {55,20,70,70,"Axis",this, params, handler,drvr,enumParmas::gaxisKnob };
-        axisGridKnob(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr);
-    };
-
     class StyleBox : public juce::ChangeListener, public moveChildComp, public paramedBeta, public handled, public drvred
     {
     public:
@@ -147,22 +124,21 @@ public:
         chBgComp bkgd{ "wave fx bg and frame and on_off panell2.png",this,handler };
 
         MoveContainer styleCont1{ 0,0,240,100,this,handler };
-        std::vector<juce::String> whichKnobVals = { "'none'","'major'", "'minor'", "'both'" };
-        whichGridKnob whichKnob{ 21, 5,100,80,&styleCont1,params, handler,drvr };
-        std::vector<juce::String>axisKnobVals = { "'both'", "'x'", "'y'" };
-        axisGridKnob axisKnob{ 121, 3,150,80,&styleCont1,params, handler,drvr };
+        SelectionBox whichAxes{ 144,17,{ "both", "x", "y" },&styleCont1, params,handler,drvr,enumParmas::gaxisKnob };
+        SelectionBox whichKinds{ 41,17,{ "both","major", "minor" },&styleCont1, params,handler,drvr,enumParmas::gwhichKnob };
         
         MoveContainer styleCont2{ 0,0,240,100,this,handler };
         chKnobClassicBeta alpha{ 21,17,70,70,"Alpha",&styleCont2,params, handler,drvr,enumParmas::galpha };
 
         MoveContainer styleCont3{ 0,0,240,100,this,handler };
-        std::vector<juce::String>lineStlyeVals = { "'solid'", "'dashed'", "'dashdot'","'dotted'","'None'" };
-        LineStyleComp lineStyleComp{ 21,17,250,150,&styleCont3,params,handler,drvr };
+        SelectionBox lineStyleComp{ 41,17,{ "solid", "dashed", "dashdot","dotted" },&styleCont3, params,handler,drvr,enumParmas::glineStyleComp };
 
         MoveContainer markersCompLabels{ 50,120,240,20,this,handler };
-        fxLabel styleLbl1{ 0,0,50,20,"which", DEFAULT_LABEL_COLORS ,&styleCont1,&markersCompLabels,handler };
-        fxLabel styleLbl2{ 50,0,50,20,"alpha", DEFAULT_LABEL_COLORS ,&styleCont2,&markersCompLabels,handler };
-        fxLabel styleLbl3{ 150,0,50,20,"style", DEFAULT_LABEL_COLORS ,&styleCont2,&markersCompLabels,handler };
+        moveChButton gridOnOff{ 0,0,15,15,"fx on botton2.png","fx off botton2.png",&markersCompLabels,params,handler,drvr,enumParmas::gridOn };
+         
+        fxLabel styleLbl1{ 50,0,50,20,"which", DEFAULT_LABEL_COLORS ,&styleCont1,&markersCompLabels,handler };
+        fxLabel styleLbl2{ 100,0,50,20,"alpha", DEFAULT_LABEL_COLORS ,&styleCont2,&markersCompLabels,handler };
+        fxLabel styleLbl3{ 150,0,50,20,"style", DEFAULT_LABEL_COLORS ,&styleCont3,&markersCompLabels,handler };
 
         StyleBox(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr);
         void changeListenerCallback(juce::ChangeBroadcaster* source);
@@ -180,6 +156,8 @@ public:
 
     chLabel xVals{ 409,92,150,25,"x-vals",this,params,handler, drvr ,enumParmas::applyXrange };
     chLabel yVals{ 409,122,150,25,"y-vals",this,params,handler, drvr ,enumParmas::applyYrange };
+
+    
       
     void MakeGridkwargs();
     void refresh();
@@ -321,10 +299,21 @@ public:
     chLabel label { 409,92,150,25,"label",this,params,handler, drvr ,enumParmas::lvalueIsVisible };
      
     std::vector<juce::String> plotParams;
+   
 
     Line2DPanel(int x, int y, int w, int h, juce::Component* parent,  pngHandler& handler, Drvr& _drvr);
    
     void MakeLine2Dkwargs();
     void refresh();
 
+};
+
+class HistPanel : public moveChildComp, public handled, public drvred
+{
+public:
+    Params* params;
+    chLabel bins{ 409,92,150,25,"bins",this,params,handler, drvr ,enumParmas::binsEnabled };
+    HistPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+
+    void refresh();
 };

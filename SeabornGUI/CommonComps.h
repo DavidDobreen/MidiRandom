@@ -14,6 +14,7 @@
 #include "GuiDriver.h"
 
 
+
 class updateSliderCompBeta : public SliderComp,  public paramedBeta, public drvrShellNotifer
 {
 public:
@@ -32,12 +33,46 @@ private:
 class moveChildComp : public childComp
 {
 public:
-    bool EditLocation = false;
+    class CompArea : public childComp
+    {
+    public:
+        childComp* parent;
+        bool EditLocation = false;
+        CompArea(int x, int y, int w, int h) : childComp(x, y, w, h){}
+                 
+        void mouseDown(const juce::MouseEvent& event)
+        {
+            if (event.mods.isRightButtonDown())
+            {
+                EditLocation = !EditLocation;
+                this->toBack();
+                repaint();
+            }
+                
+        }
+        void mouseDrag(const juce::MouseEvent& event);
+        void paint(juce::Graphics& g)
+        {
+            if (EditLocation)
+            {
+                g.setColour(juce::Colours::red);
+                g.drawRect(getLocalBounds());
+            }
+            
+                
+        }
+    };
+    
+    
 
-    moveChildComp(int x, int y, int w, int h) : childComp(x, y, w, h) {}
-    void mouseDown(const juce::MouseEvent& event);
-    void mouseDrag(const juce::MouseEvent& event);
-    void paint(juce::Graphics& g);
+    moveChildComp(int x, int y, int w, int h) : childComp(x, y, w, h) { addAndMakeVisible(area); area.parent = this; }
+       
+        
+    void mouseDown(const juce::MouseEvent& event){}
+    void mouseDrag(const juce::MouseEvent& event){}
+    void paint(juce::Graphics& g){}
+
+    CompArea area{ 0,0,dims[2],dims[3] };
 };
 
 //Just an empty moveable container
@@ -64,6 +99,25 @@ public:
     void paint(juce::Graphics& g);
 
     void mouseDown(const juce::MouseEvent& event) override;
+};
+
+class moveChButton : public chButton, public paramedBeta, public drvred
+{
+public:
+    moveChButton(int x, int y, int w, int h, juce::String _onPng, juce::String _offPng, juce::Component* parent, Params*& params, pngHandler& Handler, Drvr& drvr, int _param)
+        :chButton(x, y, w, h, _onPng, _offPng, parent, Handler), paramedBeta(params), drvred(drvr)
+    {
+        param = _param;
+        drvr.ShellNotifiers.add(this);
+    }
+    void mouseDown(const juce::MouseEvent& event) override
+    {
+        if (event.mods.isLeftButtonDown())
+        {          
+            update(!IsOn);
+            buttonPressed();
+        }           
+    }
 };
 
 class ColourSelectorWindow : public juce::DocumentWindow, public juce::ChangeBroadcaster,
@@ -433,4 +487,58 @@ public:
     ~Legends() {}
 
     void changeListenerCallback(juce::ChangeBroadcaster* source);
+};
+
+class SelectionBox : public moveChildComp, paramedBeta, public handled, public drvred
+{
+public:
+    class selecion : public moveChildComp, public paramedBeta, public handled, public drvrShellNotifer
+    {
+    public:       
+        juce::String text;
+        chButton* led;
+        juce::OwnedArray<chButton>& leds;
+
+        selecion (int y,juce::String _text, juce::OwnedArray<chButton>& _leds , chButton* _led,juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr, int _param)
+            : moveChildComp(22,y,51,20),leds(_leds),led(_led), paramedBeta(params),handled(handler,parent,this), drvrShellNotifer(drvr){
+            text = _text;
+            param = _param;
+        }
+        void paint(juce::Graphics& g) {
+            g.setColour(juce::Colours::slategrey);
+            g.drawFittedText(text, getLocalBounds(), juce::Justification::centredLeft, 1);
+        }
+
+        void mouseDown(const juce::MouseEvent& event) {
+               
+            for (auto& l : leds)                  
+                if (l->IsOn)
+                    l->buttonPressed();                                               
+            led->buttonPressed();            
+            update(text);
+            sendSynchronousChangeMessage();
+        }
+    };
+
+    juce::OwnedArray<selecion> options;
+    juce::OwnedArray<chButton> leds;
+    juce::OwnedArray<childComp> ledsBlockers;
+       
+    SelectionBox(int x, int y, std::vector<juce::String> vals, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr, int param) :
+        moveChildComp(x, y, 73, vals.size() * 25), paramedBeta(params), handled(handler, parent, this), drvred(drvr)
+    {
+        for (int i = 0; i < vals.size(); i++)
+        {      
+            leds.add(new chButton{ 5, i * 20 + 5,10,10,"LED-ON_blue.png","LED_blue_off.png" ,this,handler });
+            options.add(new selecion{ i * 20,vals[i],leds,leds.getLast(), this,params, handler, drvr,param });
+            ledsBlockers.add(new moveChildComp{ 5,i * 20 + 5,10,10 });
+            handler.compRszr_push(this, ledsBlockers.getLast());
+           
+        }        
+    }
+    //void resized() {
+    //    for (int i = 0; i < options.size(); ++i)
+    //        //options[i]->setBounds(22, i * 20, 51, 20);
+    //        ledsBlockers[i]->toFront(false);
+    //}  
 };

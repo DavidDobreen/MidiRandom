@@ -10,37 +10,37 @@
 
 #include "CommonComps.h"
 
-void moveChildComp::mouseDown(const juce::MouseEvent& event)
-{
-    if (event.mods.isRightButtonDown())
-        if (EditLocation)
-        {
-            EditLocation = !EditLocation;
-            auto childrens = getChildren();
-            for (auto c : childrens)
-                c->setVisible(true);
-            repaint();
-        }
-}
+//void moveChildComp::mouseDown(const juce::MouseEvent& event)
+//{
+//    /*if (event.mods.isRightButtonDown())
+//        if (EditLocation)
+//        {
+//            EditLocation = !EditLocation;
+//            auto childrens = getChildren();
+//            for (auto c : childrens)
+//                c->setVisible(true);
+//            repaint();
+//        }*/
+//}
+//
+//void moveChildComp::mouseDrag(const juce::MouseEvent& event)
+//{
+//    /*if (EditLocation)
+//    {
+//        setTopLeftPosition(dims[0] + event.getDistanceFromDragStartX(), dims[0] + event.getDistanceFromDragStartY());
+//        DBG("current x: " << getX());
+//        DBG("current y: " << getY());
+//    }*/
+//}
 
-void moveChildComp::mouseDrag(const juce::MouseEvent& event)
-{
-    if (EditLocation)
-    {
-        setTopLeftPosition(dims[0] + event.getDistanceFromDragStartX(), dims[0] + event.getDistanceFromDragStartY());
-        DBG("current x: " << getX());
-        DBG("current y: " << getY());
-    }
-}
-
-void moveChildComp::paint(juce::Graphics& g)
-{
-    if (EditLocation)
-    {
-        g.setColour(juce::Colours::red);
-        g.drawRect(getLocalBounds());
-    }
-}
+//void moveChildComp::paint(juce::Graphics& g)
+//{
+//    if (EditLocation)
+//    {
+//        g.setColour(juce::Colours::red);
+//        g.drawRect(getLocalBounds());
+//    }
+//}
 
 void MoveLabel::paint(juce::Graphics& g)
 {
@@ -52,11 +52,11 @@ void MoveLabel::paint(juce::Graphics& g)
 
      
 
-    if (EditLocation)
+    /*if (EditLocation)
     {
         g.setColour(juce::Colours::red);
         g.drawRect(getLocalBounds());
-    }
+    }*/
 }
 
 void MoveLabel::mouseDown(const juce::MouseEvent& event)
@@ -185,3 +185,15 @@ void Legends::changeListenerCallback(juce::ChangeBroadcaster* source)
     sendSynchronousChangeMessage();
    
 }
+
+void moveChildComp::CompArea::mouseDrag(const juce::MouseEvent& event)
+{     
+    if (EditLocation)
+    {
+        parent->setTopLeftPosition(parent->dims[0] + event.getDistanceFromDragStartX(), parent->dims[1] + event.getDistanceFromDragStartY());
+        DBG("current x: " << parent->getX());
+        DBG("current y: " << parent->getY());
+    }
+   
+}
+

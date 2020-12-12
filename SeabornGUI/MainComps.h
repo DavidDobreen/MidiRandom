@@ -41,8 +41,8 @@ public:
 
     std::vector<juce::String> plotParams;
 
-    input xValues{ 25,25,228,17,this,handler };
-    input yValues{ 25,60,228,17,this,handler };
+    input xValues{ 25,0,228,17,this,handler };
+    input yValues{ 25,25,228,17,this,handler };
 
     Axes(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler);
 
@@ -58,6 +58,7 @@ class BottomPanel : public childComp,  public handled, public drvred
 public:     
     chBgComp bkgd{ "SAMPLE GRAY PANEL2.png",this,handler };
     namebox namebox{ 407,13,152,35,this,handler };
+    HistPanel histPanel{ 0,0,dims[2],dims[3],this,handler ,drvr };
     TextPanel textPanel{ 0,0,dims[2],dims[3],this,handler ,drvr};
     Line2DPanel line2dPanel{ 0,0,dims[2],dims[3],this,handler,drvr };
     AxesPanel axesPanel{ 0,0,dims[2],dims[3],this,handler,drvr };
@@ -119,7 +120,8 @@ public:
 
         chBgComp frame{ "bottom pads name frame3.png",this ,handler };
         MoveLabel lbl{ 0,-1,dims[2],dims[3],"",juce::Colours::aqua,this,handler };
-        item(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler);
+        item(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler)
+            :  moveChildComp(x, y, w, h), handled(handler, parent, this) {}
     };
     Axes& axes;
 
@@ -131,6 +133,37 @@ public:
 
     BottomPanel& bottomPanel;
     LineList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler);
+
+    void resized();
+    void changeListenerCallback(juce::ChangeBroadcaster* source);
+
+};
+
+class HistList : public juce::ChangeListener, public moveChildComp, public handled
+{
+public:
+
+    class item : public moveChildComp, public handled
+    {
+    public:
+        Params params;
+        juce::String xValues;
+         
+        chBgComp frame{ "bottom pads name frame3.png",this ,handler };
+        MoveLabel lbl{ 0,-1,dims[2],dims[3],"",juce::Colours::aqua,this,handler };
+        item(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler)
+            : moveChildComp(x, y, w, h), handled(handler, parent, this) {}
+    };
+    Axes& axes;
+
+    chBgComp frame{ "small eq frame3.png",this ,handler };
+    chBgComp bkgd{ "BLACK MAIN BG2.png",this ,handler };
+
+    juce::OwnedArray<item> items;
+    MoveLabel* selectedLbl = nullptr;
+
+    BottomPanel& bottomPanel;
+    HistList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler);
 
     void resized();
     void changeListenerCallback(juce::ChangeBroadcaster* source);
@@ -178,6 +211,7 @@ public:
 
         bottomPanel.line2dPanel.setVisible(false);
         bottomPanel.textPanel.setVisible(false);
+        bottomPanel.histPanel.setVisible(false);
         bottomPanel.axesPanel.setVisible(true);
         
 
@@ -209,18 +243,61 @@ public:
 
 };
 
-class LeftPanel : public childComp, public handled
+
+class ChartList : public juce::ChangeListener, public moveChildComp, public handled
+{
+public:
+    class item : public moveChildComp, public handled
+    {
+    public:
+        
+        class itemArea : public MoveLabel 
+        {
+        public:
+            juce::ChangeBroadcaster cliked;
+            itemArea(int x, int y, int w, int h, juce::String _text, juce::Colour color,juce::Component* parent, pngHandler& handler)
+                : MoveLabel(  x,   y,   w,   h,   _text, color,  parent, handler) {}
+            ~itemArea() { cliked.removeAllChangeListeners(); }
+
+            void mouseDown(const juce::MouseEvent& event) { cliked.sendSynchronousChangeMessage(); }
+            void mouseEnter(const juce::MouseEvent& event) override;
+            
+        };
+        
+        chBgComp frame{ "bottom pads name frame3.png",this ,handler };
+        itemArea lbl{ 0,-1,dims[2],dims[3],"",juce::Colours::slategrey,this,handler };
+        item(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler)
+            : moveChildComp(x, y, w, h), handled(handler, parent, this) {}
+
+        
+    };
+    Axes& axes;
+    
+    chBgComp bkgd{ "BLACK MAIN BG2.png",this ,handler };
+    juce::OwnedArray<ChartList::item> items;
+
+    BottomPanel& bottomPanel;
+    ChartList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler);
+
+    void mouseExit(const juce::MouseEvent& event) { setVisible(false); }
+    void changeListenerCallback(juce::ChangeBroadcaster* source);
+};
+
+class LeftPanel : public juce::ChangeListener, public childComp, public handled
 {
 public:
 
     BottomPanel& bottomPanel;
 
     chBgComp bkgd{ "MASTER GRAY PANEL2.png",this,handler };
-    Axes axes{ 0,0,dims[2],dims[3],this,handler };
-    AxesList axesList{ 30,120,93,236,axes, bottomPanel,this,handler };
-    LineList lineList{ 130,120,93,236,axes, bottomPanel,this,handler };  
-    TextList textList{ 30,360,93,236,axes, bottomPanel,this,handler };
-    
+    Axes axes{ 0,49,dims[2],40,this,handler };
+    AxesList axesList{ 30,113,93,236,axes, bottomPanel,this,handler };
+    HistList histList{ 130,113,93,236,axes, bottomPanel,this,handler };
+    LineList lineList{ 130,113,93,236,axes, bottomPanel,this,handler };
+    TextList textList{ 30,358,93,236,axes, bottomPanel,this,handler };
+    ChartList::item chartName{ 102, 21, 76, 18, this, handler };
+    ChartList chartList{ 98,48,84,100,axes, bottomPanel,this,handler };
+
     /*chLabel XLabel{ 45,50,180,25,"X-LAbel",this,handler };
     chLabel YLabel{ 45,85,180,25,"Y-LAbel",this,handler };
     chLabel Title{ 45,120,180,25,"Title",this,handler };
@@ -235,7 +312,11 @@ public:
         YLabel.lbl.setText("Y =", juce::dontSendNotification);
         Title.lbl.setText("title", juce::dontSendNotification);
         Legend.lbl.setText("", juce::dontSendNotification);*/
+        chartName.lbl.addChangeListener(this);
+        for (auto c : chartList.items)
+            c->lbl.cliked.addChangeListener(this);
 
-         
     }
+
+    void changeListenerCallback(juce::ChangeBroadcaster* source);
 };

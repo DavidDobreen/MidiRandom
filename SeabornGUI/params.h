@@ -15,9 +15,11 @@ enum enumParmas {
     llabel, lvalueIsVisible, lmarker, lmarkerSize, lmarkerColor, lmarkerEdgeWith, lmarkeredgecolor, lmarkerFillstyleKnob, lalpha, lcolor, 
     lwidth, llineStyleComp, ldashCapstyleKnob, ldashJoinstyleKnob, lsolidCapstyleKnob, lsolidJoinstyleKnob, ldrawstyleKnob,ldashes, llabelvalueIsVisible,
     
-    galpha, gcolor, gwidth, gwhichKnob, gaxisKnob, glineStyleComp, glegendLocation, gXrange, applyXrange, gYrange, applyYrange,
+    gridOn, galpha, gcolor, gwidth, gwhichKnob, gaxisKnob, glineStyleComp, glegendLocation, gXrange, applyXrange, gYrange, applyYrange,
     
-    tvalue, tvalueIsVisible, tcolor, tsize, tfontfamily , tfontstyle, tickLbls, tickLblsEnabled
+    tvalue, tvalueIsVisible, tcolor, tsize, tfontfamily , tfontstyle, tickLbls, tickLblsEnabled,
+
+    bins, binsEnabled
 
 };
 
@@ -51,12 +53,13 @@ public:
     int ldrawstyleKnob = 0;
     juce::String ldashes = "";
 
+    bool gridOn = false;
     float galpha = 1;
     juce::String gcolor;
-    float gwidth = 1;
-    int gwhichKnob = 0;
-    int gaxisKnob = 0;
-    int glineStyleComp = 0;
+    float gwidth = 1;    
+    juce::String gwhichKnob = "both";
+    juce::String gaxisKnob = "both";
+    juce::String glineStyleComp = "";
     juce::String legendLocation = "best";
     juce::String xRange = "";
     bool applyXrange = false;
@@ -72,6 +75,8 @@ public:
     juce::String tickLbls;
     bool tickLblsEnabled = false;
      
+    juce::String bins = "";
+    bool binsEnabled = false;
 
     juce::String PlotKwargs;
 
@@ -80,6 +85,8 @@ public:
     juce::String MakeGridRangeParams(bool x=true);
     juce::String MakeTextParams();
     juce::String MakeTicksParams();
+    juce::String MakeHistKwargs();
+    
      
 };
 
