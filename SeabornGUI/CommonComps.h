@@ -88,8 +88,7 @@ class MoveLabel : public juce::ChangeBroadcaster, public moveChildComp, public h
 public:
     juce::String text;
     juce::Colour textColor;
-    int fontHight{ 16 };
-    bool manualClick = false; //to indicate if the label was clicked or called by another function
+    int fontHight{ 16 };   
     MoveLabel(int x, int y, int w, int h, juce::String _text, juce::Colour color, juce::Component* parent, pngHandler& handler) : moveChildComp(x, y, w, h), handled(handler, parent, this) {
         text = _text;
         textColor = color;
@@ -371,12 +370,22 @@ public:
     }
 };
 
-class chToggleButtonAndLabel : public moveChildComp, public handled
+class chToggleButtonAndLabel : public juce::ChangeListener, public moveChildComp, public paramedBeta, public handled, public drvrShellNotifer
 {
 public:
     MoveLabel lbl{ 0,0,60,25,"",juce::Colours::slategrey,this,handler };
-    chButton btn{ 60, 0, 23, 23,"led_red_on2.png","led_red_off2.png" ,this,handler };
-    chToggleButtonAndLabel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : moveChildComp(x, y, w, h), handled(handler, parent, this) {}
+    chButton btn{ 65, 5, 10, 10,"led_red_on2.png","led_red_off2.png" ,this,handler };
+    chToggleButtonAndLabel(int x, int y, int w, int h, juce::String text, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr, int _param)
+        : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvrShellNotifer(_drvr) {
+        param = _param;
+        lbl.text = text;
+        btn.addChangeListener(this);
+    }
+    void changeListenerCallback(juce::ChangeBroadcaster* source)
+    {
+        update(btn.IsOn);
+        sendSynchronousChangeMessage();
+    }
 };
 
 class moveMainTab : public moveChildComp, public handled

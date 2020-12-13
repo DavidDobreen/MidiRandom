@@ -39,7 +39,7 @@ void PythonShell::Matplot()
     const char* pltstr1;
      
     if (lefPanel.lineList.isVisible())
-    {
+    {        
         pltstr1 = "plt.plot(";
         for (auto& i : lefPanel.lineList.items)
         {
@@ -75,6 +75,8 @@ void PythonShell::Matplot()
 
             PyRun_SimpleString(query);
         }
+
+        bottomPanel.line2dPanel.params = &lefPanel.lineList.selectedItem->params;
     }
     else if (lefPanel.histList.isVisible())
     {
@@ -111,6 +113,8 @@ void PythonShell::Matplot()
 
             PyRun_SimpleString(query);
         }
+
+        bottomPanel.histPanel.params = &lefPanel.histList.selectedItem->params;
     }
     
 
@@ -263,14 +267,17 @@ void PythonShell::Matplot()
 
     PyRun_SimpleString(query);
 
-    lefPanel.textList.selectedLbl->sendSynchronousChangeMessage();
-    lefPanel.lineList.selectedLbl->sendSynchronousChangeMessage();
-    lefPanel.axesList.selectedLbl->sendSynchronousChangeMessage();
+    bottomPanel.textPanel.params = &lefPanel.textList.selectedItem->params;
 
-    bottomPanel.line2dPanel.setVisible(false);
+    /*lefPanel.textList.selectedLbl->sendSynchronousChangeMessage();
+    lefPanel.lineList.selectedLbl->sendSynchronousChangeMessage();
+    lefPanel.axesList.selectedLbl->sendSynchronousChangeMessage();*/
+
+    /*bottomPanel.line2dPanel.setVisible(false);
     bottomPanel.axesPanel.setVisible(false);
     bottomPanel.textPanel.setVisible(false);
-    bottomPanel.selectedPanel->setVisible(true);
+    bottomPanel.selectedPanel->setVisible(true);*/
+
     //PyRun_SimpleString("plt.grid(True,color='red',alpha=0.25,marker=4)");
    /* if (lefPanel.XLabel.lblName.IsOn)
     {

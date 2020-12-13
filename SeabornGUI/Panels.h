@@ -84,7 +84,7 @@ public:
     HallignmentKnob Halligment{ 610,70,150,75,this,handler };
     VallignmentKnob Valligment{ 765,70,150,75,this,handler };
 
-    chToggleButtonAndLabel fontvariant{ 842,11,85,25,this,handler };
+    //chToggleButtonAndLabel fontvariant{ 842,11,85,25,this,handler };
 
     TextPanel(int x, int y, int w, int h, juce::Component* parent,  pngHandler& handler, Drvr& _drvr);
 
@@ -312,7 +312,26 @@ class HistPanel : public moveChildComp, public handled, public drvred
 {
 public:
     Params* params;
-    chLabel bins{ 409,92,150,25,"bins",this,params,handler, drvr ,enumParmas::binsEnabled };
+    colorsComponent color{ 373,57,161,25,this,params,handler,enumParmas::binsColor };
+    colorsComponent edgeColor{ 553,57,161,25,this,params,handler,enumParmas::binsEdgeColor };
+    chLabel label{ 409,92,150,25,"label",this,params,handler, drvr ,enumParmas::binsLabelEnabled };
+    chLabel bins{ 409,110,150,25,"bins",this,params,handler, drvr ,enumParmas::binsEnabled };
+    chLabel range{ 409,135,150,25,"range",this,params,handler, drvr ,enumParmas::binsRangeEnabled };
+    chToggleButtonAndLabel density{ 409,160,85,25,"density",this,params,handler,drvr,enumParmas::binsDensity };
+    chToggleButtonAndLabel cumulative{ 509,160,85,25,"cumulative",this,params,handler,drvr,enumParmas::binsCumulative };
+    chToggleButtonAndLabel orientation{ 309,160,85,25,"horizontal",this,params,handler,drvr,enumParmas::binsOrientation };
+    SelectionBox binsType{ 41,17,{ "bar", "barstacked", "step","stepfilled" },this, params,handler,drvr,enumParmas::binsType };
+    SelectionBox binsAllign{ 107,17,{ "left", "mid", "right"},this, params,handler,drvr,enumParmas::binsAllign };
+    chKnobClassicBeta width{ 205,16,70,70,"width",this , params ,handler,drvr , enumParmas::binsWidth };
+    chKnobClassicBeta alpha{ 305,16,70,70,"alpha",this , params ,handler,drvr , enumParmas::binsAlpha };
+    chToggleButtonAndLabel log{ 609,160,85,25,"log",this,params,handler,drvr,enumParmas::binsLogScale };
+    chToggleButtonAndLabel stacked{ 709,160,85,25,"stacked",this,params,handler,drvr,enumParmas::binsStacked };
+    SelectionBox binsHatch{ 882,-4,{ "none", "/", "|","-","+","x","o","O",".","*" },this, params,handler,drvr,enumParmas::binsHatch };
+    SelectionBox binsLineStyle{ 802,14,{ "solid", "dashed", "dashdot", "dotted" },this, params,handler,drvr,enumParmas::binsLineStyle };
+    chKnobClassicBeta lineWidth{ 235,116,70,70,"lineWidth",this , params ,handler,drvr , enumParmas::binsLineWidth };
+    
+
+
     HistPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
 
     void refresh();

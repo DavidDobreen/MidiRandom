@@ -115,7 +115,24 @@ juce::String Params::MakeHistKwargs()
     PlotKwargs = "";
      
      
-    if (bins != "" ) PlotKwargs += ",bins=" + bins;
+    if (binsEnabled && bins != "" ) PlotKwargs += ",bins=" + bins;
+    if (binsRangeEnabled && binsRange != "") PlotKwargs += ",range=(" + binsRange + ")";
+    if (binsLabelEnabled)
+        if (binsLabel != "") PlotKwargs += ", label='" + binsLabel + "'";
+    if (binsDensity)  PlotKwargs += ",density=True";
+    if (binsCumulative)  PlotKwargs += ",cumulative=True";
+    if (binsType != "bar")  PlotKwargs += ",histtype='" + binsType + "'";
+    if (binsAllign != "mid")  PlotKwargs += ",align='" + binsAllign + "'";
+    if (binsOrientation)  PlotKwargs += ",orientation='horizontal'";
+    if (binsWidth != 1.0) PlotKwargs += ",rwidth=" + juce::String(binsWidth);
+    if (binsLogScale)  PlotKwargs += ",log=True";
+    if (binsColor != "") PlotKwargs += ",facecolor='" + binsColor + "'";
+    if (binsEdgeColor != "") PlotKwargs += ",edgecolor='" + binsEdgeColor + "'";
+    if (binsAlpha != 1.0) PlotKwargs += ",alpha=" + juce::String(binsAlpha);
+    if (binsStacked)  PlotKwargs += ",stacked=True";
+    if (binsHatch != "none")  PlotKwargs += ",hatch='" + binsHatch + "'";
+    if (binsLineStyle != "none")  PlotKwargs += ",ls='" + binsLineStyle + "'";
+    if (binsLineWidth != 1.0) PlotKwargs += ", lw=" + juce::String(binsLineWidth);
      
 
     return PlotKwargs;
@@ -128,7 +145,7 @@ void paramedBeta::update(double val)
     {
     case enumParmas::lalpha:
     {
-        params->lalpha = float(val) * 0.01f;;
+        params->lalpha = float(val) * 0.01f;
         return;
     }
     case enumParmas::lwidth:
@@ -156,16 +173,7 @@ void paramedBeta::update(double val)
         params->lmarkerFillstyleKnob = int(val);
         return;
     }
-    /*case enumParmas::gwhichKnob:
-    {
-        params->gwhichKnob = int(val);
-        return;
-    }*/
-   /* case enumParmas::gaxisKnob:
-    {
-        params->gaxisKnob = int(val);
-        return;
-    }*/
+ 
     case enumParmas::tsize:
     {
         params->tsize = val;
@@ -179,6 +187,22 @@ void paramedBeta::update(double val)
     case enumParmas::tfontstyle:
     {
         params->tfontstyle = int(val) ;
+        return;
+    }
+    case enumParmas::binsWidth:
+    {
+        params->binsWidth =val;
+        return;
+    }
+    case enumParmas::binsAlpha:
+    {
+        params->binsAlpha = float(val) * 0.01f;
+        return;
+    }
+
+    case enumParmas::binsLineWidth:
+    {
+        params->binsLineWidth = float(val) * 0.01f;
         return;
     }
 
@@ -225,6 +249,42 @@ void paramedBeta::update(bool isOn)
     case enumParmas::binsEnabled:
     {
         params->binsEnabled = isOn;
+        return;
+    }
+    case enumParmas::binsRangeEnabled:
+    {
+        params->binsRangeEnabled = isOn;
+        return;
+    }
+    case enumParmas::binsDensity:
+    {
+        params->binsDensity = isOn;
+        return;
+    }
+    case enumParmas::binsCumulative:
+    {
+        params->binsCumulative = isOn;
+        return;
+    }
+    case enumParmas::binsOrientation:
+    {
+        params->binsOrientation = isOn;
+        return;
+    }
+
+    case enumParmas::binsLogScale:
+    {
+        params->binsLogScale = isOn;
+        return;
+    }
+    case enumParmas::binsLabelEnabled:
+    {
+        params->binsLabelEnabled = isOn;
+        return;
+    }
+    case enumParmas::binsStacked:
+    {
+        params->binsStacked = isOn;
         return;
     }
 
@@ -311,6 +371,48 @@ void paramedBeta::update(juce::String text)
         params->bins = text;
         return;
     }
+    case enumParmas::binsRange:
+    {
+        params->binsRange = text;
+        return;
+    }
+    case enumParmas::binsType:
+    {
+        params->binsType = text;
+        return;
+    }
+    case enumParmas::binsAllign:
+    {
+        params->binsAllign = text;
+        return;
+    }
+    case enumParmas::binsColor:
+    {
+        params->binsColor = text;
+        return;
+    }
+    case enumParmas::binsEdgeColor:
+    {
+        params->binsEdgeColor = text;
+        return;
+    }
+    case enumParmas::binsLabel:
+    {
+        params->binsLabel = text;
+        return;
+    }
+    case enumParmas::binsHatch:
+    {
+        params->binsHatch = text;
+        return;
+    }
+
+    case enumParmas::binsLineStyle:
+    {
+        params->binsLineStyle = text;
+        return;
+    }
+
     default:
         break;
     }

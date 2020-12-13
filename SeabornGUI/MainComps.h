@@ -96,7 +96,7 @@ public:
     chBgComp bkgd{ "BLACK MAIN BG2.png",this ,handler };
 
     juce::OwnedArray<item> items;
-    MoveLabel* selectedLbl = nullptr;
+    TextList::item* selectedItem = nullptr;
 
     BottomPanel& bottomPanel;
     TextList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler);
@@ -114,7 +114,7 @@ public:
     class item : public moveChildComp, public handled
     {
     public:
-        Params params;
+        Params params;        
         juce::String xValues;
         juce::String yValues;
 
@@ -129,7 +129,7 @@ public:
     chBgComp bkgd{ "BLACK MAIN BG2.png",this ,handler };
 
     juce::OwnedArray<item> items;
-    MoveLabel* selectedLbl = nullptr;
+    LineList::item* selectedItem = nullptr;
 
     BottomPanel& bottomPanel;
     LineList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler);
@@ -160,7 +160,7 @@ public:
     chBgComp bkgd{ "BLACK MAIN BG2.png",this ,handler };
 
     juce::OwnedArray<item> items;
-    MoveLabel* selectedLbl = nullptr;
+    HistList::item* selectedItem = nullptr;
 
     BottomPanel& bottomPanel;
     HistList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler);
@@ -218,7 +218,7 @@ public:
         MoveLabel* lbl = static_cast<MoveLabel*>(source);
         selectedLbl = lbl;
         AxesList::item* item = static_cast<AxesList::item*>(lbl->getParentComponent());
-        if (lbl->manualClick) bottomPanel.selectedPanel = &bottomPanel.axesPanel;
+       
 
         bottomPanel.namebox.lbl.text = lbl->text;
         bottomPanel.namebox.repaint();
@@ -290,7 +290,7 @@ public:
     BottomPanel& bottomPanel;
 
     chBgComp bkgd{ "MASTER GRAY PANEL2.png",this,handler };
-    Axes axes{ 0,49,dims[2],40,this,handler };
+    Axes axes{ 0,49,dims[2],45,this,handler };
     AxesList axesList{ 30,113,93,236,axes, bottomPanel,this,handler };
     HistList histList{ 130,113,93,236,axes, bottomPanel,this,handler };
     LineList lineList{ 130,113,93,236,axes, bottomPanel,this,handler };

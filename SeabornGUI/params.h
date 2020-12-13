@@ -19,7 +19,8 @@ enum enumParmas {
     
     tvalue, tvalueIsVisible, tcolor, tsize, tfontfamily , tfontstyle, tickLbls, tickLblsEnabled,
 
-    bins, binsEnabled
+    bins, binsEnabled, binsColor, binsEdgeColor, binsAlpha,binsLabel, binsLabelEnabled, binsRange, binsRangeEnabled, binsDensity, binsCumulative, binsType, binsAllign, binsOrientation, binsWidth, binsLogScale, 
+    binsStacked, binsHatch, binsLineStyle, binsLineWidth
 
 };
 
@@ -77,6 +78,26 @@ public:
      
     juce::String bins = "";
     bool binsEnabled = false;
+    juce::String binsColor;
+    juce::String binsEdgeColor;
+    float binsAlpha = 1.0f;
+    juce::String binsLabel = "";
+    bool binsLabelEnabled = false;
+    juce::String binsRange = "";
+    bool binsRangeEnabled = false;
+    bool binsDensity = false;
+    bool binsCumulative = false;
+    juce::String binsType = "bar";
+    juce::String binsAllign = "mid";
+    bool binsOrientation = false;
+    float binsWidth = 1.0f;
+    bool binsLogScale = false;
+    bool binsStacked = false;
+    juce::String binsHatch = "none";
+    juce::String binsLineStyle = "solid";
+    float binsLineWidth = 1.0f;
+    
+
 
     juce::String PlotKwargs;
 

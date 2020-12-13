@@ -60,10 +60,8 @@ void MoveLabel::paint(juce::Graphics& g)
 }
 
 void MoveLabel::mouseDown(const juce::MouseEvent& event)
-{
-    manualClick = true;
-    sendSynchronousChangeMessage();
-    manualClick = false;
+{  
+    sendSynchronousChangeMessage();   
 }
 
 chLabel::chLabel(int x, int y, int w, int h, juce::String name, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr, int _param)

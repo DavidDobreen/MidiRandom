@@ -86,10 +86,9 @@ void LineList::changeListenerCallback(juce::ChangeBroadcaster* source)
     bottomPanel.line2dPanel.setVisible(true);
 
     MoveLabel* lbl = static_cast<MoveLabel*>(source);
-    selectedLbl = lbl;
     LineList::item* item = static_cast<LineList::item*>(lbl->getParentComponent());
-    if (lbl->manualClick) bottomPanel.selectedPanel = &bottomPanel.line2dPanel;
-
+    selectedItem = item;
+    
     bottomPanel.namebox.lbl.text = lbl->text;
     bottomPanel.namebox.repaint();
     
@@ -106,6 +105,7 @@ void LineList::changeListenerCallback(juce::ChangeBroadcaster* source)
     bottomPanel.line2dPanel.refresh();
 
     axes.xValues.targetLineListItemVals = &item->xValues;
+    axes.yValues.setVisible(true);
     axes.yValues.targetLineListItemVals = &item->yValues;
     axes.refresh();
 }
@@ -152,10 +152,10 @@ void TextList::changeListenerCallback(juce::ChangeBroadcaster* source)
     bottomPanel.histPanel.setVisible(false);
     bottomPanel.textPanel.setVisible(true);
     
-    MoveLabel* lbl = static_cast<MoveLabel*>(source);
-    selectedLbl = lbl;
+    MoveLabel* lbl = static_cast<MoveLabel*>(source);   
     TextList::item* item = static_cast<TextList::item*>(lbl->getParentComponent());
-    if (lbl->manualClick) bottomPanel.selectedPanel = &bottomPanel.textPanel;
+    selectedItem = item;
+    
 
     if (lbl->text == "xTicks" || lbl->text == "yTicks")
         bottomPanel.textPanel.TickPanel = true;
@@ -225,6 +225,8 @@ void LeftPanel::changeListenerCallback(juce::ChangeBroadcaster* source)
         
         lineList.items[0]->lbl.sendSynchronousChangeMessage();
         chartList.setVisible(false);
+        chartName.lbl.text = chartList.items[0]->lbl.text;
+        chartName.lbl.repaint();
         return;
     }
 
@@ -235,6 +237,8 @@ void LeftPanel::changeListenerCallback(juce::ChangeBroadcaster* source)
         histList.setVisible(true);         
         histList.items[0]->lbl.sendSynchronousChangeMessage();
         chartList.setVisible(false);
+        chartName.lbl.text = chartList.items[1]->lbl.text;
+        chartName.lbl.repaint();
         return;
     }
         
@@ -271,10 +275,9 @@ void HistList::changeListenerCallback(juce::ChangeBroadcaster* source)
     bottomPanel.line2dPanel.setVisible(false);
     bottomPanel.histPanel.setVisible(true);
 
-    MoveLabel* lbl = static_cast<MoveLabel*>(source);
-    selectedLbl = lbl;
-    LineList::item* item = static_cast<LineList::item*>(lbl->getParentComponent());
-    if (lbl->manualClick) bottomPanel.selectedPanel = &bottomPanel.line2dPanel;
+    MoveLabel* lbl = static_cast<MoveLabel*>(source);   
+    HistList::item* item = static_cast<HistList::item*>(lbl->getParentComponent());
+    selectedItem = item;
 
     bottomPanel.namebox.lbl.text = lbl->text;
     bottomPanel.namebox.repaint();
