@@ -288,7 +288,7 @@ void LeftPanel::changeListenerCallback(juce::ChangeBroadcaster* source)
 
         pieList.items[0]->lbl.sendSynchronousChangeMessage();
         chartList.setVisible(false);
-        chartName.lbl.text = chartList.items[2]->lbl.text;
+        chartName.lbl.text = chartList.items[3]->lbl.text;
         chartName.lbl.repaint();
         return;
     }
