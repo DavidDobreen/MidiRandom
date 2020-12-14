@@ -138,6 +138,54 @@ juce::String Params::MakeHistKwargs()
     return PlotKwargs;
 }
 
+juce::String Params::MakeBarsKwargs()
+{
+
+    PlotKwargs = "";
+
+    //if (binsRangeEnabled && binsRange != "") PlotKwargs += "x=(" + binsRange + ")";
+    if (barsColor != "") PlotKwargs += ",facecolor='" + barsColor + "'";
+    if (barsEdgeColor != "") PlotKwargs += ",edgecolor='" + barsEdgeColor + "'";
+    if (barsTicksEnabled && barsTicks != "") PlotKwargs += ",tick_label=(" + barsTicks + ")";
+    if (barsXerrEnabled && barsXerr != "") PlotKwargs += ",xerr=(" + barsXerr + ")";
+    if (barsYerrEnabled && barsYerr != "") PlotKwargs += ",yerr=(" + barsYerr + ")";
+    if (barsErrColor != "") PlotKwargs += ",ecolor='" + barsErrColor + "'";
+    if (barsErrCapSize != 1.0) PlotKwargs += ", capsize=" + juce::String(barsErrCapSize);
+    if (barsWidthEnabled && barsWidth != "") PlotKwargs += ",width=(" + barsWidth + ")";
+    if (barsBottomEnabled && barsBottom != "") PlotKwargs += ",bottom=(" + barsBottom + ")";
+    if (barsAlign)  PlotKwargs += ",align='edge'";
+    if (barsLineWidth != 1.0) PlotKwargs += ", linewidth=" + juce::String(barsLineWidth);
+    if (barsLog)  PlotKwargs += ",log=True";
+    if (barsAlpha != 1.0) PlotKwargs += ", alpha=" + juce::String(barsAlpha);
+    if (barsHatch != "")  PlotKwargs += ",hatch='" + barsHatch + "'";
+    if (barsLineStyle != "")  PlotKwargs += ",ls='" + barsLineStyle + "'";
+    
+ 
+
+    return PlotKwargs;
+}
+
+juce::String Params::MakePieKwargs()
+{
+    PlotKwargs = "";
+
+    if (explodeEnabled && explode != "") PlotKwargs += ",explode=(" + explode + ")";
+    if (pieLabelsEnabled && pieLabels != "") PlotKwargs += ",labels=(" + pieLabels + ")";
+    if (pieColorsEnabled && pieColors != "") PlotKwargs += ",colors=(" + pieColors + ")";
+    if (autopctEnabled && autopct != "") PlotKwargs += ",autopct='" + autopct + "'";
+    if (pctdistance != 1.0) PlotKwargs += ", pctdistance=" + juce::String(pctdistance);
+    if (pieShadow)  PlotKwargs += ",shadow=True";
+    if (pieNormalize != "none")  PlotKwargs += ",normalize='" + pieNormalize + "'";
+    if (labeldistance != 1.0) PlotKwargs += ", labeldistance=" + juce::String(labeldistance);
+    if (startangle != 1.0) PlotKwargs += ", startangle=" + juce::String(startangle);
+    if (radius != 1.0) PlotKwargs += ", radius=" + juce::String(radius);
+    if (counterclock)  PlotKwargs += ",counterclock=False";
+    if (pieFrame)  PlotKwargs += ",frame=True";
+    if (rotateLabels)  PlotKwargs += ",rotatelabels=True";
+
+
+    return PlotKwargs;
+}
 
 void paramedBeta::update(double val)
 {
@@ -205,6 +253,46 @@ void paramedBeta::update(double val)
         params->binsLineWidth = float(val) * 0.01f;
         return;
     }
+
+    case enumParmas::barsErrCapSize:
+    {
+        params->barsErrCapSize = float(val) * 0.01f;
+        return;
+    }
+
+    case enumParmas::barsLineWidth:
+    {
+        params->barsLineWidth = float(val) * 0.01f;
+        return;
+    }
+
+    case enumParmas::barsAlpha:
+    {
+        params->barsAlpha = float(val) * 0.01f;
+        return;
+    }
+
+    case enumParmas::pctdistance:
+    {
+        params->pctdistance = float(val) * 0.01f;
+        return;
+    }
+    case enumParmas::labeldistance:
+    {
+        params->labeldistance = float(val) * 0.01f;
+        return;
+    }
+    case enumParmas::startangle:
+    {
+        params->startangle = float(val) * 0.01f;
+        return;
+    }
+    case enumParmas::radius:
+    {
+        params->radius = float(val) * 0.01f;
+        return;
+    }
+
 
 
     default:
@@ -287,6 +375,99 @@ void paramedBeta::update(bool isOn)
         params->binsStacked = isOn;
         return;
     }
+
+    case enumParmas::barsXcordsEnabled:
+    {
+        params->barsXcordsEnabled = isOn;
+        return;
+    }
+
+    case enumParmas::barsTicksEnabled:
+    {
+        params->barsTicksEnabled = isOn;
+        return;
+    }
+
+    case enumParmas::barsXerrEnabled:
+    {
+        params->barsXerrEnabled = isOn;
+        return;
+    }
+
+    case enumParmas::barsYerrEnabled:
+    {
+        params->barsYerrEnabled = isOn;
+        return;
+    }
+
+    case enumParmas::barsWidthEnabled:
+    {
+        params->barsWidthEnabled = isOn;
+        return;
+    }
+
+    case enumParmas::barsBottomEnabled:
+    {
+        params->barsBottomEnabled = isOn;
+        return;
+    }
+
+    case enumParmas::barsAlign:
+    {
+        params->barsAlign = isOn;
+        return;
+    }
+
+    case enumParmas::barsLog:
+    {
+        params->barsLog = isOn;
+        return;
+    }
+
+
+    case enumParmas::explodeEnabled:
+    {
+        params->explodeEnabled = isOn;
+        return;
+    }
+    case enumParmas::pieLabelsEnabled:
+    {
+        params->pieLabelsEnabled = isOn;
+        return;
+    }
+    case enumParmas::pieColorsEnabled:
+    {
+        params->pieColorsEnabled = isOn;
+        return;
+    }
+    case enumParmas::autopctEnabled:
+    {
+        params->autopctEnabled = isOn;
+        return;
+    }
+    case enumParmas::pieShadow:
+    {
+        params->pieShadow = isOn;
+        return;
+    }
+    case enumParmas::counterclock:
+    {
+        params->counterclock = isOn;
+        return;
+    }
+    case enumParmas::pieFrame:
+    {
+        params->pieFrame = isOn;
+        return;
+    }
+    case enumParmas::rotateLabels:
+    {
+        params->rotateLabels = isOn;
+        return;
+    }
+
+
+
 
     default:
         break;
@@ -412,6 +593,102 @@ void paramedBeta::update(juce::String text)
         params->binsLineStyle = text;
         return;
     }
+
+    case enumParmas::barsColor:
+    {
+        params->barsColor = text;
+        return;
+    }
+
+    case enumParmas::barsEdgeColor:
+    {
+        params->barsEdgeColor = text;
+        return;
+    }
+
+    case enumParmas::barsXcords:
+    {
+        params->barsXcords = text;
+        return;
+    }
+
+    case enumParmas::barsTicks:
+    {
+        params->barsTicks = text;
+        return;
+    }
+
+    case enumParmas::barsXerr:
+    {
+        params->barsXerr = text;
+        return;
+    }
+
+    case enumParmas::barsYerr:
+    {
+        params->barsYerr = text;
+        return;
+    }
+
+    case enumParmas::barsErrColor:
+    {
+        params->barsErrColor = text;
+        return;
+    }
+
+    case enumParmas::barsWidth:
+    {
+        params->barsWidth = text;
+        return;
+    }
+
+    case enumParmas::barsBottom:
+    {
+        params->barsBottom = text;
+        return;
+    }
+
+    case enumParmas::barsLineStyle:
+    {
+        params->barsLineStyle = text;
+        return;
+    }
+
+    case enumParmas::barsHatch:
+    {
+        params->barsHatch = text;
+        return;
+    }
+
+
+    case enumParmas::explode:
+    {
+        params->explode = text;
+        return;
+    }
+    case enumParmas::pieLabels:
+    {
+        params->pieLabels = text;
+        return;
+    }
+    case enumParmas::pieColors:
+    {
+        params->pieColors = text;
+        return;
+    }
+    case enumParmas::autopct:
+    {
+        params->autopct = text;
+        return;
+    }
+    case enumParmas::pieNormalize:
+    {
+        params->pieNormalize = text;
+        return;
+    }
+
+
+
 
     default:
         break;

@@ -372,3 +372,19 @@ HistPanel::HistPanel(int x, int y, int w, int h, juce::Component* parent, pngHan
 void HistPanel::refresh()
 {
 }
+
+BarsPanel::BarsPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+  : moveChildComp(x, y, w, h), handled(handler, parent, this), drvred(_drvr) {
+}
+
+void BarsPanel::refresh()
+{
+}
+
+PiePanel::PiePanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : moveChildComp(x, y, w, h), handled(handler, parent, this), drvred(_drvr) {
+}
+
+void PiePanel::refresh()
+{
+}

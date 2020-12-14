@@ -20,7 +20,14 @@ enum enumParmas {
     tvalue, tvalueIsVisible, tcolor, tsize, tfontfamily , tfontstyle, tickLbls, tickLblsEnabled,
 
     bins, binsEnabled, binsColor, binsEdgeColor, binsAlpha,binsLabel, binsLabelEnabled, binsRange, binsRangeEnabled, binsDensity, binsCumulative, binsType, binsAllign, binsOrientation, binsWidth, binsLogScale, 
-    binsStacked, binsHatch, binsLineStyle, binsLineWidth
+    binsStacked, binsHatch, binsLineStyle, binsLineWidth,
+
+    barsColor, barsEdgeColor, barsXcords, barsXcordsEnabled, barsTicks, barsTicksEnabled, barsXerr, barsXerrEnabled, barsYerr, barsYerrEnabled,
+    barsErrColor, barsErrCapSize, barsWidth, barsWidthEnabled, barsBottom, barsBottomEnabled, barsAlign, barsLineWidth, barsLog, barsAlpha,
+    barsLineStyle, barsHatch,
+
+    explode, explodeEnabled, pieLabels, pieLabelsEnabled, pieColors, pieColorsEnabled, autopct, autopctEnabled, pctdistance, pieShadow, pieNormalize, labeldistance, startangle,
+    radius, counterclock, pieFrame, rotateLabels
 
 };
 
@@ -96,8 +103,51 @@ public:
     juce::String binsHatch = "none";
     juce::String binsLineStyle = "solid";
     float binsLineWidth = 1.0f;
-    
 
+    juce::String barsColor = "";
+    juce::String barsEdgeColor = "";
+    juce::String barsXcords = "";
+    bool barsXcordsEnabled = false;
+    juce::String barsTicks = "";
+    bool barsTicksEnabled = false;
+    juce::String barsXerr = "";
+    bool barsXerrEnabled = false;
+    juce::String barsYerr = "";
+    bool barsYerrEnabled = false;
+    juce::String barsErrColor = "";
+    float barsErrCapSize = 1.0f;
+    juce::String barsWidth = "";
+    bool barsWidthEnabled = false;
+    juce::String barsBottom = "";
+    bool barsBottomEnabled = false;
+    bool barsAlign = false;
+    float barsLineWidth = 1.0f;
+    bool barsLog = false;
+    float barsAlpha = 1.0f;
+    juce::String barsLineStyle = "";
+    juce::String barsHatch = "";
+
+
+    juce::String explode = "";
+    bool explodeEnabled = false;
+    juce::String pieLabels = "";
+    bool pieLabelsEnabled = false;
+    juce::String pieColors = "";
+    bool pieColorsEnabled = false;
+    juce::String autopct = "";
+    bool autopctEnabled = false;
+    float pctdistance = 1.0f;
+    bool pieShadow = false;
+    juce::String pieNormalize = "none";
+    float labeldistance = 1.0f;
+    float startangle = 1.0f;
+    float radius = 1.0f;
+    bool counterclock = false;
+    bool pieFrame = false;
+    bool rotateLabels = false;
+
+
+ 
 
     juce::String PlotKwargs;
 
@@ -107,6 +157,9 @@ public:
     juce::String MakeTextParams();
     juce::String MakeTicksParams();
     juce::String MakeHistKwargs();
+    juce::String MakeBarsKwargs();
+    juce::String MakePieKwargs();
+     
     
      
 };
