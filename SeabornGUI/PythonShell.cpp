@@ -160,7 +160,7 @@ void PythonShell::Matplot()
     else if (lefPanel.pieList.isVisible())
     {
     pltstr1 = "plt.pie(";
-    for (auto& i : lefPanel.barsList.items)
+    for (auto& i : lefPanel.pieList.items)
     {
         plotParams.clear();
         bottomPanel.piePanel.params = &i->params;

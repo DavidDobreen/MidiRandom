@@ -169,7 +169,7 @@ juce::String Params::MakePieKwargs()
 {
     PlotKwargs = "";
 
-    if (explodeEnabled && explode != "") PlotKwargs += ",explode=(" + explode + ")";
+   /* if (explodeEnabled && explode != "") PlotKwargs += ",explode=(" + explode + ")";
     if (pieLabelsEnabled && pieLabels != "") PlotKwargs += ",labels=(" + pieLabels + ")";
     if (pieColorsEnabled && pieColors != "") PlotKwargs += ",colors=(" + pieColors + ")";
     if (autopctEnabled && autopct != "") PlotKwargs += ",autopct='" + autopct + "'";
@@ -181,14 +181,19 @@ juce::String Params::MakePieKwargs()
     if (radius != 1.0) PlotKwargs += ", radius=" + juce::String(radius);
     if (counterclock)  PlotKwargs += ",counterclock=False";
     if (pieFrame)  PlotKwargs += ",frame=True";
-    if (rotateLabels)  PlotKwargs += ",rotatelabels=True";
+    if (rotateLabels)  PlotKwargs += ",rotatelabels=True";*/
 
+    for (auto& p : paramsArray)
+        p->makeKwarg(PlotKwargs);
 
     return PlotKwargs;
 }
 
 void paramedBeta::update(double val)
 {
+    
+    paramVal = val;
+
     switch (param)
     {
     case enumParmas::lalpha:
@@ -287,11 +292,11 @@ void paramedBeta::update(double val)
         params->startangle = float(val) * 0.01f;
         return;
     }
-    case enumParmas::radius:
+    /*case enumParmas::radius:
     {
         params->radius = float(val) * 0.01f;
         return;
-    }
+    }*/
 
 
 
@@ -302,6 +307,8 @@ void paramedBeta::update(double val)
 
 void paramedBeta::update(bool isOn)
 {
+    paramBool = isOn;
+
     switch (param)
     {
     case enumParmas::lvalueIsVisible:
@@ -476,6 +483,8 @@ void paramedBeta::update(bool isOn)
 
 void paramedBeta::update(juce::String text)
 {
+
+    paramTextValue = text;
 
     switch (param)
     {
@@ -681,11 +690,11 @@ void paramedBeta::update(juce::String text)
         params->autopct = text;
         return;
     }
-    case enumParmas::pieNormalize:
+    /*case enumParmas::pieNormalize:
     {
         params->pieNormalize = text;
         return;
-    }
+    }*/
 
 
 

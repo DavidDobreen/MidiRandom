@@ -26,14 +26,90 @@ enum enumParmas {
     barsErrColor, barsErrCapSize, barsWidth, barsWidthEnabled, barsBottom, barsBottomEnabled, barsAlign, barsLineWidth, barsLog, barsAlpha,
     barsLineStyle, barsHatch,
 
-    explode, explodeEnabled, pieLabels, pieLabelsEnabled, pieColors, pieColorsEnabled, autopct, autopctEnabled, pctdistance, pieShadow, pieNormalize, labeldistance, startangle,
-    radius, counterclock, pieFrame, rotateLabels
+    explode, explodeEnabled, pieLabels, pieLabelsEnabled, pieColors, pieColorsEnabled, autopct, autopctEnabled, pctdistance, pieShadow, labeldistance, startangle,
+    /*radius, */counterclock, pieFrame, rotateLabels
 
 };
+
+class paramedType
+{
+public:
+    juce::String* param;
+    
+
+    paramedType(juce::String* _param) : param(_param) {}
+    virtual void makeKwarg(juce::String& args) =0;
+};
+
+class paramBool : public paramedType
+{
+public:
+    bool* val = false;
+    paramBool(juce::String* _param, bool* _val) : paramedType(_param), val(_val) {}
+    void makeKwarg(juce::String& args) {
+        if (*val) args += "," + *param + "=True";
+    }
+
+};
+
+class paramString : public paramedType
+{
+public:  
+    
+    juce::String* val;    
+    bool*& myBool;
+    paramString(juce::String* _param, juce::String* _val, bool*&  _myBool) : paramedType(_param) , val (_val) ,myBool(_myBool){}
+    void makeKwarg(juce::String& args) {       
+        if (*myBool && *val != "") args += "," + *param + "='" + *val + "'";
+    }
+     
+};
+
+class paramStringArray : public paramedType
+{
+public:
+    
+    juce::String* val;  
+    bool*& myBool;
+    paramStringArray(juce::String* _param, juce::String* _val, bool*& _myBool) : paramedType(_param), val(_val), myBool(_myBool) {}
+    void makeKwarg(juce::String& args) {
+        if (*myBool && *val != "") args += "," + *param + "=[" + *val + "]";
+    }
+};
+
+class paramNumber : public paramedType
+{
+public:   
+    float* val;  
+    float* scalar;    
+    paramNumber(juce::String* _param, float* _val, float* _scalar) : paramedType(_param), val(_val), scalar(_scalar) {}
+    void makeKwarg(juce::String& args) {
+        if (*val != 1.0f) args += "," + *param + "=" + juce::String(*val*(*scalar));
+    }
+     
+};
+
+class paramList : public paramedType
+{
+public:
+    juce::String* val;
+    paramList(juce::String* _param, juce::String* _val) : paramedType(_param), val(_val) {}
+    void makeKwarg(juce::String& args) {
+
+        //args += "," + *param + "='" + *val + "'";
+        args += "," + *param + "=" + *val;
+    }
+
+};
+
+
 
 class Params
 {
 public:
+
+    juce::OwnedArray<paramedType> paramsArray;
+
     Params() {}
     std::vector<juce::String>lineStlyeVals = { "'solid'", "'dashed'", "'dashdot'","'dotted'","'None'" };
     std::vector<juce::String>FillStyleVals = { "'none'", "'full'", "'left'","'right'" ,"'bottom'" ,"'top'" };
@@ -138,10 +214,10 @@ public:
     bool autopctEnabled = false;
     float pctdistance = 1.0f;
     bool pieShadow = false;
-    juce::String pieNormalize = "none";
+    //juce::String pieNormalize = "none";
     float labeldistance = 1.0f;
     float startangle = 1.0f;
-    float radius = 1.0f;
+    //float radius = 1.0f;
     bool counterclock = false;
     bool pieFrame = false;
     bool rotateLabels = false;
@@ -163,6 +239,8 @@ public:
     
      
 };
+
+
 
 //class Line2Dparams  
 //{
@@ -222,7 +300,15 @@ public:
     Params*&  params;
     int param;
 
-    paramedBeta(Params*& pparams) : params(pparams){}
+    int guiType = 0; // 1=float, 2=string, 3=string array, 4 = bool  
+    float paramVal = 1.0;
+    float paramScalar = 0.01f;
+    juce::String paramText = "";
+    juce::String paramTextValue = "";
+    bool paramBool = false;
+    bool* myBool; // For combo components with on/off switch
+
+    paramedBeta(Params*& _params, int type =0) : params(_params), guiType(type){}
 
     void update(double val);
     void update(juce::String text);    

@@ -404,7 +404,7 @@ void BarsList::changeListenerCallback(juce::ChangeBroadcaster* source)
 PieList::PieList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler)
     : axes(_axes), bottomPanel(_bottomPanel), moveChildComp(x, y, w, h), handled(handler, parent, this)
 {
-    auto item1 = new item(9, 8, 76, 18, this, handler);
+    auto item1 = new PieList::item(9, 8, 76, 18, _bottomPanel.piePanel.paramComps, this, handler);
     item1->lbl.text = "Pie1";
     item1->lbl.addChangeListener(this);
     items.add(item1);

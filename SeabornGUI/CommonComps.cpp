@@ -64,7 +64,8 @@ void MoveLabel::mouseDown(const juce::MouseEvent& event)
     sendSynchronousChangeMessage();   
 }
 
-chLabel::chLabel(int x, int y, int w, int h, juce::String name, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr, int _param)
+chLabel::chLabel(int x, int y, int w, int h, juce::String name, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr, 
+    int _param, int guiType , juce::String _paramText , float _paramVal )
     : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvrShellNotifer(drvr)  {
     lblName.text = name;
     addAndMakeVisible(lbl);
@@ -73,7 +74,12 @@ chLabel::chLabel(int x, int y, int w, int h, juce::String name, juce::Component*
     lbl.lbl.setEditable(true); 
     param = _param;
     lbl.param = _param - 1;
-    
+
+    lbl.guiType = guiType;
+    lblName.guiType = 4;
+    lbl.myBool = &paramBool;
+    if (_paramText != "")
+        lbl.paramText = _paramText;
 }
 
 void chLabel::changeListenerCallback(juce::ChangeBroadcaster* source)

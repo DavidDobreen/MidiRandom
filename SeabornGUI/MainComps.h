@@ -214,13 +214,30 @@ public:
         Params params;
         juce::String xValues;
         juce::String yValues;
+        juce::OwnedArray<paramedBeta>& paramComps;
 
         chBgComp frame{ "bottom pads name frame3.png",this ,handler };
         MoveLabel lbl{ 0,-1,dims[2],dims[3],"",juce::Colours::aqua,this,handler };
-        item(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler)
-            : moveChildComp(x, y, w, h), handled(handler, parent, this) {}
+        item(int x, int y, int w, int h, juce::OwnedArray<paramedBeta>& _paramComps,juce::Component* parent, pngHandler& handler)
+            : paramComps(_paramComps), moveChildComp(x, y, w, h), handled(handler, parent, this) {
+            for (auto& c : paramComps)
+            {
+                if (c->guiType==1)
+                    params.paramsArray.add(new paramNumber(&c->paramText, &c->paramVal, &c->paramScalar));
+                else if (c->guiType == 2)
+                    params.paramsArray.add(new paramString(&c->paramText, &c->paramTextValue,c->myBool));
+                else if (c->guiType == 3)
+                    params.paramsArray.add(new paramStringArray(&c->paramText, &c->paramTextValue, c->myBool));
+                else if (c->guiType == 4)
+                    params.paramsArray.add(new paramBool(&c->paramText, &c->paramBool));
+                else if (c->guiType == 5)
+                    params.paramsArray.add(new paramList(&c->paramText, &c->paramTextValue));
+            }
+                
+        }
     };
     Axes& axes;
+    
 
     chBgComp frame{ "small eq frame3.png",this ,handler };
     chBgComp bkgd{ "BLACK MAIN BG2.png",this ,handler };

@@ -103,7 +103,8 @@ public:
 class moveChButton : public chButton, public paramedBeta, public drvred
 {
 public:
-    moveChButton(int x, int y, int w, int h, juce::String _onPng, juce::String _offPng, juce::Component* parent, Params*& params, pngHandler& Handler, Drvr& drvr, int _param)
+    moveChButton(int x, int y, int w, int h, juce::String _onPng, juce::String _offPng, juce::Component* parent, Params*& params, pngHandler& Handler, 
+        Drvr& drvr, int _param)
         :chButton(x, y, w, h, _onPng, _offPng, parent, Handler), paramedBeta(params), drvred(drvr)
     {
         param = _param;
@@ -117,6 +118,18 @@ public:
             buttonPressed();
         }           
     }
+};
+
+class moveFxLabel : public fxLabel, public paramedBeta
+{
+public:
+    
+    moveFxLabel(int x, int y, int w, int h, juce::String name, juce::Colour on, juce::Colour off, Component* Comp,  juce::Component* parent, Params*& params, pngHandler& Handler)
+        :fxLabel(x, y, w, h, name, on, off, Comp, parent, Handler), paramedBeta(params) {
+
+    }
+    ~moveFxLabel() { removeAllChangeListeners(); }
+
 };
 
 class ColourSelectorWindow : public juce::DocumentWindow, public juce::ChangeBroadcaster,
@@ -171,11 +184,12 @@ public:
     {
     public:
         chBgComp frame{ "bottom pads name frame3.png",this ,handler };
-        fxLabel& lblName;
+        //fxLabel& lblName;
+        moveFxLabel& lblName;
         
 
         juce::Label lbl;
-        labelTextBox(int x, int y, int w, int h, fxLabel& _lblName, juce::Component* parent, Params*& params,pngHandler& handler,Drvr& drvr)
+        labelTextBox(int x, int y, int w, int h, /*fxLabel& _lblName*/moveFxLabel& _lblName, juce::Component* parent, Params*& params,pngHandler& handler,Drvr& drvr)
             : moveChildComp(x, y, w, h), lblName(_lblName), paramedBeta(params), handled(handler, parent, this), drvrShellNotifer(drvr){
             addAndMakeVisible(lbl);
             lbl.onTextChange = [&] {
@@ -203,10 +217,12 @@ public:
     };
 
     juce::String text;   
-    fxLabel lblName{ 0,0,30,18, "",DEFAULT_LABEL_COLORS,nullptr,this,handler };
+    //fxLabel lblName{ 0,0,30,18, "",DEFAULT_LABEL_COLORS,nullptr,this,handler };
+    moveFxLabel lblName{ 0,0,30,18, "",DEFAULT_LABEL_COLORS,nullptr,this,params,handler };
     labelTextBox lbl{ 60,0,136,18,lblName,this,params,handler,drvr};
 
-    chLabel(int x, int y, int w, int h, juce::String name, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr, int param);
+    chLabel(int x, int y, int w, int h, juce::String name, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr, 
+        int param, int guiType = 0, juce::String _paramText = "", float _paramVal = 0);
     void changeListenerCallback(juce::ChangeBroadcaster* source);
 };
 
@@ -317,11 +333,15 @@ public:
     updateSliderCompBeta sldr{ "vals",0,100,1,15,15,39,41,this, params,  handler,  drvr };
     MoveLabel LblName{ 0,51,70,18, "",juce::Colours::slategrey,this,handler };
 
-    chKnobClassicBeta( int x, int y, int w, int h, juce::String lblText, juce::Component* parent, Params*& _params, pngHandler& handler, Drvr& _drvr, int param )
-        :  moveChildComp(x, y, w, h), paramedBeta(_params), handled(handler, parent, this), drvred(_drvr) {       
+    chKnobClassicBeta(int x, int y, int w, int h, juce::String lblText, juce::Component* parent, Params*& _params, pngHandler& handler, Drvr& _drvr, 
+        int param, int guiType = 0, juce::String _paramText="",float _paramVal=0 )
+        :  moveChildComp(x, y, w, h), paramedBeta(_params, guiType), handled(handler, parent, this), drvred(_drvr) {
         LblName.text = lblText;
         LblName.repaint();
         sldr.param =  param;
+        sldr.guiType = guiType;
+        if (_paramText != "")
+            sldr.paramText = _paramText;
     }
 };
 
@@ -375,11 +395,15 @@ class chToggleButtonAndLabel : public juce::ChangeListener, public moveChildComp
 public:
     MoveLabel lbl{ 0,0,60,25,"",juce::Colours::slategrey,this,handler };
     chButton btn{ 65, 5, 10, 10,"led_red_on2.png","led_red_off2.png" ,this,handler };
-    chToggleButtonAndLabel(int x, int y, int w, int h, juce::String text, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr, int _param)
+    chToggleButtonAndLabel(int x, int y, int w, int h, juce::String text, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr, 
+        int _param, int _guiType = 0, juce::String _paramText = "", float _paramVal = 0)
         : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvrShellNotifer(_drvr) {
         param = _param;
         lbl.text = text;
         btn.addChangeListener(this);
+        guiType = _guiType;
+        if (_paramText != "")
+            paramText = _paramText;
     }
     void changeListenerCallback(juce::ChangeBroadcaster* source)
     {
@@ -498,7 +522,7 @@ public:
     void changeListenerCallback(juce::ChangeBroadcaster* source);
 };
 
-class SelectionBox : public moveChildComp, paramedBeta, public handled, public drvred
+class SelectionBox : public moveChildComp, public paramedBeta, public handled, public drvred
 {
 public:
     class selecion : public moveChildComp, public paramedBeta, public handled, public drvrShellNotifer
@@ -507,11 +531,13 @@ public:
         juce::String text;
         chButton* led;
         juce::OwnedArray<chButton>& leds;
+        paramedBeta* parentList;
 
-        selecion (int y,juce::String _text, juce::OwnedArray<chButton>& _leds , chButton* _led,juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr, int _param)
-            : moveChildComp(22,y,51,20),leds(_leds),led(_led), paramedBeta(params),handled(handler,parent,this), drvrShellNotifer(drvr){
+        selecion (int y,juce::String _text, paramedBeta* _parentList, juce::OwnedArray<chButton>& _leds , chButton* _led,juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr, int _param)
+            : moveChildComp(22,y,51,20),leds(_leds),led(_led),paramedBeta(params),handled(handler,parent,this), drvrShellNotifer(drvr){
             text = _text;
-            param = _param;
+            parentList = _parentList;
+            
         }
         void paint(juce::Graphics& g) {
             g.setColour(juce::Colours::slategrey);
@@ -524,7 +550,7 @@ public:
                 if (l->IsOn)
                     l->buttonPressed();                                               
             led->buttonPressed();            
-            update(text);
+            parentList->update(text);
             sendSynchronousChangeMessage();
         }
     };
@@ -533,21 +559,22 @@ public:
     juce::OwnedArray<chButton> leds;
     juce::OwnedArray<childComp> ledsBlockers;
        
-    SelectionBox(int x, int y, std::vector<juce::String> vals, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr, int param) :
+    SelectionBox(int x, int y, std::vector<juce::String> vals, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr, 
+        int param, int _guiType = 0, juce::String _paramText = "", float _paramVal = 0) :
         moveChildComp(x, y, 73, vals.size() * 25), paramedBeta(params), handled(handler, parent, this), drvred(drvr)
     {
         for (int i = 0; i < vals.size(); i++)
         {      
             leds.add(new chButton{ 5, i * 20 + 5,10,10,"LED-ON_blue.png","LED_blue_off.png" ,this,handler });
-            options.add(new selecion{ i * 20,vals[i],leds,leds.getLast(), this,params, handler, drvr,param });
+            options.add(new selecion{ i * 20,vals[i],this,leds,leds.getLast(), this,params, handler, drvr,param });
             ledsBlockers.add(new moveChildComp{ 5,i * 20 + 5,10,10 });
             handler.compRszr_push(this, ledsBlockers.getLast());
            
-        }        
+        }    
+
+        guiType = _guiType;        
+        if (_paramText != "")
+            paramText = _paramText;
     }
-    //void resized() {
-    //    for (int i = 0; i < options.size(); ++i)
-    //        //options[i]->setBounds(22, i * 20, 51, 20);
-    //        ledsBlockers[i]->toFront(false);
-    //}  
+      
 };
