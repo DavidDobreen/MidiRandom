@@ -384,23 +384,40 @@ void BarsPanel::refresh()
 PiePanel::PiePanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
     : moveChildComp(x, y, w, h), handled(handler, parent, this), drvred(_drvr) {
      
+    
+     
     chLabel* explode = new chLabel( 409,92,150,25,"explode",this,params,handler, drvr ,-1,3,"explode" );
-    guiComps.add(explode);
+    guiChLabels.add(std::move(explode));
     paramComps.add(&explode->lbl);
 
-    chKnobClassicBeta* radius = new chKnobClassicBeta(305, 116, 70, 70, "radius", this, params, handler, drvr, -1, 1, "radius", 1.0f);
-    guiComps.add(radius);
-    paramComps.add(&radius->sldr);
+    // chLabel* labels = new chLabel(409, 110, 150, 25, "labels", this, params, handler, drvr, -1,3,"labels");
+    //guiComps.add(std::move(labels));
+    //paramComps.add(&labels->lbl);
+     
+    /*chKnobClassicBeta* radius = new chKnobClassicBeta(305, 116, 70, 70, "radius", this, params, handler, drvr, -1, 1, "radius", 1.0f);
+    guiComps.add(std::move(radius));
+    paramComps.add(&radius->sldr);*/
 
-    chToggleButtonAndLabel* shadow = new chToggleButtonAndLabel( 609,160,85,25,"shadow",this,params,handler,drvr,-1,4,"shadow" );
-    guiComps.add(shadow);
-    paramComps.add(shadow);
+    //chToggleButtonAndLabel* shadow = new chToggleButtonAndLabel( 609,160,85,25,"shadow",this,params,handler,drvr,-1,4,"shadow" );
+    //guiComps.add(std::move(shadow));
+    //paramComps.add(shadow);
 
-    SelectionBox* normalize = new SelectionBox( 102,14,{ "None", "True", "False"},this, params,handler,drvr,-1,5,"normalize" );
-    guiComps.add(normalize);
-    paramComps.add(normalize);
+  /*  SelectionBox* normalize = new SelectionBox( 102,14,{ "None", "True", "False"},this, params,handler,drvr,-1,5,"normalize" );
+    guiComps.add(std::move(normalize));
+    paramComps.add(normalize);*/
 }
 
 void PiePanel::refresh()
 {
+}
+
+ChartPanel::ChartPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : moveChildComp(x, y, w, h), handled(handler, parent, this), drvred(_drvr)
+{
+}
+
+void ChartPanel::refresh()
+{
+    for (auto& comp : guiChLabels)
+        comp->refresh();
 }

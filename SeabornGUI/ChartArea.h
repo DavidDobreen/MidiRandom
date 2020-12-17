@@ -44,7 +44,7 @@ public:
     ShellWindow shell{ 25, 55, 576, 350, this, handler };
 
     ChartArea(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : childComp(x, y, w, h), handled(handler, parent, this) {}
-
+    ~ChartArea(){}
     void DrawChart() {
         juce::Image plt = juce::PNGImageFormat::loadFrom(juce::File("C:\\Users\\DAVID\\Desktop\\SeabornGUI\\Builds\\VisualStudio2019\\output.png"));
         chart.bkgd.setSize(plt.getWidth(),plt.getHeight());

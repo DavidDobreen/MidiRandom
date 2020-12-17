@@ -90,6 +90,13 @@ void chLabel::changeListenerCallback(juce::ChangeBroadcaster* source)
     sendSynchronousChangeMessage();
 }
 
+void chLabel::refresh()
+{
+    lblName.IsOn = lblName.paramBool;
+    lblName.repaint();
+    lbl.lbl.setText(lbl.paramTextValue,juce::dontSendNotification);
+}
+
 void marker::paint(juce::Graphics& g)
 {
     g.drawImage(img, getLocalBounds().toFloat().reduced(2));

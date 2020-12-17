@@ -20,6 +20,7 @@ public:
     moveMainTab shellMainTab{ 150,0,121,66,this,handler };
 
     MainTabsPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler);
+    ~MainTabsPanel(){}
     void changeListenerCallback(juce::ChangeBroadcaster* source);
 };
 
@@ -72,7 +73,7 @@ public:
         namebox.lbl.text = "text panel";
         namebox.setName("namebox");
     }
-
+    ~BottomPanel(){}
 };
 
 class TextList : public juce::ChangeListener, public moveChildComp, public handled
@@ -214,13 +215,12 @@ public:
         Params params;
         juce::String xValues;
         juce::String yValues;
-        juce::OwnedArray<paramedBeta>& paramComps;
-
+        
         chBgComp frame{ "bottom pads name frame3.png",this ,handler };
         MoveLabel lbl{ 0,-1,dims[2],dims[3],"",juce::Colours::aqua,this,handler };
-        item(int x, int y, int w, int h, juce::OwnedArray<paramedBeta>& _paramComps,juce::Component* parent, pngHandler& handler)
-            : paramComps(_paramComps), moveChildComp(x, y, w, h), handled(handler, parent, this) {
-            for (auto& c : paramComps)
+        item(int x, int y, int w, int h,  juce::Array<paramedBeta*>& _paramComps,  juce::Component* parent, pngHandler& handler)
+            : moveChildComp(x, y, w, h), handled(handler, parent, this) {
+            for (auto& c : _paramComps)
             {
                 if (c->guiType==1)
                     params.paramsArray.add(new paramNumber(&c->paramText, &c->paramVal, &c->paramScalar));
@@ -404,6 +404,10 @@ public:
             c->lbl.cliked.addChangeListener(this);
 
     }
+    ~LeftPanel(){
+       
+    }
+        
 
     void changeListenerCallback(juce::ChangeBroadcaster* source);
 };

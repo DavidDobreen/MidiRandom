@@ -38,6 +38,7 @@ public:
     
 
     paramedType(juce::String* _param) : param(_param) {}
+    ~paramedType(){}
     virtual void makeKwarg(juce::String& args) =0;
 };
 
@@ -46,6 +47,7 @@ class paramBool : public paramedType
 public:
     bool* val = false;
     paramBool(juce::String* _param, bool* _val) : paramedType(_param), val(_val) {}
+    ~paramBool(){}
     void makeKwarg(juce::String& args) {
         if (*val) args += "," + *param + "=True";
     }
@@ -59,6 +61,7 @@ public:
     juce::String* val;    
     bool*& myBool;
     paramString(juce::String* _param, juce::String* _val, bool*&  _myBool) : paramedType(_param) , val (_val) ,myBool(_myBool){}
+    ~paramString(){}
     void makeKwarg(juce::String& args) {       
         if (*myBool && *val != "") args += "," + *param + "='" + *val + "'";
     }
@@ -72,6 +75,7 @@ public:
     juce::String* val;  
     bool*& myBool;
     paramStringArray(juce::String* _param, juce::String* _val, bool*& _myBool) : paramedType(_param), val(_val), myBool(_myBool) {}
+    ~paramStringArray(){}
     void makeKwarg(juce::String& args) {
         if (*myBool && *val != "") args += "," + *param + "=[" + *val + "]";
     }
@@ -83,6 +87,7 @@ public:
     float* val;  
     float* scalar;    
     paramNumber(juce::String* _param, float* _val, float* _scalar) : paramedType(_param), val(_val), scalar(_scalar) {}
+    ~paramNumber(){}
     void makeKwarg(juce::String& args) {
         if (*val != 1.0f) args += "," + *param + "=" + juce::String(*val*(*scalar));
     }
@@ -94,10 +99,13 @@ class paramList : public paramedType
 public:
     juce::String* val;
     paramList(juce::String* _param, juce::String* _val) : paramedType(_param), val(_val) {}
+    ~paramList(){}
     void makeKwarg(juce::String& args) {
 
-        //args += "," + *param + "='" + *val + "'";
-        args += "," + *param + "=" + *val;
+        if (*val=="None" || *val=="True" || *val=="False")
+            args += "," + *param + "=" + *val;
+        else
+            args += "," + *param + "='" + *val + "'";
     }
 
 };
@@ -110,7 +118,8 @@ public:
 
     juce::OwnedArray<paramedType> paramsArray;
 
-    Params() {}
+    Params() { paramsArray.clear(); }
+    ~Params(){}
     std::vector<juce::String>lineStlyeVals = { "'solid'", "'dashed'", "'dashdot'","'dotted'","'None'" };
     std::vector<juce::String>FillStyleVals = { "'none'", "'full'", "'left'","'right'" ,"'bottom'" ,"'top'" };
     std::vector<juce::String> whichKnobVals = { "'none'","'major'", "'minor'", "'both'" };
@@ -297,7 +306,7 @@ class paramedBeta
      
 public:
        
-    Params*&  params;
+    Params*& params;
     int param;
 
     int guiType = 0; // 1=float, 2=string, 3=string array, 4 = bool  
@@ -309,8 +318,13 @@ public:
     bool* myBool; // For combo components with on/off switch
 
     paramedBeta(Params*& _params, int type =0) : params(_params), guiType(type){}
+    ~paramedBeta() { params = nullptr; myBool = nullptr; }
 
     void update(double val);
     void update(juce::String text);    
     void update(bool isOn);
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(paramedBeta)
 };
+
+ 

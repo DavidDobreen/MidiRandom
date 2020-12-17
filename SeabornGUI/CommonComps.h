@@ -21,12 +21,13 @@ public:
 
     updateSliderCompBeta(juce::String _name, int min, int max, int interval, int x, int y, int w, int h, juce::Component* parent, Params*& _params,  pngHandler& Handler, Drvr& _drvr, int style = 0, int lookAndFeelClass = 0) :
        SliderComp(_name, min, max, interval, x, y, w, h, parent, Handler, style, lookAndFeelClass), paramedBeta(_params),  drvrShellNotifer(_drvr) {}
+    ~updateSliderCompBeta() { setLookAndFeel(nullptr); }
     void stoppedDragging() {       
         auto val = getValue() ;
         update(getValue());
         sendSynchronousChangeMessage();
     }
-
+   
 private:
 };
 
@@ -212,6 +213,9 @@ public:
             sendSynchronousChangeMessage();
             };
         }
+
+        ~labelTextBox(){}
+
         void resized() { lbl.setBounds(getLocalBounds()); };
         
     };
@@ -223,7 +227,9 @@ public:
 
     chLabel(int x, int y, int w, int h, juce::String name, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr, 
         int param, int guiType = 0, juce::String _paramText = "", float _paramVal = 0);
+    ~chLabel(){}
     void changeListenerCallback(juce::ChangeBroadcaster* source);
+    void refresh();
 };
 
 class colorsComponent : public moveChildComp, public paramedBeta, public handled
@@ -234,6 +240,7 @@ public:
     public:
         chBgComp bkgd{ "colors.png",this,handler };
         icon(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : moveChildComp(x, y, w, h), handled(handler, parent, this) {}
+        ~icon(){}
     };
 
     class iconArea : public juce::ChangeListener, public paramedBeta, public moveChildComp, public handled
@@ -248,6 +255,8 @@ public:
 
         iconArea(int x, int y, int w, int h, juce::Label& _selection, juce::Component* parent, Params*& params, pngHandler& handler) 
             : selection(_selection), moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this) {}
+        ~iconArea(){}
+        
         void mouseDown(const juce::MouseEvent& event) {
 
             if (win == NULL)
@@ -343,6 +352,7 @@ public:
         if (_paramText != "")
             sldr.paramText = _paramText;
     }
+    ~chKnobClassicBeta(){}
 };
 
 class LineStyleComp : public moveChildComp, public paramedBeta, public handled, public drvred
@@ -388,6 +398,7 @@ public:
     MoveLabel lbl{ 0,0,dims[2],dims[3],"",juce::Colours::aqua,this,handler };
     namebox(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : moveChildComp(x, y, w, h), handled(handler, parent, this) {
     }
+    ~namebox(){}
 };
 
 class chToggleButtonAndLabel : public juce::ChangeListener, public moveChildComp, public paramedBeta, public handled, public drvrShellNotifer
@@ -405,6 +416,7 @@ public:
         if (_paramText != "")
             paramText = _paramText;
     }
+    ~chToggleButtonAndLabel(){}
     void changeListenerCallback(juce::ChangeBroadcaster* source)
     {
         update(btn.IsOn);

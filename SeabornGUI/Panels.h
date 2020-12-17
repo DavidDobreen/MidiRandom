@@ -87,7 +87,7 @@ public:
     //chToggleButtonAndLabel fontvariant{ 842,11,85,25,this,handler };
 
     TextPanel(int x, int y, int w, int h, juce::Component* parent,  pngHandler& handler, Drvr& _drvr);
-
+    ~TextPanel(){}
     void changeListenerCallback(juce::ChangeBroadcaster* source);    
     void refresh();
 };
@@ -114,6 +114,7 @@ public:
         fxLabel locLbl{ 50,0,50,20,"Loc", DEFAULT_LABEL_COLORS ,&legendCont2,&markersCompLabels,handler };
          
         LegendBox(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr);
+        ~LegendBox(){}
         void changeListenerCallback(juce::ChangeBroadcaster* source);
     };
 
@@ -141,6 +142,7 @@ public:
         fxLabel styleLbl3{ 150,0,50,20,"style", DEFAULT_LABEL_COLORS ,&styleCont3,&markersCompLabels,handler };
 
         StyleBox(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr);
+        ~StyleBox(){}
         void changeListenerCallback(juce::ChangeBroadcaster* source);
     };
 
@@ -153,7 +155,7 @@ public:
     colorsComponent color{ 373,57,161,25,this,params,handler,enumParmas::gcolor };
 
     AxesPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-
+    ~AxesPanel(){}
     chLabel xVals{ 409,92,150,25,"x-vals",this,params,handler, drvr ,enumParmas::applyXrange };
     chLabel yVals{ 409,122,150,25,"y-vals",this,params,handler, drvr ,enumParmas::applyYrange };
 
@@ -302,7 +304,8 @@ public:
    
 
     Line2DPanel(int x, int y, int w, int h, juce::Component* parent,  pngHandler& handler, Drvr& _drvr);
-   
+   ~Line2DPanel(){}
+
     void MakeLine2Dkwargs();
     void refresh();
 
@@ -331,7 +334,7 @@ public:
     chKnobClassicBeta lineWidth{ 235,116,70,70,"lineWidth",this , params ,handler,drvr , enumParmas::binsLineWidth };
     
     HistPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-
+    ~HistPanel(){}
     void refresh();
 };
 
@@ -358,16 +361,34 @@ public:
     
 
     BarsPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-
+    ~BarsPanel(){}
     void refresh();
 };
 
+class ChartPanel : public moveChildComp, public handled, public drvred
+{
+public:
+    Params* params;
+    juce::OwnedArray<chLabel> guiChLabels;
+    juce::OwnedArray<chKnobClassicBeta> guiChKnobs;
+    juce::OwnedArray<chToggleButtonAndLabel> guiChButtons;
+    juce::OwnedArray<SelectionBox> guiChSelections;
+    juce::Array<paramedBeta*> paramComps;
+
+    ChartPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    ~ChartPanel() {}
+
+    void refresh();
+    
+};
 class PiePanel : public moveChildComp, public handled, public drvred
 {
 public:
     Params* params;
-    juce::OwnedArray<paramedBeta> guiComps;
-    juce::OwnedArray<paramedBeta> paramComps;
+    
+    juce::OwnedArray<paramedBeta> guiChLabels;
+    //juce::OwnedArray<paramedBeta> guiComps;
+    juce::Array<paramedBeta*> paramComps;
 
     //chLabel explode{ 409,92,150,25,"explode",this,params,handler, drvr ,enumParmas::explodeEnabled };
     chLabel labels{ 409,110,150,25,"labels",this,params,handler, drvr ,enumParmas::pieLabelsEnabled };
@@ -386,6 +407,8 @@ public:
 
 
     PiePanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-
+    ~PiePanel(){      
+         
+    }
     void refresh();
 };

@@ -169,7 +169,7 @@ public:
 	juce::Path outer;
 
 	MainKnobLookAndFeel() { }
-	~MainKnobLookAndFeel() { knboPNG = nullptr; }
+	~MainKnobLookAndFeel() {knboPNG = nullptr;}
 
 	void drawRotarySlider(juce::Graphics& g, int, int, int width, int height, float sliderPos,
 		const float , const float , juce::Slider&) override
@@ -230,7 +230,8 @@ public:
 	std::vector<std::pair <juce::Component*, childComp*> > compRszr;
 
 	pngHandler(juce::File& path);
-
+	~pngHandler(){
+	}
 	void renderTriggerButton(rOnOffRect* rect, juce::String& pngOn, juce::String& pngOff)
 	{
 		rect->OnImage = juce::PNGImageFormat::loadFrom(PNGdir.getChildFile(pngOn));
