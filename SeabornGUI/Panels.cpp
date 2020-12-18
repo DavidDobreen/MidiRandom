@@ -365,8 +365,8 @@ TextPanel::FontStyleKnob::FontStyleKnob(int x, int y, int w, int h, juce::Compon
 }
 
 HistPanel::HistPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
-    : moveChildComp(x, y, w, h), handled(handler, parent, this), drvred(_drvr) {
-    lineWidth.sldr.setRange(1, 500, 1);
+    : ChartPanel(x, y, w, h, parent, handler, _drvr) {
+    //lineWidth.sldr.setRange(1, 500, 1);
 }
 
 void HistPanel::refresh()

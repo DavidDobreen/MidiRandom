@@ -12,6 +12,18 @@
 #include "CommonComps.h"
 #include "params.h"
 
+class ChartPanel : public moveChildComp, public handled, public drvred
+{
+public:
+    Params* itemParams;
+    juce::OwnedArray<moveChildComp> guiComps;
+    juce::Array<paramedBeta*> paramComps;
+
+    ChartPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    ~ChartPanel() {}
+    void refresh();
+};
+
 class TextPanel : public juce::ChangeListener, public childComp, public handled, public drvrShellNotifer
 {
     class FontFamilyKnob :  public moveChildComp, public paramedBeta, public handled, public drvred
@@ -311,10 +323,10 @@ public:
 
 };
 
-class HistPanel : public moveChildComp, public handled, public drvred
+class HistPanel : public ChartPanel
 {
 public:
-    Params* params;
+    /*Params* params;
     colorsComponent color{ 373,57,161,25,this,params,handler,enumParmas::binsColor };
     colorsComponent edgeColor{ 553,57,161,25,this,params,handler,enumParmas::binsEdgeColor };
     chLabel label{ 409,92,150,25,"label",this,params,handler, drvr ,enumParmas::binsLabelEnabled };
@@ -331,7 +343,7 @@ public:
     chToggleButtonAndLabel stacked{ 709,160,85,25,"stacked",this,params,handler,drvr,enumParmas::binsStacked };
     SelectionBox binsHatch{ 882,-4,{ "none", "/", "|","-","+","x","o","O",".","*" },this, params,handler,drvr,enumParmas::binsHatch };
     SelectionBox binsLineStyle{ 802,14,{ "solid", "dashed", "dashdot", "dotted" },this, params,handler,drvr,enumParmas::binsLineStyle };
-    chKnobClassicBeta lineWidth{ 235,116,70,70,"lineWidth",this , params ,handler,drvr , enumParmas::binsLineWidth };
+    chKnobClassicBeta lineWidth{ 235,116,70,70,"lineWidth",this , params ,handler,drvr , enumParmas::binsLineWidth };*/
     
     HistPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
     ~HistPanel(){}
@@ -365,17 +377,7 @@ public:
     void refresh();
 };
 
-class ChartPanel : public moveChildComp, public handled, public drvred
-{
-public:
-    Params* itemParams;
-    juce::OwnedArray<moveChildComp> guiComps;
-    juce::Array<paramedBeta*> paramComps;
-     
-    ChartPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~ChartPanel() {}
-    void refresh();  
-};
+
 class PiePanel : public ChartPanel
 {
 public:

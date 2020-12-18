@@ -58,25 +58,27 @@ class BottomPanel : public childComp,  public handled, public drvred
 {
 public:     
     juce::OwnedArray<ChartPanel> panels;
-    int selected;
+    ChartPanel* selectedPanel = nullptr;
    
     chBgComp bkgd{ "SAMPLE GRAY PANEL2.png",this,handler };
     namebox namebox{ 407,13,152,35,this,handler };
-    HistPanel histPanel{ 0,0,dims[2],dims[3],this,handler ,drvr };
+    //HistPanel histPanel{ 0,0,dims[2],dims[3],this,handler ,drvr };
     BarsPanel barsPanel{ 0,0,dims[2],dims[3],this,handler ,drvr };
-    PiePanel piePanel{ 0,0,dims[2],dims[3],this,handler ,drvr };
+    //PiePanel piePanel{ 0,0,dims[2],dims[3],this,handler ,drvr };
     TextPanel textPanel{ 0,0,dims[2],dims[3],this,handler ,drvr};
     Line2DPanel line2dPanel{ 0,0,dims[2],dims[3],this,handler,drvr };
     AxesPanel axesPanel{ 0,0,dims[2],dims[3],this,handler,drvr };
-
-    juce::Component* selectedPanel = nullptr;
 
     BottomPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr) 
         : childComp(x, y, w, h),handled(handler, parent, this) , drvred(_drvr) {
         namebox.lbl.text = "text panel";
         namebox.setName("namebox");
+
+        
     }
     ~BottomPanel(){}
+
+     
 };
 
 class TextList : public juce::ChangeListener, public moveChildComp, public handled
@@ -172,7 +174,7 @@ public:
     HistList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler);
 
     void resized();
-    void changeListenerCallback(juce::ChangeBroadcaster* source);
+    //void changeListenerCallback(juce::ChangeBroadcaster* source);
 
 };
 
@@ -208,53 +210,53 @@ public:
 
 };
 
-class PieList : public juce::ChangeListener, public moveChildComp, public handled
-{
-public:
-
-    class item : public moveChildComp, public handled
-    {
-    public:
-        Params params;
-        juce::String xValues;
-        juce::String yValues;
-        
-        chBgComp frame{ "bottom pads name frame3.png",this ,handler };
-        MoveLabel lbl{ 0,-1,dims[2],dims[3],"",juce::Colours::aqua,this,handler };
-        item(int x, int y, int w, int h,  juce::Array<paramedBeta*>& _paramComps,  juce::Component* parent, pngHandler& handler)
-            : moveChildComp(x, y, w, h), handled(handler, parent, this) {
-            for (auto& c : _paramComps)
-            {
-                if (c->guiType == 1)              
-                    params.paramsArray.add(new paramNumber(&c->paramText, c->paramVal, c->paramScalar));
-                else if (c->guiType == 2)
-                    params.paramsArray.add(new paramString(&c->paramText, &c->paramTextValue,c->myBool));
-                else if (c->guiType == 3)
-                    params.paramsArray.add(new paramStringArray(&c->paramText, &c->paramTextValue, c->myBool));
-                else if (c->guiType == 4)
-                    params.paramsArray.add(new paramBool(&c->paramText, &c->paramBool));
-                else if (c->guiType == 5)
-                    params.paramsArray.add(new paramList(&c->paramText, &c->paramTextValue));
-            }
-                
-        }
-    };
-    Axes& axes;
-    
-
-    chBgComp frame{ "small eq frame3.png",this ,handler };
-    chBgComp bkgd{ "BLACK MAIN BG2.png",this ,handler };
-
-    juce::OwnedArray<PieList::item> items;
-    PieList::item* selectedItem = nullptr;
-
-    BottomPanel& bottomPanel;
-    PieList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler);
-
-    void resized();
-    void changeListenerCallback(juce::ChangeBroadcaster* source);
-
-};
+//class PieList : public juce::ChangeListener, public moveChildComp, public handled
+//{
+//public:
+//
+//    class item : public moveChildComp, public handled
+//    {
+//    public:
+//        Params params;
+//        juce::String xValues;
+//        juce::String yValues;
+//        
+//        chBgComp frame{ "bottom pads name frame3.png",this ,handler };
+//        MoveLabel lbl{ 0,-1,dims[2],dims[3],"",juce::Colours::aqua,this,handler };
+//        item(int x, int y, int w, int h,  juce::Array<paramedBeta*>& _paramComps,  juce::Component* parent, pngHandler& handler)
+//            : moveChildComp(x, y, w, h), handled(handler, parent, this) {
+//            for (auto& c : _paramComps)
+//            {
+//                if (c->guiType == 1)              
+//                    params.paramsArray.add(new paramNumber(&c->paramText, c->paramVal, c->paramScalar));
+//                else if (c->guiType == 2)
+//                    params.paramsArray.add(new paramString(&c->paramText, &c->paramTextValue,c->myBool));
+//                else if (c->guiType == 3)
+//                    params.paramsArray.add(new paramStringArray(&c->paramText, &c->paramTextValue, c->myBool));
+//                else if (c->guiType == 4)
+//                    params.paramsArray.add(new paramBool(&c->paramText, &c->paramBool));
+//                else if (c->guiType == 5)
+//                    params.paramsArray.add(new paramList(&c->paramText, &c->paramTextValue));
+//            }
+//                
+//        }
+//    };
+//    Axes& axes;
+//    
+//
+//    chBgComp frame{ "small eq frame3.png",this ,handler };
+//    chBgComp bkgd{ "BLACK MAIN BG2.png",this ,handler };
+//
+//    juce::OwnedArray<PieList::item> items;
+//    PieList::item* selectedItem = nullptr;
+//
+//    BottomPanel& bottomPanel;
+//    PieList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler);
+//
+//    void resized();
+//    void changeListenerCallback(juce::ChangeBroadcaster* source);
+//
+//};
 
 class AxesList : public juce::ChangeListener, public moveChildComp, public handled
 {
@@ -295,14 +297,10 @@ public:
     }
     void changeListenerCallback(juce::ChangeBroadcaster* source) {
 
-        bottomPanel.line2dPanel.setVisible(false);
-        bottomPanel.textPanel.setVisible(false);
-        bottomPanel.histPanel.setVisible(false);
-        bottomPanel.barsPanel.setVisible(false);
-        bottomPanel.piePanel.setVisible(false);
-        bottomPanel.axesPanel.setVisible(true);
-        
+        for (auto& p : bottomPanel.panels)
+            p->setVisible(false);
 
+              
         MoveLabel* lbl = static_cast<MoveLabel*>(source);
         selectedLbl = lbl;
         AxesList::item* item = static_cast<AxesList::item*>(lbl->getParentComponent());
@@ -366,18 +364,20 @@ public:
     };
     Axes& axes;
     BottomPanel& bottomPanel;
+    int& selected;
     
     chBgComp frame{ "small eq frame3.png",this ,handler };
     chBgComp bkgd{ "BLACK MAIN BG2.png",this ,handler };
 
-    juce::OwnedArray<PieList::item> items;
+    juce::OwnedArray<ItemList::item> items;
     ItemList::item* selectedItem = nullptr;
 
     
-    ItemList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler);
+    ItemList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler, int& _selected);
 
     void resized();
     void changeListenerCallback(juce::ChangeBroadcaster* source);
+    void addItem(const juce::String& text);
 
 };
 
@@ -393,26 +393,25 @@ public:
         {
         public:
             juce::ChangeBroadcaster cliked;
-            
+            int index;
+            int* selected;
 
             itemArea(int x, int y, int w, int h, juce::String _text, juce::Colour color,juce::Component* parent, pngHandler& handler)
                 : MoveLabel(  x,   y,   w,   h,   _text, color,  parent, handler)    {}
             ~itemArea() { cliked.removeAllChangeListeners(); }
-                
+                   
             void mouseDown(const juce::MouseEvent& event) {    
-                 
+                *selected = index;
                 cliked.sendSynchronousChangeMessage(); }
             void mouseEnter(const juce::MouseEvent& event) override;
             
         };
         
         chBgComp frame{ "bottom pads name frame3.png",this ,handler };
-        itemArea lbl{ 0,-1,dims[2],dims[3],"",juce::Colours::slategrey,this,handler  };
-        int& selected;
-
+        itemArea lbl{ 0,-1,dims[2],dims[3],"",juce::Colours::slategrey,this,handler };
          
-        item(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler )
-            : moveChildComp(x, y, w, h), handled(handler, parent, this), selected(selected) {}
+        item(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler)
+            : moveChildComp(x, y, w, h), handled(handler, parent, this) {}
 
         
     };
@@ -421,6 +420,7 @@ public:
 
     chBgComp bkgd{ "BLACK MAIN BG2.png",this ,handler };
     juce::OwnedArray<ChartList::item> items;
+    int selected;
      
 
     BottomPanel& bottomPanel;
@@ -431,46 +431,42 @@ public:
     void addItem(juce::String text);
 };
 
-class LeftPanel : public juce::ChangeListener, public childComp, public handled
+class LeftPanel : public juce::ChangeListener, public childComp, public handled, public drvred
 {
 public:
 
     BottomPanel& bottomPanel;
-
+    juce::OwnedArray<ItemList> itemsList;
+    
     chBgComp bkgd{ "MASTER GRAY PANEL2.png",this,handler };
     Axes axes{ 0,49,dims[2],45,this,handler };
     AxesList axesList{ 30,113,93,236,axes, bottomPanel,this,handler };
-    HistList histList{ 130,113,93,236,axes, bottomPanel,this,handler };
+    //HistList histList{ 130,113,93,236,axes, bottomPanel,this,handler };
     BarsList barsList{ 130,113,93,236,axes, bottomPanel,this,handler };
-    PieList pieList{ 130,113,93,236,axes, bottomPanel,this,handler };
+    /*PieList pieList{ 130,113,93,236,axes, bottomPanel,this,handler };*/
     LineList lineList{ 130,113,93,236,axes, bottomPanel,this,handler };
     TextList textList{ 30,358,93,236,axes, bottomPanel,this,handler };
     ChartList::item chartName{ 102, 21, 76, 18, this, handler };
     ChartList chartList{ 98,48,84,100,axes, bottomPanel,this,handler };
-
-    /*chLabel XLabel{ 45,50,180,25,"X-LAbel",this,handler };
-    chLabel YLabel{ 45,85,180,25,"Y-LAbel",this,handler };
-    chLabel Title{ 45,120,180,25,"Title",this,handler };
-    chLabel Legend{ 45,155,180,25,"Legend",this,handler };
-
-    std::vector<juce::String> intervals = { "solid","dotted","dashed","dashdot" };
-    markerKnobBackground lineStyleBkgd{ 45,265,100,90,this,handler };
-    chKnobSelection lineStyle{ 70,275,70,60,intervals,this,handler };*/
-
-    LeftPanel(int x, int y, int w, int h, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler) : bottomPanel(_bottomPanel), childComp(x, y, w, h), handled(handler, parent, this) {
-        /*XLabel.lbl.setText("X =", juce::dontSendNotification);
-        YLabel.lbl.setText("Y =", juce::dontSendNotification);
-        Title.lbl.setText("title", juce::dontSendNotification);
-        Legend.lbl.setText("", juce::dontSendNotification);*/
+ 
+    LeftPanel(int x, int y, int w, int h, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler, Drvr& _drvr) 
+        : bottomPanel(_bottomPanel), childComp(x, y, w, h), handled(handler, parent, this) ,drvred(_drvr){
         chartName.lbl.addChangeListener(this);
+        chartName.lbl.index = -1;
+        
+
+        bottomPanel.panels.add(new HistPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], &bottomPanel, handler, drvr));
+        addPanel("Hist");
+        bottomPanel.panels.add(new PiePanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], &bottomPanel, handler, drvr));
+        addPanel("Pie");
+
         for (auto c : chartList.items)
             c->lbl.cliked.addChangeListener(this);
-
     }
     ~LeftPanel(){
        
     }
         
-
+    void addPanel(const juce::String& text);
     void changeListenerCallback(juce::ChangeBroadcaster* source);
 };
