@@ -84,12 +84,12 @@ public:
 class paramNumber : public paramedType
 {
 public:   
-    float* val;  
-    float* scalar;    
-    paramNumber(juce::String* _param, float* _val, float* _scalar) : paramedType(_param), val(_val), scalar(_scalar) {}
+    float val;  
+    float scalar;    
+    paramNumber(juce::String* _param, float _val, float _scalar) : paramedType(_param), val(_val), scalar(_scalar) {}
     ~paramNumber(){}
     void makeKwarg(juce::String& args) {
-        if (*val != 1.0f) args += "," + *param + "=" + juce::String(*val*(*scalar));
+        if (val != 1.0f) args += "," + *param + "=" + juce::String(val*(scalar));
     }
      
 };
@@ -117,6 +117,7 @@ class Params
 public:
 
     juce::OwnedArray<paramedType> paramsArray;
+   
 
     Params() { paramsArray.clear(); }
     ~Params(){}
@@ -309,7 +310,7 @@ public:
     Params*& params;
     int param;
 
-    int guiType = 0; // 1=float, 2=string, 3=string array, 4 = bool  
+    int guiType = 0; // 1=float, 2=string, 3=string array, 4 = bool, 5=list  
     float paramVal = 1.0;
     float paramScalar = 0.01f;
     juce::String paramText = "";

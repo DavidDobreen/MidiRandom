@@ -63,17 +63,14 @@ public:
                 
         }
     };
-    
-    
-
+    CompArea area{ 0,0,dims[2],dims[3] };
     moveChildComp(int x, int y, int w, int h) : childComp(x, y, w, h) { addAndMakeVisible(area); area.parent = this; }
-       
-        
+             
     void mouseDown(const juce::MouseEvent& event){}
     void mouseDrag(const juce::MouseEvent& event){}
     void paint(juce::Graphics& g){}
-
-    CompArea area{ 0,0,dims[2],dims[3] };
+    virtual void refresh(){}
+    
 };
 
 //Just an empty moveable container
@@ -351,8 +348,12 @@ public:
         sldr.guiType = guiType;
         if (_paramText != "")
             sldr.paramText = _paramText;
+
+        
     }
     ~chKnobClassicBeta(){}
+
+    void refresh() { sldr.setValue(sldr.paramVal /** sldr.paramScalar*/, juce::dontSendNotification); }
 };
 
 class LineStyleComp : public moveChildComp, public paramedBeta, public handled, public drvred
@@ -422,6 +423,8 @@ public:
         update(btn.IsOn);
         sendSynchronousChangeMessage();
     }
+
+    void refresh() { btn.IsOn = paramBool; btn.repaint(); }
 };
 
 class moveMainTab : public moveChildComp, public handled
@@ -575,18 +578,12 @@ public:
         int param, int _guiType = 0, juce::String _paramText = "", float _paramVal = 0) :
         moveChildComp(x, y, 73, vals.size() * 25), paramedBeta(params), handled(handler, parent, this), drvred(drvr)
     {
-        for (int i = 0; i < vals.size(); i++)
-        {      
-            leds.add(new chButton{ 5, i * 20 + 5,10,10,"LED-ON_blue.png","LED_blue_off.png" ,this,handler });
-            options.add(new selecion{ i * 20,vals[i],this,leds,leds.getLast(), this,params, handler, drvr,param });
-            ledsBlockers.add(new moveChildComp{ 5,i * 20 + 5,10,10 });
-            handler.compRszr_push(this, ledsBlockers.getLast());
            
-        }    
 
         guiType = _guiType;        
         if (_paramText != "")
             paramText = _paramText;
     }
-      
+    
+    void refresh();
 };

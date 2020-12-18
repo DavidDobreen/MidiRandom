@@ -185,7 +185,14 @@ void TextList::changeListenerCallback(juce::ChangeBroadcaster* source)
 ChartList::ChartList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler)
     : axes(_axes), bottomPanel(_bottomPanel), moveChildComp(x, y, w, h), handled(handler, parent, this)
 {
-    ChartList::item* item1 = new ChartList::item(4, 3, 76, 18, this, handler);
+
+    addItem("Line");
+    addItem("Hist");
+    addItem("Bars");
+    addItem("Pie");
+     
+
+   /* ChartList::item* item1 = new ChartList::item(4, 3, 76, 18, this, handler);
     
     item1->lbl.text = "Line";
     item1->lbl.addChangeListener(this);
@@ -208,7 +215,7 @@ ChartList::ChartList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bott
     item4->lbl.text = "Pie";
     item4->lbl.addChangeListener(this);
     item4->area.toFront(false);
-    items.add(item4);
+    items.add(item4);*/
 }
 
 void ChartList::changeListenerCallback(juce::ChangeBroadcaster* source)
@@ -222,6 +229,15 @@ void ChartList::changeListenerCallback(juce::ChangeBroadcaster* source)
 
 }
 
+void ChartList::addItem(juce::String text)
+{
+    ChartList::item* item = new ChartList::item(4, 3 + items.size()*18, 76, 18, this, handler);
+    item->lbl.text = text;
+    item->lbl.addChangeListener(this);
+    item->area.toFront(false);
+    items.add(item);
+}
+
 void ChartList::item::itemArea::mouseEnter(const juce::MouseEvent& event)
 {
     
@@ -232,7 +248,11 @@ void ChartList::item::itemArea::mouseEnter(const juce::MouseEvent& event)
 
 void LeftPanel::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
-      
+ 
+    for (auto& i : chartList.items)
+        i->setVisible(false);
+
+    
     //Line chart
     if (source == &chartList.items[0]->lbl.cliked)
     {      
@@ -408,6 +428,11 @@ PieList::PieList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPa
     item1->lbl.text = "Pie1";
     item1->lbl.addChangeListener(this);
     items.add(item1);
+
+    auto item2 = new PieList::item(9, 26, 76, 18, _bottomPanel.piePanel.paramComps, this, handler);
+    item2->lbl.text = "Pie2";
+    item2->lbl.addChangeListener(this);
+    items.add(item2);
 }
 
 void PieList::resized()
@@ -440,12 +465,51 @@ void PieList::changeListenerCallback(juce::ChangeBroadcaster* source)
 
     lbl->textColor = juce::Colours::aqua;
 
-    bottomPanel.piePanel.params = &item->params;
+    bottomPanel.piePanel.itemParams = &item->params;
 
     bottomPanel.piePanel.refresh();
 
     axes.xValues.targetLineListItemVals = &item->xValues;
     axes.yValues.setVisible(true);
+    axes.yValues.targetLineListItemVals = &item->yValues;
+    axes.refresh();
+}
+
+ItemList::ItemList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler)
+    : axes(_axes), bottomPanel(_bottomPanel), moveChildComp(x, y, w, h), handled(handler, parent, this)
+{
+}
+
+void ItemList::resized()
+{
+    for (auto& i : items)
+        i->setBounds(i->dims[0], i->dims[1], i->dims[2], i->dims[3]);
+}
+
+void ItemList::changeListenerCallback(juce::ChangeBroadcaster* source)
+{
+    for (auto& p : bottomPanel.panels)
+        p->setVisible(false);
+    bottomPanel.panels[bottomPanel.selected]->setVisible(true);
+
+    MoveLabel* lbl = static_cast<MoveLabel*>(source);
+    ItemList::item* item = static_cast<ItemList::item*>(lbl->getParentComponent());
+    selectedItem = item;
+
+    bottomPanel.namebox.lbl.text = lbl->text;
+    bottomPanel.namebox.repaint();
+
+    for (auto i : items)
+    {
+        i->lbl.textColor = juce::Colours::slategrey;
+        i->repaint();
+    }
+
+    lbl->textColor = juce::Colours::aqua;   
+    bottomPanel.panels[bottomPanel.selected]->itemParams = &item->params;
+    bottomPanel.panels[bottomPanel.selected]->refresh();
+
+    axes.xValues.targetLineListItemVals = &item->xValues;
     axes.yValues.targetLineListItemVals = &item->yValues;
     axes.refresh();
 }

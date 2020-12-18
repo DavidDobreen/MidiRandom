@@ -163,7 +163,7 @@ void PythonShell::Matplot()
     for (auto& i : lefPanel.pieList.items)
     {
         plotParams.clear();
-        bottomPanel.piePanel.params = &i->params;
+        bottomPanel.piePanel.itemParams = &i->params;
         lefPanel.axes.xValues.targetLineListItemVals = &i->xValues;
         plotParams.push_back("(" + lefPanel.axes.xValues.lbl.getText() + ")");
 
@@ -173,7 +173,7 @@ void PythonShell::Matplot()
             mlc += strlen(p.toUTF8());
         mlc += strlen(close);
 
-        juce::String pieParams = bottomPanel.piePanel.params->MakePieKwargs();
+        juce::String pieParams = bottomPanel.piePanel.itemParams->MakePieKwargs();
         mlc += strlen(pieParams.toUTF8());
 
         //allocate space for parameters

@@ -368,41 +368,30 @@ public:
 class ChartPanel : public moveChildComp, public handled, public drvred
 {
 public:
-    Params* params;
-    juce::OwnedArray<chLabel> guiChLabels;
-    juce::OwnedArray<chKnobClassicBeta> guiChKnobs;
-    juce::OwnedArray<chToggleButtonAndLabel> guiChButtons;
-    juce::OwnedArray<SelectionBox> guiChSelections;
+    Params* itemParams;
+    juce::OwnedArray<moveChildComp> guiComps;
     juce::Array<paramedBeta*> paramComps;
-
+     
     ChartPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
     ~ChartPanel() {}
-
-    void refresh();
-    
+    void refresh();  
 };
-class PiePanel : public moveChildComp, public handled, public drvred
+class PiePanel : public ChartPanel
 {
 public:
-    Params* params;
-    
-    juce::OwnedArray<paramedBeta> guiChLabels;
-    //juce::OwnedArray<paramedBeta> guiComps;
-    juce::Array<paramedBeta*> paramComps;
-
     //chLabel explode{ 409,92,150,25,"explode",this,params,handler, drvr ,enumParmas::explodeEnabled };
-    chLabel labels{ 409,110,150,25,"labels",this,params,handler, drvr ,enumParmas::pieLabelsEnabled };
-    chLabel colors{ 409,135,150,25,"colors",this,params,handler, drvr ,enumParmas::pieColorsEnabled };
-    chLabel autopct{ 409,160,150,25,"autopct",this,params,handler, drvr ,enumParmas::autopctEnabled };
-    chKnobClassicBeta pctdistance{ 235,116,70,70,"pctdistance",this , params ,handler,drvr , enumParmas::pctdistance };
-    //chToggleButtonAndLabel shadow{ 609,160,85,25,"shadow",this,params,handler,drvr,enumParmas::pieShadow };
-    //SelectionBox normalize{ 102,14,{ "none", "True", "False"},this, params,handler,drvr,enumParmas::pieNormalize };
-    chKnobClassicBeta labeldistance{ 205,16,70,70,"distance",this , params ,handler,drvr , enumParmas::labeldistance };
-    chKnobClassicBeta startangle{ 305,16,70,70,"startangle",this , params ,handler,drvr , enumParmas::startangle };
-    //chKnobClassicBeta radius{ 305,116,70,70,"radius",this , params ,handler,drvr , enumParmas::radius };
-    chToggleButtonAndLabel counterclock{ 709,160,85,25,"counterclock",this,params,handler,drvr,enumParmas::counterclock };
-    chToggleButtonAndLabel frame{ 409,160,85,25,"frame",this,params,handler,drvr,enumParmas::pieFrame };
-    chToggleButtonAndLabel rotateLabels{ 409,160,85,25,"rotateLabels",this,params,handler,drvr,enumParmas::rotateLabels };
+    //chLabel labels{ 409,110,150,25,"labels",this,params,handler, drvr ,enumParmas::pieLabelsEnabled };
+    //chLabel colors{ 409,135,150,25,"colors",this,params,handler, drvr ,enumParmas::pieColorsEnabled };
+    //chLabel autopct{ 409,160,150,25,"autopct",this,params,handler, drvr ,enumParmas::autopctEnabled };
+    //chKnobClassicBeta pctdistance{ 235,116,70,70,"pctdistance",this , params ,handler,drvr , enumParmas::pctdistance };
+    ////chToggleButtonAndLabel shadow{ 609,160,85,25,"shadow",this,params,handler,drvr,enumParmas::pieShadow };
+    ////SelectionBox normalize{ 102,14,{ "none", "True", "False"},this, params,handler,drvr,enumParmas::pieNormalize };
+    //chKnobClassicBeta labeldistance{ 205,16,70,70,"distance",this , params ,handler,drvr , enumParmas::labeldistance };
+    //chKnobClassicBeta startangle{ 305,16,70,70,"startangle",this , params ,handler,drvr , enumParmas::startangle };
+    ////chKnobClassicBeta radius{ 305,116,70,70,"radius",this , params ,handler,drvr , enumParmas::radius };
+    //chToggleButtonAndLabel counterclock{ 709,160,85,25,"counterclock",this,params,handler,drvr,enumParmas::counterclock };
+    //chToggleButtonAndLabel frame{ 409,160,85,25,"frame",this,params,handler,drvr,enumParmas::pieFrame };
+    //chToggleButtonAndLabel rotateLabels{ 409,160,85,25,"rotateLabels",this,params,handler,drvr,enumParmas::rotateLabels };
 
 
 
@@ -410,5 +399,5 @@ public:
     ~PiePanel(){      
          
     }
-    void refresh();
+   
 };

@@ -92,7 +92,7 @@ void chLabel::changeListenerCallback(juce::ChangeBroadcaster* source)
 
 void chLabel::refresh()
 {
-    lblName.IsOn = lblName.paramBool;
+    lblName.IsOn = paramBool;
     lblName.repaint();
     lbl.lbl.setText(lbl.paramTextValue,juce::dontSendNotification);
 }
@@ -208,3 +208,21 @@ void moveChildComp::CompArea::mouseDrag(const juce::MouseEvent& event)
    
 }
 
+void SelectionBox::refresh()
+{
+    for (auto& l : leds)
+    {
+        l->IsOn = false;
+        l->repaint();
+    }
+    for (auto& o : options)
+    {
+        if (o->paramTextValue == paramTextValue)
+        {
+            o->led->IsOn;
+            o->repaint();
+        }
+            
+            
+    }
+}

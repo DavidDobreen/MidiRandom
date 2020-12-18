@@ -382,21 +382,19 @@ void BarsPanel::refresh()
 }
 
 PiePanel::PiePanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
-    : moveChildComp(x, y, w, h), handled(handler, parent, this), drvred(_drvr) {
-     
-    
-     
-    chLabel* explode = new chLabel( 409,92,150,25,"explode",this,params,handler, drvr ,-1,3,"explode" );
-    guiChLabels.add(std::move(explode));
+    : ChartPanel(x, y, w, h,parent,handler,_drvr){
+ 
+    chLabel* explode = new chLabel( 409,92,150,25,"explode",this, itemParams,handler, drvr ,0,3,"explode" );
+    guiComps.add(std::move(explode));
     paramComps.add(&explode->lbl);
 
     // chLabel* labels = new chLabel(409, 110, 150, 25, "labels", this, params, handler, drvr, -1,3,"labels");
     //guiComps.add(std::move(labels));
     //paramComps.add(&labels->lbl);
      
-    /*chKnobClassicBeta* radius = new chKnobClassicBeta(305, 116, 70, 70, "radius", this, params, handler, drvr, -1, 1, "radius", 1.0f);
+    chKnobClassicBeta* radius = new chKnobClassicBeta(305, 116, 70, 70, "radius", this, itemParams, handler, drvr, 1, 1, "radius", 1.0f);
     guiComps.add(std::move(radius));
-    paramComps.add(&radius->sldr);*/
+    paramComps.add(&radius->sldr);
 
     //chToggleButtonAndLabel* shadow = new chToggleButtonAndLabel( 609,160,85,25,"shadow",this,params,handler,drvr,-1,4,"shadow" );
     //guiComps.add(std::move(shadow));
@@ -407,9 +405,7 @@ PiePanel::PiePanel(int x, int y, int w, int h, juce::Component* parent, pngHandl
     paramComps.add(normalize);*/
 }
 
-void PiePanel::refresh()
-{
-}
+ 
 
 ChartPanel::ChartPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
     : moveChildComp(x, y, w, h), handled(handler, parent, this), drvred(_drvr)
@@ -418,6 +414,90 @@ ChartPanel::ChartPanel(int x, int y, int w, int h, juce::Component* parent, pngH
 
 void ChartPanel::refresh()
 {
-    for (auto& comp : guiChLabels)
-        comp->refresh();
+    for (int i = 0; i < paramComps.size(); ++i)
+    {
+        switch (paramComps[i]->guiType)
+        {
+        case 1:
+            {
+                chKnobClassicBeta* knob = dynamic_cast<chKnobClassicBeta*>(guiComps[i]);
+                if (knob != nullptr)
+                {
+                    paramNumber* prm = dynamic_cast<paramNumber*>(itemParams->paramsArray[i]);
+                    if (prm != nullptr)
+                    {
+                        knob->sldr.paramVal = prm->val;
+                        knob->sldr.paramScalar = prm->scalar;
+                        knob->refresh();
+                    }                                
+                }
+                break;
+            }
+
+        
+        case 2:
+        {
+            chLabel* label = dynamic_cast<chLabel*>(guiComps[i]);
+            if (label != nullptr)
+            {
+                paramString* prm = dynamic_cast<paramString*>(itemParams->paramsArray[i]);
+                if (prm != nullptr)
+                {
+                    label->paramBool = prm->myBool;
+                    label->paramTextValue = *prm->val;
+                    label->refresh();
+                }
+                 
+            }
+            break;
+        }
+        case 3:
+        {
+            chLabel* label = dynamic_cast<chLabel*>(guiComps[i]);
+            if (label != nullptr)
+            {
+                paramStringArray* prm = dynamic_cast<paramStringArray*>(itemParams->paramsArray[i]);
+                if (prm != nullptr)
+                {
+                    label->paramBool = prm->myBool;
+                    label->paramTextValue = *prm->val;
+                    label->refresh();
+                }
+
+            }
+            break;
+        }
+        case 4:
+            {
+                chToggleButtonAndLabel* btn = dynamic_cast<chToggleButtonAndLabel*>(guiComps[i]);
+                if (btn != nullptr)
+                {
+                    paramBool* prm = dynamic_cast<paramBool*>(itemParams->paramsArray[i]);
+                    if (prm != nullptr)
+                    {
+                        btn->paramBool = *prm->val;
+                        btn->refresh();
+                    }                              
+                }
+                break;
+            }
+        case 5:
+            {
+                SelectionBox* slc = dynamic_cast<SelectionBox*>(guiComps[i]);
+                if (slc != nullptr)
+                {
+                    paramList* prm = dynamic_cast<paramList*>(itemParams->paramsArray[i]);
+                    if (prm != nullptr)
+                    {
+                        slc->paramTextValue = *prm->val;
+                        slc->refresh();
+                    }
+ 
+                }
+                break;
+            }
+        }
+    }                        
 }
+     
+

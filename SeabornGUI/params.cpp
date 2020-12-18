@@ -192,7 +192,10 @@ juce::String Params::MakePieKwargs()
 void paramedBeta::update(double val)
 {
     
-    paramVal = val;
+    
+    paramNumber* pem = static_cast<paramNumber*>(params->paramsArray[param]);
+    pem->val = val;
+    //paramVal = val;
 
     switch (param)
     {
