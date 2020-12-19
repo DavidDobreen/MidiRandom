@@ -191,128 +191,128 @@ juce::String Params::MakePieKwargs()
 
 void paramedBeta::update(double val)
 {
-    
-    
-    paramNumber* pem = static_cast<paramNumber*>(params->paramsArray[param]);
-    pem->val = val;
-    //paramVal = val;
-
-    switch (param)
-    {
-    case enumParmas::lalpha:
-    {
-        params->lalpha = float(val) * 0.01f;
-        return;
-    }
-    case enumParmas::lwidth:
-    {
-        params->lwidth = float(val) * 0.01f;
-        return;
-    }
-    case enumParmas::llineStyleComp:
-    {
-        params->llineStyleComp = int(val);
-        return;
-    }
-    case enumParmas::lmarkerSize:
-    {
-        params->lmarkerSize = val * 0.25;
-        return;
-    }
-    case enumParmas::lmarkerEdgeWith:
-    {
-        params->lmarkerEdgeWith = val * 0.10;
-        return;
-    }
-    case enumParmas::lmarkerFillstyleKnob:
-    {
-        params->lmarkerFillstyleKnob = int(val);
-        return;
-    }
  
-    case enumParmas::tsize:
-    {
-        params->tsize = val;
-        return;
-    }
-    case enumParmas::tfontfamily:
-    {
-        params->tfontfamily = int(val) ;
-        return;
-    }
-    case enumParmas::tfontstyle:
-    {
-        params->tfontstyle = int(val) ;
-        return;
-    }
-    case enumParmas::binsWidth:
-    {
-        params->binsWidth =val;
-        return;
-    }
-    case enumParmas::binsAlpha:
-    {
-        params->binsAlpha = float(val) * 0.01f;
-        return;
-    }
+    params->paramsArray[index]->floatVal = val;
+    
+     
+    //switch (param)
+    //{
+    //case enumParmas::lalpha:
+    //{
+    //    params->lalpha = float(val) * 0.01f;
+    //    return;
+    //}
+    //case enumParmas::lwidth:
+    //{
+    //    params->lwidth = float(val) * 0.01f;
+    //    return;
+    //}
+    //case enumParmas::llineStyleComp:
+    //{
+    //    params->llineStyleComp = int(val);
+    //    return;
+    //}
+    //case enumParmas::lmarkerSize:
+    //{
+    //    params->lmarkerSize = val * 0.25;
+    //    return;
+    //}
+    //case enumParmas::lmarkerEdgeWith:
+    //{
+    //    params->lmarkerEdgeWith = val * 0.10;
+    //    return;
+    //}
+    //case enumParmas::lmarkerFillstyleKnob:
+    //{
+    //    params->lmarkerFillstyleKnob = int(val);
+    //    return;
+    //}
+ 
+    //case enumParmas::tsize:
+    //{
+    //    params->tsize = val;
+    //    return;
+    //}
+    //case enumParmas::tfontfamily:
+    //{
+    //    params->tfontfamily = int(val) ;
+    //    return;
+    //}
+    //case enumParmas::tfontstyle:
+    //{
+    //    params->tfontstyle = int(val) ;
+    //    return;
+    //}
+    //case enumParmas::binsWidth:
+    //{
+    //    params->binsWidth =val;
+    //    return;
+    //}
+    //case enumParmas::binsAlpha:
+    //{
+    //    params->binsAlpha = float(val) * 0.01f;
+    //    return;
+    //}
 
-    case enumParmas::binsLineWidth:
-    {
-        params->binsLineWidth = float(val) * 0.01f;
-        return;
-    }
+    //case enumParmas::binsLineWidth:
+    //{
+    //    params->binsLineWidth = float(val) * 0.01f;
+    //    return;
+    //}
 
-    case enumParmas::barsErrCapSize:
-    {
-        params->barsErrCapSize = float(val) * 0.01f;
-        return;
-    }
+    //case enumParmas::barsErrCapSize:
+    //{
+    //    params->barsErrCapSize = float(val) * 0.01f;
+    //    return;
+    //}
 
-    case enumParmas::barsLineWidth:
-    {
-        params->barsLineWidth = float(val) * 0.01f;
-        return;
-    }
+    //case enumParmas::barsLineWidth:
+    //{
+    //    params->barsLineWidth = float(val) * 0.01f;
+    //    return;
+    //}
 
-    case enumParmas::barsAlpha:
-    {
-        params->barsAlpha = float(val) * 0.01f;
-        return;
-    }
+    //case enumParmas::barsAlpha:
+    //{
+    //    params->barsAlpha = float(val) * 0.01f;
+    //    return;
+    //}
 
-    case enumParmas::pctdistance:
-    {
-        params->pctdistance = float(val) * 0.01f;
-        return;
-    }
-    case enumParmas::labeldistance:
-    {
-        params->labeldistance = float(val) * 0.01f;
-        return;
-    }
-    case enumParmas::startangle:
-    {
-        params->startangle = float(val) * 0.01f;
-        return;
-    }
-    /*case enumParmas::radius:
-    {
-        params->radius = float(val) * 0.01f;
-        return;
-    }*/
+    //case enumParmas::pctdistance:
+    //{
+    //    params->pctdistance = float(val) * 0.01f;
+    //    return;
+    //}
+    //case enumParmas::labeldistance:
+    //{
+    //    params->labeldistance = float(val) * 0.01f;
+    //    return;
+    //}
+    //case enumParmas::startangle:
+    //{
+    //    params->startangle = float(val) * 0.01f;
+    //    return;
+    //}
+    ///*case enumParmas::radius:
+    //{
+    //    params->radius = float(val) * 0.01f;
+    //    return;
+    //}*/
 
 
 
-    default:
-        break;
-    }
+    //default:
+    //    break;
+    //}
 }
 
 void paramedBeta::update(bool isOn)
 {
-    paramBool = isOn;
+    params->paramsArray[index]->boolVal = isOn;
+    /*paramBool* pmb = static_cast<paramBool*>(params->paramsArray[index]);
+    pmb->boolVal = isOn;*/
 
-    switch (param)
+   /* switch (param)
     {
     case enumParmas::lvalueIsVisible:
     {
@@ -481,228 +481,238 @@ void paramedBeta::update(bool isOn)
 
     default:
         break;
-    }
+    }*/
 }
 
 void paramedBeta::update(juce::String text)
 {
+    params->paramsArray[index]->stringText = text;
+   /* if (guiType == 2)
+    {
+        paramString* pms = static_cast<paramString*>(params->paramsArray[index]);
+        pms->stringText = text;
+    }
+        
+    else if (guiType == 3)
+    {
+        paramStringArray* pms = static_cast<paramStringArray*>(params->paramsArray[index]);
+        pms->stringText = text;
+    }
+     */   
+    //switch (param)
+    //{
+    //case enumParmas::llabel:
+    //{
+    //    params->llabel = text;
+    //    return;
+    //}
 
-    paramTextValue = text;
+    //case enumParmas::lcolor:
+    //{
+    //    params->lcolor = text;
+    //    return;
+    //}
+    //case enumParmas::lmarkerColor:
+    //{
+    //    params->lmarkerColor = text;
+    //    return;
+    //}
+    //case enumParmas::lmarkeredgecolor:
+    //{
+    //    params->lmarkeredgecolor = text;
+    //    return;
+    //}
+    //case enumParmas::gcolor:
+    //{
+    //    params->gcolor = text;
+    //    return;
+    //}
+    //case enumParmas::gXrange:
+    //{
+    //    params->xRange = text;
+    //    return;
+    //}
+    //case enumParmas::gYrange:
+    //{
+    //    params->yRange = text;
+    //    return;
+    //}
+    //case enumParmas::tvalue:
+    //{
+    //    params->tvalue = text;
+    //    return;
+    //}
 
-    switch (param)
-    {
-    case enumParmas::llabel:
-    {
-        params->llabel = text;
-        return;
-    }
+    //case enumParmas::tcolor:
+    //{
+    //    params->tcolor = text;
+    //    return;
+    //}
+    //case enumParmas::tickLbls:
+    //{
+    //    params->tickLbls = text;
+    //    return;
+    //}
+    //case enumParmas::gwhichKnob:
+    //{
+    //    params->gwhichKnob = text;
+    //    return;
+    //}
+    //case enumParmas::gaxisKnob:
+    //{
+    //    params->gaxisKnob = text;
+    //    return;
+    //}
+    //case enumParmas::glineStyleComp:
+    //{
+    //    params->glineStyleComp = text;
+    //    return;
+    //}
 
-    case enumParmas::lcolor:
-    {
-        params->lcolor = text;
-        return;
-    }
-    case enumParmas::lmarkerColor:
-    {
-        params->lmarkerColor = text;
-        return;
-    }
-    case enumParmas::lmarkeredgecolor:
-    {
-        params->lmarkeredgecolor = text;
-        return;
-    }
-    case enumParmas::gcolor:
-    {
-        params->gcolor = text;
-        return;
-    }
-    case enumParmas::gXrange:
-    {
-        params->xRange = text;
-        return;
-    }
-    case enumParmas::gYrange:
-    {
-        params->yRange = text;
-        return;
-    }
-    case enumParmas::tvalue:
-    {
-        params->tvalue = text;
-        return;
-    }
+    //case enumParmas::bins:
+    //{
+    //    params->bins = text;
+    //    return;
+    //}
+    //case enumParmas::binsRange:
+    //{
+    //    params->binsRange = text;
+    //    return;
+    //}
+    //case enumParmas::binsType:
+    //{
+    //    params->binsType = text;
+    //    return;
+    //}
+    //case enumParmas::binsAllign:
+    //{
+    //    params->binsAllign = text;
+    //    return;
+    //}
+    //case enumParmas::binsColor:
+    //{
+    //    params->binsColor = text;
+    //    return;
+    //}
+    //case enumParmas::binsEdgeColor:
+    //{
+    //    params->binsEdgeColor = text;
+    //    return;
+    //}
+    //case enumParmas::binsLabel:
+    //{
+    //    params->binsLabel = text;
+    //    return;
+    //}
+    //case enumParmas::binsHatch:
+    //{
+    //    params->binsHatch = text;
+    //    return;
+    //}
 
-    case enumParmas::tcolor:
-    {
-        params->tcolor = text;
-        return;
-    }
-    case enumParmas::tickLbls:
-    {
-        params->tickLbls = text;
-        return;
-    }
-    case enumParmas::gwhichKnob:
-    {
-        params->gwhichKnob = text;
-        return;
-    }
-    case enumParmas::gaxisKnob:
-    {
-        params->gaxisKnob = text;
-        return;
-    }
-    case enumParmas::glineStyleComp:
-    {
-        params->glineStyleComp = text;
-        return;
-    }
+    //case enumParmas::binsLineStyle:
+    //{
+    //    params->binsLineStyle = text;
+    //    return;
+    //}
 
-    case enumParmas::bins:
-    {
-        params->bins = text;
-        return;
-    }
-    case enumParmas::binsRange:
-    {
-        params->binsRange = text;
-        return;
-    }
-    case enumParmas::binsType:
-    {
-        params->binsType = text;
-        return;
-    }
-    case enumParmas::binsAllign:
-    {
-        params->binsAllign = text;
-        return;
-    }
-    case enumParmas::binsColor:
-    {
-        params->binsColor = text;
-        return;
-    }
-    case enumParmas::binsEdgeColor:
-    {
-        params->binsEdgeColor = text;
-        return;
-    }
-    case enumParmas::binsLabel:
-    {
-        params->binsLabel = text;
-        return;
-    }
-    case enumParmas::binsHatch:
-    {
-        params->binsHatch = text;
-        return;
-    }
+    //case enumParmas::barsColor:
+    //{
+    //    params->barsColor = text;
+    //    return;
+    //}
 
-    case enumParmas::binsLineStyle:
-    {
-        params->binsLineStyle = text;
-        return;
-    }
+    //case enumParmas::barsEdgeColor:
+    //{
+    //    params->barsEdgeColor = text;
+    //    return;
+    //}
 
-    case enumParmas::barsColor:
-    {
-        params->barsColor = text;
-        return;
-    }
+    //case enumParmas::barsXcords:
+    //{
+    //    params->barsXcords = text;
+    //    return;
+    //}
 
-    case enumParmas::barsEdgeColor:
-    {
-        params->barsEdgeColor = text;
-        return;
-    }
+    //case enumParmas::barsTicks:
+    //{
+    //    params->barsTicks = text;
+    //    return;
+    //}
 
-    case enumParmas::barsXcords:
-    {
-        params->barsXcords = text;
-        return;
-    }
+    //case enumParmas::barsXerr:
+    //{
+    //    params->barsXerr = text;
+    //    return;
+    //}
 
-    case enumParmas::barsTicks:
-    {
-        params->barsTicks = text;
-        return;
-    }
+    //case enumParmas::barsYerr:
+    //{
+    //    params->barsYerr = text;
+    //    return;
+    //}
 
-    case enumParmas::barsXerr:
-    {
-        params->barsXerr = text;
-        return;
-    }
+    //case enumParmas::barsErrColor:
+    //{
+    //    params->barsErrColor = text;
+    //    return;
+    //}
 
-    case enumParmas::barsYerr:
-    {
-        params->barsYerr = text;
-        return;
-    }
+    //case enumParmas::barsWidth:
+    //{
+    //    params->barsWidth = text;
+    //    return;
+    //}
 
-    case enumParmas::barsErrColor:
-    {
-        params->barsErrColor = text;
-        return;
-    }
+    //case enumParmas::barsBottom:
+    //{
+    //    params->barsBottom = text;
+    //    return;
+    //}
 
-    case enumParmas::barsWidth:
-    {
-        params->barsWidth = text;
-        return;
-    }
+    //case enumParmas::barsLineStyle:
+    //{
+    //    params->barsLineStyle = text;
+    //    return;
+    //}
 
-    case enumParmas::barsBottom:
-    {
-        params->barsBottom = text;
-        return;
-    }
-
-    case enumParmas::barsLineStyle:
-    {
-        params->barsLineStyle = text;
-        return;
-    }
-
-    case enumParmas::barsHatch:
-    {
-        params->barsHatch = text;
-        return;
-    }
-
-
-    case enumParmas::explode:
-    {
-        params->explode = text;
-        return;
-    }
-    case enumParmas::pieLabels:
-    {
-        params->pieLabels = text;
-        return;
-    }
-    case enumParmas::pieColors:
-    {
-        params->pieColors = text;
-        return;
-    }
-    case enumParmas::autopct:
-    {
-        params->autopct = text;
-        return;
-    }
-    /*case enumParmas::pieNormalize:
-    {
-        params->pieNormalize = text;
-        return;
-    }*/
+    //case enumParmas::barsHatch:
+    //{
+    //    params->barsHatch = text;
+    //    return;
+    //}
 
 
+    //case enumParmas::explode:
+    //{
+    //    params->explode = text;
+    //    return;
+    //}
+    //case enumParmas::pieLabels:
+    //{
+    //    params->pieLabels = text;
+    //    return;
+    //}
+    //case enumParmas::pieColors:
+    //{
+    //    params->pieColors = text;
+    //    return;
+    //}
+    //case enumParmas::autopct:
+    //{
+    //    params->autopct = text;
+    //    return;
+    //}
+    ///*case enumParmas::pieNormalize:
+    //{
+    //    params->pieNormalize = text;
+    //    return;
+    //}*/
 
 
-    default:
-        break;
-    }
+
+
+    //default:
+    //    break;
+    //}
 }

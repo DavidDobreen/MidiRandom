@@ -249,6 +249,7 @@ void LeftPanel::addPanel(const juce::String& text)
     chartList.items.getLast()->lbl.cliked.addChangeListener(this);        
     itemsList.add(new ItemList(130, 113, 93, 236, axes, bottomPanel, this, handler,chartList.selected));
     itemsList.getLast()->addItem(text);
+    itemsList.getLast()->addItem(text);
 }
 
 void LeftPanel::changeListenerCallback(juce::ChangeBroadcaster* source)
@@ -531,10 +532,8 @@ void ItemList::changeListenerCallback(juce::ChangeBroadcaster* source)
 }
 
 void ItemList::addItem(const juce::String& text)
-{  
-     
-
-    auto item = new ItemList::item(9, 8, 76, 18, bottomPanel.panels[selected]->paramComps, this, handler);   
+{ 
+    auto item = new ItemList::item(9, 8+(items.size()*18), 76, 18, bottomPanel.panels[selected]->paramComps, this, handler);   
     item->lbl.addChangeListener(this);
     items.add(item);
     item->lbl.text = text + juce::String(items.size());

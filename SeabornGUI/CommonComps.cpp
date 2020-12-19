@@ -65,36 +65,46 @@ void MoveLabel::mouseDown(const juce::MouseEvent& event)
 }
 
 chLabel::chLabel(int x, int y, int w, int h, juce::String name, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr, 
-    int _param, int guiType , juce::String _paramText , float _paramVal )
+    int* _index, int guiType)
     : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvrShellNotifer(drvr)  {
     lblName.text = name;
     addAndMakeVisible(lbl);
     lblName.addChangeListener(this);
     lblName.fontHight = 15;
     lbl.lbl.setEditable(true); 
-    param = _param;
-    lbl.param = _param - 1;
 
+    if (_index != nullptr)
+    {         
+        
+        lblName.index = *_index;
+        (*_index)++;
+        lbl.index = *_index;
+        (*_index)++;
+    }
+    
     lbl.guiType = guiType;
-    lblName.guiType = 4;
-    lbl.myBool = &paramBool;
-    if (_paramText != "")
-        lbl.paramText = _paramText;
+    lblName.guiType = 4;    
+    if (name != "")
+        lbl.paramText = name;
+     
 }
 
 void chLabel::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
     lblName.IsOn = !lblName.IsOn;
-    update(lblName.IsOn);
+    lblName.update(lblName.IsOn);
     lblName.repaint();
     sendSynchronousChangeMessage();
 }
 
-void chLabel::refresh()
+void chLabel::paramRefresh()
 {
-    lblName.IsOn = paramBool;
-    lblName.repaint();
-    lbl.lbl.setText(lbl.paramTextValue,juce::dontSendNotification);
+    if (lbl.index >= 0)
+    {
+        lblName.IsOn = params->paramsArray[lblName.index]->boolVal;
+        lblName.repaint();
+        lbl.lbl.setText(params->paramsArray[lbl.index]->stringText, juce::dontSendNotification);
+    }
 }
 
 void marker::paint(juce::Graphics& g)
@@ -208,7 +218,7 @@ void moveChildComp::CompArea::mouseDrag(const juce::MouseEvent& event)
    
 }
 
-void SelectionBox::refresh()
+void SelectionBox::paramRefresh()
 {
     for (auto& l : leds)
     {
@@ -217,11 +227,15 @@ void SelectionBox::refresh()
     }
     for (auto& o : options)
     {
-        if (o->paramTextValue == paramTextValue)
+        if (o->index >= 0)
         {
-            o->led->IsOn;
-            o->repaint();
+            if (o->text == params->paramsArray[o->index]->stringText)
+            {
+                o->led->IsOn;
+                o->repaint();
+            }
         }
+        
             
             
     }

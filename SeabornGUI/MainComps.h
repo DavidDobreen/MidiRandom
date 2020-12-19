@@ -329,6 +329,7 @@ public:
 
 };
 
+//A list of items for a chart.  Line1, Line2... or Bar1, Bar2...
 class ItemList : public juce::ChangeListener, public moveChildComp, public handled
 {
 public:
@@ -336,49 +337,45 @@ public:
     class item : public moveChildComp, public handled
     {
     public:
-        Params params;
+        Params params;        
         juce::String xValues;
         juce::String yValues;
          
-
-
         chBgComp frame{ "bottom pads name frame3.png",this ,handler };
         MoveLabel lbl{ 0,-1,dims[2],dims[3],"",juce::Colours::aqua,this,handler };
         item(int x, int y, int w, int h, juce::Array<paramedBeta*>& _paramComps, juce::Component* parent, pngHandler& handler)
             : moveChildComp(x, y, w, h), handled(handler, parent, this) {
-            for (auto& c : _paramComps)
+            for (int i=0; i < _paramComps.size();i++)
             {
-                if (c->guiType == 1)
-                    params.paramsArray.add(new paramNumber(&c->paramText, c->paramVal, c->paramScalar));
-                else if (c->guiType == 2)
-                    params.paramsArray.add(new paramString(&c->paramText, &c->paramTextValue, c->myBool));
-                else if (c->guiType == 3)
-                    params.paramsArray.add(new paramStringArray(&c->paramText, &c->paramTextValue, c->myBool));
-                else if (c->guiType == 4)
-                    params.paramsArray.add(new paramBool(&c->paramText, &c->paramBool));
-                else if (c->guiType == 5)
-                    params.paramsArray.add(new paramList(&c->paramText, &c->paramTextValue));
+                if (_paramComps[i]->guiType == 1)
+                    params.paramsArray.add(new paramNumber(_paramComps[i]->paramText));
+                else if (_paramComps[i]->guiType == 2)
+                    params.paramsArray.add(new paramString(_paramComps[i]->paramText, params.paramsArray[i - 1]->boolVal));
+                else if (_paramComps[i]->guiType == 3)
+                    params.paramsArray.add(new paramStringArray(_paramComps[i]->paramText, params.paramsArray[i - 1]->boolVal));
+                else if (_paramComps[i]->guiType == 4)
+                    params.paramsArray.add(new paramBool(_paramComps[i]->paramText));
+                else if (_paramComps[i]->guiType == 5)
+                    params.paramsArray.add(new paramList(_paramComps[i]->paramText));
             }
 
         }
     };
-    Axes& axes;
-    BottomPanel& bottomPanel;
-    int& selected;
-    
+       
     chBgComp frame{ "small eq frame3.png",this ,handler };
     chBgComp bkgd{ "BLACK MAIN BG2.png",this ,handler };
 
+    Axes& axes;
+    BottomPanel& bottomPanel;
+    int& selected;
     juce::OwnedArray<ItemList::item> items;
     ItemList::item* selectedItem = nullptr;
-
-    
+   
     ItemList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler, int& _selected);
 
     void resized();
     void changeListenerCallback(juce::ChangeBroadcaster* source);
     void addItem(const juce::String& text);
-
 };
 
 

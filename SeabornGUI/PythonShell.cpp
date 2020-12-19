@@ -166,43 +166,43 @@ void PythonShell::Matplot()
 
     // UNCOMMENT BELOW TO RETURN PICHART
 
-    //else if (lefPanel.pieList.isVisible())
-    //{
-    //pltstr1 = "plt.pie(";
-    //for (auto& i : lefPanel.pieList.items)
-    //{
-    //    plotParams.clear();
-    //    bottomPanel.piePanel.itemParams = &i->params;
-    //    lefPanel.axes.xValues.targetLineListItemVals = &i->xValues;
-    //    plotParams.push_back("(" + lefPanel.axes.xValues.lbl.getText() + ")");
+    else if (lefPanel.chartList.selected==1)
+    {
+    pltstr1 = "plt.pie(";
+    for (auto& i : lefPanel.itemsList[1]->items)
+    {
+        plotParams.clear();
+        bottomPanel.panels[1]->itemParams = &i->params;
+        lefPanel.axes.xValues.targetLineListItemVals = &i->xValues;
+        plotParams.push_back("(" + lefPanel.axes.xValues.lbl.getText() + ")");
 
-    //    //calculate space for parameters
-    //    int mlc = strlen(pltstr1) + 1;
-    //    for (auto& p : plotParams)
-    //        mlc += strlen(p.toUTF8());
-    //    mlc += strlen(close);
+        //calculate space for parameters
+        int mlc = strlen(pltstr1) + 1;
+        for (auto& p : plotParams)
+            mlc += strlen(p.toUTF8());
+        mlc += strlen(close);
 
-    //    juce::String pieParams = bottomPanel.piePanel.itemParams->MakePieKwargs();
-    //    mlc += strlen(pieParams.toUTF8());
+        juce::String pieParams = bottomPanel.panels[1]->itemParams->MakePieKwargs();
+        mlc += strlen(pieParams.toUTF8());
 
-    //    //allocate space for parameters
-    //    char* query = (char*)malloc(mlc);
+        //allocate space for parameters
+        char* query = (char*)malloc(mlc);
 
-    //    strcpy(query, pltstr1);
+        strcpy(query, pltstr1);
 
-    //    //convert strings to chars and append
-    //    for (auto& p : plotParams)
-    //        strcat(query, p.toUTF8());
+        //convert strings to chars and append
+        for (auto& p : plotParams)
+            strcat(query, p.toUTF8());
 
-    //    strcat(query, pieParams.toUTF8());
+        strcat(query, pieParams.toUTF8());
 
-    //    strcat(query, close);
+        strcat(query, close);
 
-    //    PyRun_SimpleString(query);
-    //}
+        PyRun_SimpleString(query);
+    }
 
-    //bottomPanel.pieList.params = &lefPanel.barsList.selectedItem->params;
-    //}
+    bottomPanel.panels[1]->itemParams = &lefPanel.itemsList[1]->selectedItem->params;
+    }
 
     plotParams.clear();
 

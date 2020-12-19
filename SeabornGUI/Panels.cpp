@@ -383,22 +383,19 @@ void BarsPanel::refresh()
 
 PiePanel::PiePanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
     : ChartPanel(x, y, w, h,parent,handler,_drvr){
+    
+    addChLabel(new chLabel(409, 92, 150, 25, "explode", this, itemParams, handler, drvr, &index, 3));
+    addChLabel(new chLabel(409, 110, 150, 25, "labels", this, itemParams, handler, drvr, &index, 3));
+    addChLabel(new chLabel(409, 135, 150, 25, "colors", this, itemParams, handler, drvr, &index, 3));
+    addChLabel(new chLabel(409, 160, 150, 25, "autopct", this, itemParams, handler, drvr, &index, 3));
+
+    addChKnob(new chKnobClassicBeta(235, 116, 70, 70, "pctdistance", this, itemParams, handler, drvr, &index, "pctdistance"));
+    addChKnob(new chKnobClassicBeta(305, 116, 70, 70, "radius", this, itemParams, handler, drvr, &index, "radius"));
  
-    chLabel* explode = new chLabel( 409,92,150,25,"explode",this, itemParams,handler, drvr ,0,3,"explode" );
-    guiComps.add(std::move(explode));
-    paramComps.add(&explode->lbl);
+    addToggleButton(new chToggleButtonAndLabel(609, 160, 85, 25, "shadow", this, itemParams, handler, drvr, &index, "shadow"));
 
-    // chLabel* labels = new chLabel(409, 110, 150, 25, "labels", this, params, handler, drvr, -1,3,"labels");
-    //guiComps.add(std::move(labels));
-    //paramComps.add(&labels->lbl);
-     
-    chKnobClassicBeta* radius = new chKnobClassicBeta(305, 116, 70, 70, "radius", this, itemParams, handler, drvr, 1, 1, "radius", 1.0f);
-    guiComps.add(std::move(radius));
-    paramComps.add(&radius->sldr);
+    addSelectionBox(new SelectionBox(102, 14, { "None", "True", "False" }, this, itemParams, handler, drvr, &index, "normalize"));
 
-    //chToggleButtonAndLabel* shadow = new chToggleButtonAndLabel( 609,160,85,25,"shadow",this,params,handler,drvr,-1,4,"shadow" );
-    //guiComps.add(std::move(shadow));
-    //paramComps.add(shadow);
 
   /*  SelectionBox* normalize = new SelectionBox( 102,14,{ "None", "True", "False"},this, params,handler,drvr,-1,5,"normalize" );
     guiComps.add(std::move(normalize));
@@ -414,90 +411,66 @@ ChartPanel::ChartPanel(int x, int y, int w, int h, juce::Component* parent, pngH
 
 void ChartPanel::refresh()
 {
-    for (int i = 0; i < paramComps.size(); ++i)
+    for (auto& c: paramComps)
     {
-        switch (paramComps[i]->guiType)
+        switch (c->guiType)
         {
         case 1:
-            {
-                chKnobClassicBeta* knob = dynamic_cast<chKnobClassicBeta*>(guiComps[i]);
-                if (knob != nullptr)
-                {
-                    paramNumber* prm = dynamic_cast<paramNumber*>(itemParams->paramsArray[i]);
-                    if (prm != nullptr)
-                    {
-                        knob->sldr.paramVal = prm->val;
-                        knob->sldr.paramScalar = prm->scalar;
-                        knob->refresh();
-                    }                                
-                }
-                break;
-            }
-
-        
-        case 2:
         {
-            chLabel* label = dynamic_cast<chLabel*>(guiComps[i]);
-            if (label != nullptr)
-            {
-                paramString* prm = dynamic_cast<paramString*>(itemParams->paramsArray[i]);
-                if (prm != nullptr)
-                {
-                    label->paramBool = prm->myBool;
-                    label->paramTextValue = *prm->val;
-                    label->refresh();
-                }
-                 
-            }
+            static_cast<chKnobClassicBeta*>(c)->paramRefresh();
             break;
         }
+        case 2:
         case 3:
         {
-            chLabel* label = dynamic_cast<chLabel*>(guiComps[i]);
-            if (label != nullptr)
-            {
-                paramStringArray* prm = dynamic_cast<paramStringArray*>(itemParams->paramsArray[i]);
-                if (prm != nullptr)
-                {
-                    label->paramBool = prm->myBool;
-                    label->paramTextValue = *prm->val;
-                    label->refresh();
-                }
-
-            }
+            static_cast<chLabel*>(c)->paramRefresh();
             break;
         }
         case 4:
-            {
-                chToggleButtonAndLabel* btn = dynamic_cast<chToggleButtonAndLabel*>(guiComps[i]);
-                if (btn != nullptr)
-                {
-                    paramBool* prm = dynamic_cast<paramBool*>(itemParams->paramsArray[i]);
-                    if (prm != nullptr)
-                    {
-                        btn->paramBool = *prm->val;
-                        btn->refresh();
-                    }                              
-                }
-                break;
-            }
-        case 5:
-            {
-                SelectionBox* slc = dynamic_cast<SelectionBox*>(guiComps[i]);
-                if (slc != nullptr)
-                {
-                    paramList* prm = dynamic_cast<paramList*>(itemParams->paramsArray[i]);
-                    if (prm != nullptr)
-                    {
-                        slc->paramTextValue = *prm->val;
-                        slc->refresh();
-                    }
- 
-                }
-                break;
-            }
+        {
+            static_cast<chToggleButtonAndLabel*>(c)->paramRefresh();
+            break;
         }
+        case 5:
+        {
+            static_cast<SelectionBox*>(c)->paramRefresh();
+            break;
+        }
+            
+        default:
+            break;
+        }
+        
+        
+         
+    
+        
     }                        
+}
+
+void ChartPanel::addChLabel(chLabel* _chLabel)
+{    
+    guiComps.add(std::move(_chLabel));   
+    paramComps.add(&_chLabel->lblName);
+    paramComps.add(&_chLabel->lbl);
+}
+
+void ChartPanel::addChKnob(chKnobClassicBeta* _chKnob)
+{
+    guiComps.add(std::move(_chKnob));
+    paramComps.add(&_chKnob->sldr);
+}
+
+void ChartPanel::addToggleButton(chToggleButtonAndLabel* _btn)
+{
+    guiComps.add(std::move(_btn));
+    paramComps.add(_btn);
+}
+
+void ChartPanel::addSelectionBox(SelectionBox* _selections)
+{
+    guiComps.add(std::move(_selections));
+    paramComps.add(_selections);
 }
      
 

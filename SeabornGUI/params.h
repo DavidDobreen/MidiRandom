@@ -34,10 +34,12 @@ enum enumParmas {
 class paramedType
 {
 public:
-    juce::String* param;
+    juce::String param="";
+    bool boolVal = false;
+    juce::String stringText="";
+    float floatVal = 1.0;;
     
-
-    paramedType(juce::String* _param) : param(_param) {}
+    paramedType(juce::String _param) : param(_param) {}
     ~paramedType(){}
     virtual void makeKwarg(juce::String& args) =0;
 };
@@ -45,11 +47,11 @@ public:
 class paramBool : public paramedType
 {
 public:
-    bool* val = false;
-    paramBool(juce::String* _param, bool* _val) : paramedType(_param), val(_val) {}
+     
+    paramBool(juce::String _param) : paramedType(_param) {}
     ~paramBool(){}
     void makeKwarg(juce::String& args) {
-        if (*val) args += "," + *param + "=True";
+        if (param != "" && boolVal) args += "," + param + "=True";
     }
 
 };
@@ -57,27 +59,24 @@ public:
 class paramString : public paramedType
 {
 public:  
-    
-    juce::String* val;    
-    bool*& myBool;
-    paramString(juce::String* _param, juce::String* _val, bool*&  _myBool) : paramedType(_param) , val (_val) ,myBool(_myBool){}
+         
+    bool& myBool;
+    paramString(juce::String _param, bool&  _myBool) : paramedType(_param) ,myBool(_myBool){}
     ~paramString(){}
     void makeKwarg(juce::String& args) {       
-        if (*myBool && *val != "") args += "," + *param + "='" + *val + "'";
+        if (myBool && stringText != "") args += "," + param + "='" + stringText + "'";
     }
      
 };
 
 class paramStringArray : public paramedType
 {
-public:
-    
-    juce::String* val;  
-    bool*& myBool;
-    paramStringArray(juce::String* _param, juce::String* _val, bool*& _myBool) : paramedType(_param), val(_val), myBool(_myBool) {}
+public:       
+    bool& myBool;
+    paramStringArray(juce::String _param, bool& _myBool) : paramedType(_param), myBool(_myBool) {}
     ~paramStringArray(){}
     void makeKwarg(juce::String& args) {
-        if (*myBool && *val != "") args += "," + *param + "=[" + *val + "]";
+        if (myBool && stringText != "") args += "," + param + "=[" + stringText + "]";
     }
 };
 
@@ -85,11 +84,11 @@ class paramNumber : public paramedType
 {
 public:   
     float val;  
-    float scalar;    
-    paramNumber(juce::String* _param, float _val, float _scalar) : paramedType(_param), val(_val), scalar(_scalar) {}
+    float scalar = 0.01f;
+    paramNumber(juce::String _param) : paramedType(_param)   {}
     ~paramNumber(){}
     void makeKwarg(juce::String& args) {
-        if (val != 1.0f) args += "," + *param + "=" + juce::String(val*(scalar));
+        if (floatVal != 1.0f) args += "," + param + "=" + juce::String(floatVal *(scalar));
     }
      
 };
@@ -97,15 +96,15 @@ public:
 class paramList : public paramedType
 {
 public:
-    juce::String* val;
-    paramList(juce::String* _param, juce::String* _val) : paramedType(_param), val(_val) {}
+    //juce::String val;
+    paramList(juce::String _param) : paramedType(_param) {}
     ~paramList(){}
     void makeKwarg(juce::String& args) {
 
-        if (*val=="None" || *val=="True" || *val=="False")
-            args += "," + *param + "=" + *val;
+        if (stringText =="None" || stringText =="True" || stringText =="False")
+            args += "," + param + "=" + stringText;
         else
-            args += "," + *param + "='" + *val + "'";
+            args += "," + param + "='" + stringText + "'";
     }
 
 };
@@ -303,27 +302,20 @@ public:
 //};
 
 class paramedBeta
-{
-     
-public:
-       
+{    
+public:      
     Params*& params;
-    int param;
-
-    int guiType = 0; // 1=float, 2=string, 3=string array, 4 = bool, 5=list  
-    float paramVal = 1.0;
-    float paramScalar = 0.01f;
+    int index=-1;
+    int guiType = 0; // 1=float, 2=string, 3=string array, 4 = bool, 5=list        
     juce::String paramText = "";
-    juce::String paramTextValue = "";
-    bool paramBool = false;
-    bool* myBool; // For combo components with on/off switch
-
-    paramedBeta(Params*& _params, int type =0) : params(_params), guiType(type){}
-    ~paramedBeta() { params = nullptr; myBool = nullptr; }
+    
+    paramedBeta(Params*& _params) : params(_params){}
+    ~paramedBeta() { params = nullptr;  }
 
     void update(double val);
     void update(juce::String text);    
     void update(bool isOn);
+     
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(paramedBeta)
 };

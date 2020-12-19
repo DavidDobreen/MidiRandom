@@ -18,10 +18,15 @@ public:
     Params* itemParams;
     juce::OwnedArray<moveChildComp> guiComps;
     juce::Array<paramedBeta*> paramComps;
+    int index = 0;
 
     ChartPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
     ~ChartPanel() {}
     void refresh();
+    void addChLabel(chLabel* _chLabel);
+    void addChKnob(chKnobClassicBeta* _chKnob);
+    void addToggleButton(chToggleButtonAndLabel* _btn);
+    void addSelectionBox(SelectionBox* _selections);
 };
 
 class TextPanel : public juce::ChangeListener, public childComp, public handled, public drvrShellNotifer
@@ -36,7 +41,7 @@ class TextPanel : public juce::ChangeListener, public childComp, public handled,
         MoveLabel fantasy{ 98,25,45,20,"fantasy",juce::Colours::slategrey,this,handler };
         MoveLabel monospace{ 80,55,60,20,"monospace",juce::Colours::slategrey,this,handler };
 
-        chKnobClassicBeta vals{ 50,10,70,70,"",this,params, handler ,drvr, enumParmas::tfontfamily };
+        chKnobClassicBeta vals{ 50,10,70,70,"",this,params, handler, drvr, nullptr };
         FontFamilyKnob(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr);
 
     };
@@ -48,7 +53,7 @@ class TextPanel : public juce::ChangeListener, public childComp, public handled,
         MoveLabel italic{ 58,3,45,20,"italic",juce::Colours::slategrey,this,handler };
         MoveLabel oblique{ 86,57,60,20,"oblique",juce::Colours::slategrey,this,handler };
 
-        chKnobClassicBeta vals{ 50,11,70,70,"",this,params, handler ,drvr, enumParmas::tfontstyle };
+        chKnobClassicBeta vals{ 50,11,70,70,"",this,params, handler ,drvr, nullptr };
         FontStyleKnob(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr);                    
     };
 
@@ -82,10 +87,10 @@ public:
     Params* params;    
     bool TickPanel = false;
     
-    chLabel value { 409,92,150,25,"Value",this,params,handler,drvr, enumParmas::tvalueIsVisible };   
-    chLabel lbls{ 409,122,150,25,"labels",this,params,handler, drvr ,enumParmas::tickLblsEnabled };
+    chLabel value { 409,92,150,25,"Value",this,params,handler,drvr, nullptr };
+    chLabel lbls{ 409,122,150,25,"labels",this,params,handler, drvr ,nullptr };
 
-    chKnobClassicBeta fontSize{ 10,70,70,70,"size",this,params,handler ,drvr,enumParmas::tsize};
+    chKnobClassicBeta fontSize{ 10,70,70,70,"size",this,params,handler ,drvr,nullptr };
     
     colorsComponent color{ 373,57,161,25,this,params,handler,enumParmas::tcolor };
    // colorsComponent background{ 179,18,121,25,this,handler,  };
@@ -118,8 +123,8 @@ public:
         Legends legends{ 10,10,250,100,&legendCont1,handler,drvr };
 
         MoveContainer legendCont2{ 0,0,240,100,this,handler };
-        chKnobClassicBeta horizontal{ 21,17,70,70,"Horizon",&legendCont2,params,handler,drvr,100 };
-        chKnobClassicBeta vertical{ 91,17,70,70,"Vertical",&legendCont2,params,handler,drvr,100 };
+        chKnobClassicBeta horizontal{ 21,17,70,70,"Horizon",&legendCont2,params,handler,drvr,nullptr };
+        chKnobClassicBeta vertical{ 91,17,70,70,"Vertical",&legendCont2,params,handler,drvr,nullptr };
   
         MoveContainer markersCompLabels{ 50,120,240,20,this,handler };
         fxLabel legendLbl{ 0,0,50,20,"Legend", DEFAULT_LABEL_COLORS ,&legendCont1,&markersCompLabels,handler };
@@ -137,14 +142,14 @@ public:
         chBgComp bkgd{ "wave fx bg and frame and on_off panell2.png",this,handler };
 
         MoveContainer styleCont1{ 0,0,240,100,this,handler };
-        SelectionBox whichAxes{ 144,17,{ "both", "x", "y" },&styleCont1, params,handler,drvr,enumParmas::gaxisKnob };
-        SelectionBox whichKinds{ 41,17,{ "both","major", "minor" },&styleCont1, params,handler,drvr,enumParmas::gwhichKnob };
+        /*SelectionBox whichAxes{ 144,17,{ "both", "x", "y" },&styleCont1, params,handler,drvr,enumParmas::gaxisKnob };
+        SelectionBox whichKinds{ 41,17,{ "both","major", "minor" },&styleCont1, params,handler,drvr,enumParmas::gwhichKnob };*/
         
         MoveContainer styleCont2{ 0,0,240,100,this,handler };
-        chKnobClassicBeta alpha{ 21,17,70,70,"Alpha",&styleCont2,params, handler,drvr,enumParmas::galpha };
+        chKnobClassicBeta alpha{ 21,17,70,70,"Alpha",&styleCont2,params, handler,drvr,nullptr };
 
         MoveContainer styleCont3{ 0,0,240,100,this,handler };
-        SelectionBox lineStyleComp{ 41,17,{ "solid", "dashed", "dashdot","dotted" },&styleCont3, params,handler,drvr,enumParmas::glineStyleComp };
+        /*SelectionBox lineStyleComp{ 41,17,{ "solid", "dashed", "dashdot","dotted" },&styleCont3, params,handler,drvr,enumParmas::glineStyleComp };*/
 
         MoveContainer markersCompLabels{ 50,120,240,20,this,handler };
         moveChButton gridOnOff{ 0,0,15,15,"fx on botton2.png","fx off botton2.png",&markersCompLabels,params,handler,drvr,enumParmas::gridOn };
@@ -168,8 +173,8 @@ public:
 
     AxesPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
     ~AxesPanel(){}
-    chLabel xVals{ 409,92,150,25,"x-vals",this,params,handler, drvr ,enumParmas::applyXrange };
-    chLabel yVals{ 409,122,150,25,"y-vals",this,params,handler, drvr ,enumParmas::applyYrange };
+    chLabel xVals{ 409,92,150,25,"x-vals",this,params,handler, drvr ,nullptr };
+    chLabel yVals{ 409,122,150,25,"y-vals",this,params,handler, drvr ,nullptr };
 
     
       
@@ -215,7 +220,7 @@ public:
         MoveLabel stepsMid{ 85,52,45,23,"steps-mid",juce::Colours::slategrey,this,handler };
         MoveLabel stepsPost{ 32,0,80,20,"steps-post",juce::Colours::slategrey,this,handler };
 
-        chKnobClassicBeta vals{ 55,20,70,70,"",this,params,handler,drvr,enumParmas::ldrawstyleKnob };
+        chKnobClassicBeta vals{ 55,20,70,70,"",this,params,handler,drvr,nullptr };
         DrawstyleKnob(int x, int y, int w, int h,  juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr);
     };
 
@@ -229,7 +234,7 @@ public:
         MoveLabel bottom{ 38,8,80,20,"bottom",juce::Colours::slategrey,this,handler };
         MoveLabel top{ 38,8,0,0,"top",juce::Colours::slategrey,this,handler };
 
-        chKnobClassicBeta vals{ 41,14,70,70,"",this,params,handler,drvr,enumParmas::lmarkerFillstyleKnob };
+        chKnobClassicBeta vals{ 41,14,70,70,"",this,params,handler,drvr,nullptr };
         MarkerFillstyleKnob(int x, int y, int w, int h,  juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr);
     };
 
@@ -244,11 +249,11 @@ public:
         markers markers{ 10,10,250,100,&markersCont1,params,handler ,drvr};
 
         MoveContainer markersCont2{ 0,0,240,100,this,handler };
-        chKnobClassicBeta markerSize{ 21,17,70,70,"Size",&markersCont2,params,handler,drvr,enumParmas::lmarkerSize };
+        chKnobClassicBeta markerSize{ 21,17,70,70,"Size",&markersCont2,params,handler,drvr,nullptr };
         colorsComponent markerfacecolor{ 90,41,161,25,&markersCont2,params,handler,enumParmas::lmarkerColor };
 
         MoveContainer markersCont3{ 0,0,240,100,this,handler };
-        chKnobClassicBeta markerEdgeWith{ 21,17,70,70,"Edge",&markersCont3,params,handler,drvr,enumParmas::lmarkerEdgeWith };
+        chKnobClassicBeta markerEdgeWith{ 21,17,70,70,"Edge",&markersCont3,params,handler,drvr,nullptr };
         colorsComponent markeredgecolor{ 90,41,161,25,&markersCont3,params, handler ,enumParmas::lmarkeredgecolor };
 
         MoveContainer markersCont4{ 0,0,240,100,this,handler };
@@ -273,8 +278,8 @@ public:
         chBgComp bkgd{ "wave fx bg and frame and on_off panell2.png",this,handler };
 
         MoveContainer lineCont1{ 0,0,240,100,this,handler };
-        chKnobClassicBeta alpha{ 21,17,70,70,"Alpha",&lineCont1 , params ,handler,drvr , enumParmas::lalpha };
-        chKnobClassicBeta width{ 121,17,70,70,"Width", &lineCont1,params,handler,drvr, enumParmas::lwidth };
+        chKnobClassicBeta alpha{ 21,17,70,70,"Alpha",&lineCont1 , params ,handler,drvr , nullptr };
+        chKnobClassicBeta width{ 121,17,70,70,"Width", &lineCont1,params,handler,drvr, nullptr };
 
         MoveContainer lineCont2{ 0,0,240,100,this,handler };
         std::vector<juce::String>lineStlyeVals = { "'solid'", "'dashed'", "'dashdot'","'dotted'","'None'" };
@@ -310,7 +315,7 @@ public:
     //DrawstyleKnob drawstyleKnob { 9,77,250,150,this,params,handler,drvr };
 
     //chLabel dashes{ 22,12,180,25,"dashes",this,params,handler,drvr};
-    chLabel label { 409,92,150,25,"label",this,params,handler, drvr ,enumParmas::lvalueIsVisible };
+    chLabel label { 409,92,150,25,"label",this,params,handler, drvr ,nullptr };
      
     std::vector<juce::String> plotParams;
    
@@ -356,20 +361,20 @@ public:
     Params* params;
     colorsComponent color{ 373,57,161,25,this,params,handler,enumParmas::barsColor };
     colorsComponent edgeColor{ 553,57,161,25,this,params,handler,enumParmas::barsEdgeColor };
-    chLabel xCords{ 409,92,150,25,"X-cords",this,params,handler, drvr ,enumParmas::barsXcordsEnabled };
-    chLabel ticks{ 409,110,150,25,"ticks label",this,params,handler, drvr ,enumParmas::barsTicksEnabled };
-    chLabel xerr{ 609,92,150,25,"xerr",this,params,handler, drvr ,enumParmas::barsXerrEnabled };
-    chLabel yerr{ 609,110,150,25,"yerrl",this,params,handler, drvr ,enumParmas::barsYerrEnabled };
+    chLabel xCords{ 409,92,150,25,"X-cords",this,params,handler, drvr ,nullptr };
+    chLabel ticks{ 409,110,150,25,"ticks label",this,params,handler, drvr ,nullptr };
+    chLabel xerr{ 609,92,150,25,"xerr",this,params,handler, drvr ,nullptr };
+    chLabel yerr{ 609,110,150,25,"yerrl",this,params,handler, drvr ,nullptr };
     colorsComponent errorColor{ 609,135,161,25,this,params,handler,enumParmas::barsErrColor };
-    chKnobClassicBeta errorCapSize{ 235,116,70,70,"capsize",this , params ,handler,drvr , enumParmas::barsErrCapSize };
-    chLabel barWidth{ 409,135,150,25," bar width",this,params,handler, drvr ,enumParmas::barsWidthEnabled };
-    chLabel bottom{ 409,150,150,25,"range",this,params,handler, drvr ,enumParmas::barsBottomEnabled };
-    chToggleButtonAndLabel align{ 709,160,85,25,"align",this,params,handler,drvr,enumParmas::barsAlign };
-    chKnobClassicBeta lineWidth{ 205,16,70,70,"line width",this , params ,handler,drvr , enumParmas::barsLineWidth };
-    chToggleButtonAndLabel log{ 609,160,85,25,"log",this,params,handler,drvr,enumParmas::barsLog };
-    chKnobClassicBeta alpha{ 305,16,70,70,"alpha",this , params ,handler,drvr , enumParmas::barsAlpha };
-    SelectionBox barsLineStyle{ 802,14,{ "solid", "dashed", "dashdot", "dotted" },this, params,handler,drvr,enumParmas::barsLineStyle };
-    SelectionBox barsHatch{ 882,-4,{ "none", "/", "|","-","+","x","o","O",".","*" },this, params,handler,drvr,enumParmas::barsHatch };
+    chKnobClassicBeta errorCapSize{ 235,116,70,70,"capsize",this , params ,handler,drvr , nullptr };
+    chLabel barWidth{ 409,135,150,25," bar width",this,params,handler, drvr ,nullptr };
+    chLabel bottom{ 409,150,150,25,"range",this,params,handler, drvr ,nullptr };
+    chToggleButtonAndLabel align{ 709,160,85,25,"align",this,params,handler,drvr,nullptr };
+    chKnobClassicBeta lineWidth{ 205,16,70,70,"line width",this , params ,handler,drvr , nullptr };
+    chToggleButtonAndLabel log{ 609,160,85,25,"log",this,params,handler,drvr,nullptr };
+    chKnobClassicBeta alpha{ 305,16,70,70,"alpha",this , params ,handler,drvr , nullptr };
+    /*SelectionBox barsLineStyle{ 802,14,{ "solid", "dashed", "dashdot", "dotted" },this, params,handler,drvr,enumParmas::barsLineStyle };
+    SelectionBox barsHatch{ 882,-4,{ "none", "/", "|","-","+","x","o","O",".","*" },this, params,handler,drvr,enumParmas::barsHatch };*/
     
 
     BarsPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
