@@ -37,9 +37,10 @@ public:
         juce::String* targetLineListItemVals = nullptr;
         input(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler);
         void resized() { lbl.setBounds(getLocalBounds()); }
-        void refresh() { lbl.setText(*targetLineListItemVals, juce::dontSendNotification); }
+        void refresh() { if (targetLineListItemVals != nullptr) lbl.setText(*targetLineListItemVals, juce::dontSendNotification); }
     };
 
+    bool ShowYinput = true;
     std::vector<juce::String> plotParams;
 
     input xValues{ 25,0,228,17,this,handler };
@@ -66,7 +67,7 @@ public:
     BarsPanel barsPanel{ 0,0,dims[2],dims[3],this,handler ,drvr };
     //PiePanel piePanel{ 0,0,dims[2],dims[3],this,handler ,drvr };
     TextPanel textPanel{ 0,0,dims[2],dims[3],this,handler ,drvr};
-    Line2DPanel line2dPanel{ 0,0,dims[2],dims[3],this,handler,drvr };
+    //Line2DPanel line2dPanel{ 0,0,dims[2],dims[3],this,handler,drvr };
     AxesPanel axesPanel{ 0,0,dims[2],dims[3],this,handler,drvr };
 
     BottomPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr) 
@@ -206,7 +207,7 @@ public:
     BarsList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler);
 
     void resized();
-    void changeListenerCallback(juce::ChangeBroadcaster* source);
+    void changeListenerCallback(juce::ChangeBroadcaster* source){}
 
 };
 
@@ -319,7 +320,7 @@ public:
 
         bottomPanel.axesPanel.params = &item->params;
         bottomPanel.axesPanel.legendBox.legends.params = &item->params;
-        bottomPanel.axesPanel.refresh();
+        
 
         //What should go here?
         //axes.xValues.targetLineListItemVals = &item->xValues;
@@ -343,23 +344,7 @@ public:
          
         chBgComp frame{ "bottom pads name frame3.png",this ,handler };
         MoveLabel lbl{ 0,-1,dims[2],dims[3],"",juce::Colours::aqua,this,handler };
-        item(int x, int y, int w, int h, juce::Array<paramedBeta*>& _paramComps, juce::Component* parent, pngHandler& handler)
-            : moveChildComp(x, y, w, h), handled(handler, parent, this) {
-            for (int i=0; i < _paramComps.size();i++)
-            {
-                if (_paramComps[i]->guiType == 1)
-                    params.paramsArray.add(new paramNumber(_paramComps[i]->paramText));
-                else if (_paramComps[i]->guiType == 2)
-                    params.paramsArray.add(new paramString(_paramComps[i]->paramText, params.paramsArray[i - 1]->boolVal));
-                else if (_paramComps[i]->guiType == 3)
-                    params.paramsArray.add(new paramStringArray(_paramComps[i]->paramText, params.paramsArray[i - 1]->boolVal));
-                else if (_paramComps[i]->guiType == 4)
-                    params.paramsArray.add(new paramBool(_paramComps[i]->paramText));
-                else if (_paramComps[i]->guiType == 5)
-                    params.paramsArray.add(new paramList(_paramComps[i]->paramText));
-            }
-
-        }
+        item(int x, int y, int w, int h, juce::Array<paramedBeta*>& _paramComps, juce::Component* parent, pngHandler& handler);           
     };
        
     chBgComp frame{ "small eq frame3.png",this ,handler };
@@ -451,10 +436,11 @@ public:
         chartName.lbl.addChangeListener(this);
         chartName.lbl.index = -1;
         
-
-        bottomPanel.panels.add(new HistPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], &bottomPanel, handler, drvr));
+        bottomPanel.panels.add(new Line2DPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], true,&bottomPanel, handler, drvr));
+        addPanel("Line");
+        bottomPanel.panels.add(new HistPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], false,&bottomPanel, handler, drvr));
         addPanel("Hist");
-        bottomPanel.panels.add(new PiePanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], &bottomPanel, handler, drvr));
+        bottomPanel.panels.add(new PiePanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], false,&bottomPanel, handler, drvr));
         addPanel("Pie");
 
         for (auto c : chartList.items)

@@ -62,13 +62,21 @@ public:
                 
         }
     };
+    int GuiClass = 0; 
+    /*
+        1- chKnobClassicBeta
+        2- chLabel
+        3- chToggleButtonAndLabel
+        4- SelectionBox
+        5- moveChButton
+    */
     CompArea area{ 0,0,dims[2],dims[3] };
     moveChildComp(int x, int y, int w, int h) : childComp(x, y, w, h) { addAndMakeVisible(area); area.parent = this; }
              
     void mouseDown(const juce::MouseEvent& event){}
     void mouseDrag(const juce::MouseEvent& event){}
     void paint(juce::Graphics& g){}
-    virtual void refresh(){}
+    virtual void paramRefresh(){}
     
 };
 
@@ -97,33 +105,52 @@ public:
     void mouseDown(const juce::MouseEvent& event) override;
 };
 
-class moveChButton : public chButton, public paramedBeta, public drvred
+class moveChButton : public juce::ChangeListener, public moveChildComp, public paramedBeta, public handled, public drvrShellNotifer
 {
 public:
+    chButton btn {0 , 0, 0, 0,"", "", this, handler };
+
     moveChButton(int x, int y, int w, int h, juce::String _onPng, juce::String _offPng, juce::Component* parent, Params*& params, pngHandler& Handler, 
-        Drvr& drvr, int _index)
-        :chButton(x, y, w, h, _onPng, _offPng, parent, Handler), paramedBeta(params), drvred(drvr)
-    {
-        index = _index;
+        Drvr& drvr, int* _index, juce::String _paramText = "", int _guiType = guiType::_bool)
+        :/*chButton(x, y, w, h, _onPng, _offPng, parent, Handler),*/ moveChildComp(x, y, w, h), paramedBeta(params), handled(Handler,parent,this), drvrShellNotifer(drvr)
+    {        
+        btn.dims[2] = w;
+        btn.dims[3] = h;
+        btn.onPng = _onPng;
+        btn.offPng = _offPng;
+         
+        btn.addChangeListener(this);
+        Handler.renderTriggerButton(&btn, btn.onPng, btn.offPng);
+
+        GuiClass = 6;
+        guiType = _guiType;
+
+        if (_index != nullptr)
+        {
+            index = *_index;
+            (*_index)++;
+        }       
         drvr.ShellNotifiers.add(this);
     }
-    void mouseDown(const juce::MouseEvent& event) override
+
+    void changeListenerCallback(juce::ChangeBroadcaster* source)
     {
-        if (event.mods.isLeftButtonDown())
-        {          
-            update(!IsOn);
-            buttonPressed();
-        }           
+        update(btn.IsOn);
+        sendSynchronousChangeMessage();
     }
+
+    void paramRefresh();
+     
 };
 
 class moveFxLabel : public fxLabel, public paramedBeta
 {
 public:
-    
+     
+
     moveFxLabel(int x, int y, int w, int h, juce::String name, juce::Colour on, juce::Colour off, Component* Comp,  juce::Component* parent, Params*& params, pngHandler& Handler)
         :fxLabel(x, y, w, h, name, on, off, Comp, parent, Handler), paramedBeta(params) {
-
+         
     }
     ~moveFxLabel() { removeAllChangeListeners(); }
      
@@ -222,13 +249,14 @@ public:
     labelTextBox lbl{ 60,0,136,18,lblName,this,params,handler,drvr};
 
     chLabel(int x, int y, int w, int h, juce::String name, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr, 
-        int* index, int guiType = 2 );
+        int* _index, int guiType = guiType::_stringQuots );
     ~chLabel(){}
     void changeListenerCallback(juce::ChangeBroadcaster* source);
-    void paramRefresh();
+    void paramRefresh() override;
+    
 };
 
-class colorsComponent : public moveChildComp, public paramedBeta, public handled
+class colorsComponent : public moveChildComp, public paramedBeta, public handled, public drvred
 {
 public:
     class icon : public moveChildComp, public handled
@@ -239,18 +267,21 @@ public:
         ~icon(){}
     };
 
-    class iconArea : public juce::ChangeListener, public paramedBeta, public moveChildComp, public handled
+    class iconArea : public juce::ChangeListener, /*public paramedBeta,*/ public moveChildComp, public handled
     {
     public:
+
         //juce::String* param = nullptr; //Where you store the color value
         juce::String WindowTitle = "window";
         juce::Array<Component::SafePointer<Component>> windows;
-        juce::Label& selection;
+        chLabel& selection;
 
         SafePointer<Component> win;
 
-        iconArea(int x, int y, int w, int h, juce::Label& _selection, juce::Component* parent, Params*& params, pngHandler& handler) 
-            : selection(_selection), moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this) {}
+        iconArea(int x, int y, int w, int h, chLabel& _selection, juce::Component* parent, /*Params*& params,*/ pngHandler& handler)
+            : selection(_selection), moveChildComp(x, y, w, h), /*paramedBeta(params),*/ handled(handler, parent, this) {
+           /* guiType = guiType::_stringQuots;*/
+        }
         ~iconArea(){}
         
         void mouseDown(const juce::MouseEvent& event) {
@@ -285,29 +316,51 @@ public:
 
         void changeListenerCallback(juce::ChangeBroadcaster* source) {
 
-            selection.setText("#" + static_cast<ColourSelectorWindow*>(source)->currentColor, juce::dontSendNotification);
-            update(selection.getText());           
+            selection.lbl.lbl.setText("#" + static_cast<ColourSelectorWindow*>(source)->currentColor, juce::dontSendNotification);
+            selection.lbl.update(selection.lbl.lbl.getText());
+            if (selection.params->paramsArray[selection.lblName.index]->boolVal == false);
+                selection.lblName.update(true);
+           // update(selection.getText());           
         }
 
     };
 
-    juce::Label selection;
-    colorsComponent::icon icon{ 40,0,41,25,this,handler };
-    colorsComponent::iconArea area{ 40,0,41,25,selection,this,params,handler };
-    fxLabel name{ 0,0,40,25,"",juce::Colours::slategrey,juce::Colours::slategrey,nullptr,this,handler };
+    //juce::Label selection;
 
-    colorsComponent(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, int param)
-        : moveChildComp(x, y, w, h), paramedBeta(params),handled(handler, parent, this) {
+    chLabel selection{ 0, 0, 150, 25, "color", this, params, handler, drvr, &index, guiType::_stringQuots };
+    colorsComponent::icon icon{ 150,0,41,25,this,handler };
+    colorsComponent::iconArea area{ 150,0,41,25,selection,this,/*params,*/handler };
+    //fxLabel name{ 0,0,40,25,"",juce::Colours::slategrey,juce::Colours::slategrey,nullptr,this,handler };
+
+    colorsComponent(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr,
+        int* _index, juce::String _paramText = "", int guiType = guiType::_stringQuots)
+        : moveChildComp(x, y, w, h), paramedBeta(params),handled(handler, parent, this), drvred(_drvr) {
         addAndMakeVisible(selection);
-        area.index = param;
+        if (_index != nullptr)
+        {
+            selection.lblName.index = *_index;
+            (*_index)++;
+            selection.lbl.index = *_index;
+            (*_index)++;
+        }       
+        selection.lblName.IsOn = true;
+        
+        GuiClass = 8;         
+        
+        selection.lblName.guiType = guiType::_bool;
+         
+
+        if (_paramText != "")
+            selection.lbl.paramText = _paramText;
     }
     void resized() { selection.setBounds(80, 0, 70, 25); }
 
     void UpdateText(juce::String text)
     {
-        area.WindowTitle = name.text = text;
+        area.WindowTitle = selection.lblName.text = text;
     }
 
+    void paramRefresh(){ }
 };
 
 //class chKnobSelection : public childComp, public paramed, public handled, public drvred
@@ -339,16 +392,21 @@ public:
     MoveLabel LblName{ 0,51,70,18, "",juce::Colours::slategrey,this,handler };
 
     chKnobClassicBeta(int x, int y, int w, int h, juce::String lblText, juce::Component* parent, Params*& _params, pngHandler& handler, Drvr& _drvr, 
-        int* _index,  juce::String _paramText="",float _paramVal=1.0 ,int guiType = 1 )
+        int* _index,  juce::String _paramText="",float _paramVal=1.0 ,int guiType = guiType::_float)
         :  moveChildComp(x, y, w, h), paramedBeta(_params), handled(handler, parent, this), drvred(_drvr) {
         LblName.text = lblText;
         LblName.repaint();
-        if (_index != nullptr)
+
+        sldr.SetIndex(_index);
+
+        //see if you can use SetIndex
+        /*if (_index != nullptr)
         {
             sldr.index = *_index;
             (*_index)++;
         }
-        
+        */
+        GuiClass = 1;
         sldr.guiType = guiType;
         if (_paramText != "")
             sldr.paramText = _paramText;
@@ -357,7 +415,7 @@ public:
     }
     ~chKnobClassicBeta(){}
 
-    void paramRefresh()  { 
+    void paramRefresh()  override { 
 
         if (sldr.index>=0)
             sldr.setValue(params->paramsArray[sldr.index]->floatVal , juce::dontSendNotification); 
@@ -416,7 +474,7 @@ public:
     MoveLabel lbl{ 0,0,60,25,"",juce::Colours::slategrey,this,handler };
     chButton btn{ 65, 5, 10, 10,"led_red_on2.png","led_red_off2.png" ,this,handler };
     chToggleButtonAndLabel(int x, int y, int w, int h, juce::String text, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr, 
-        int* _index,  juce::String _paramText = "",  int _guiType = 4)
+        int* _index,  juce::String _paramText = "",  int _guiType = guiType::_bool)
         : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvrShellNotifer(_drvr) {
         if (_index != nullptr)
         {
@@ -426,7 +484,10 @@ public:
        
         lbl.text = text;
         btn.addChangeListener(this);
+
+        GuiClass = 3;
         guiType = _guiType;
+
         if (_paramText != "")
             paramText = _paramText;
     }
@@ -437,7 +498,7 @@ public:
         sendSynchronousChangeMessage();
     }
 
-    void paramRefresh() { btn.IsOn = params->paramsArray[index]->boolVal; btn.repaint(); }
+    void paramRefresh() override { btn.IsOn = params->paramsArray[index]->boolVal; btn.repaint(); }
 };
 
 class moveMainTab : public moveChildComp, public handled
@@ -468,11 +529,11 @@ public:
     void paint(juce::Graphics& g);
 };
 
-class markers : public paramedBeta, public drvrShellNotifer, public juce::ChangeListener, public moveChildComp, public handled 
+class markers : public juce::ChangeListener, public moveChildComp, public paramedBeta, public handled, public drvrShellNotifer              
 {
 public:
 
-    int active = 0;
+    bool active = false;
     juce::String code;
     
     marker point{ 0,0,20,20,"point","'.'",this,handler };
@@ -511,7 +572,8 @@ public:
     marker caretup_centered_at_base{ 180,40,20,20,"caretup_centered_at_base","10",this,handler };
     marker caretdown_centered_at_base{ 200,40,20,20,"caretdown_centered_at_base","11",this,handler };
 
-    markers(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr);
+    markers(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr,
+        int* _index, juce::String _paramText="", int _guiType=2);
     void changeListenerCallback(juce::ChangeBroadcaster* source);
 
 };
@@ -588,7 +650,7 @@ public:
     juce::OwnedArray<childComp> ledsBlockers;
        
     SelectionBox(int x, int y, std::vector<juce::String> vals, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr, 
-        int* _index,  juce::String _paramText = "", int _guiType = 5 ) :
+        int* _index,  juce::String _paramText = "", int _guiType = guiType::_list ) :
         moveChildComp(x, y, 73, vals.size() * 25), paramedBeta(params), handled(handler, parent, this), drvred(drvr)
     {
         for (int i = 0; i < vals.size(); i++)
@@ -605,10 +667,12 @@ public:
             index = *_index;
             (*_index)++;
         }
+
+        GuiClass = 4;
         guiType = _guiType;        
         if (_paramText != "")
             paramText = _paramText;
     }
-    
-    void paramRefresh();
+    void paramRefresh() override;
+       
 };

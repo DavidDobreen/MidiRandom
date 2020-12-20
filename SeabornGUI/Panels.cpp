@@ -10,111 +10,25 @@
 
 #include "Panels.h"
 
-Line2DPanel::Line2DPanel(int x, int y, int w, int h, juce::Component* parent,   pngHandler& handler, Drvr& _drvr)
-    : childComp(x, y, w, h),  handled(handler, parent, this), drvrShellNotifer(_drvr) {
-        
-    LineBox.width.sldr.setRange(0, 500, 1);
-    LineBox.width.sldr.setValue(100,juce::dontSendNotification);
+Line2DPanel::Line2DPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent,   pngHandler& handler, Drvr& _drvr)
+    : ChartPanel(x, y, w, h, _ShowYinput, parent,handler,_drvr)
+{
+    //LineBox.width.sldr.setRange(0, 500, 1);
+    //LineBox.width.sldr.setValue(100,juce::dontSendNotification);
 
+    addChKnob(new chKnobClassicBeta(21, 17, 70, 70, "alpha", this, itemParams, handler, drvr, &index, "alpha"));
+    addChKnob(new chKnobClassicBeta(121, 17, 70, 70, "width", this, itemParams, handler, drvr, &index, "width"));
+
+    addToggleButton(new moveChButton(200, 20, 15, 15, "fx on botton2.png", "fx off botton2.png", this, itemParams, handler, drvr, &index));
+    addMarkers(new markers(610, 10, 250, 100, this, itemParams, handler, drvr, &index, "marker"));
+
+    addSelectionBox(new SelectionBox(202, 14, { "solid", "dashed", "dashdot","dotted" }, this, itemParams, handler, drvr, &index, "ls"));
     
+    addColorsComponent(new colorsComponent ( 373,57,161,25,this, itemParams,handler,drvr,&index,"color" ));
+      
 }
 
-void Line2DPanel::MakeLine2Dkwargs()
-{
-
-    /*plotParams.clear();
-
-    if (params->lalpha != 1.0f)
-        plotParams.push_back(", alpha=" + juce::String(params->lalpha));
-
-    if (params->lwidth != 1.0f)
-        plotParams.push_back(", lw=" + juce::String(params->lwidth));
-
-    if (params->lcolor != "")
-        plotParams.push_back(", c='" + params->lcolor + "'");
-
-    if (params->llineStyleComp)
-        plotParams.push_back(", ls=" + lineStlyeVals[params->llineStyleComp]);
-
-    if (params->tvalueIsVisible)
-        plotParams.push_back(", label='" + params->llabel + "'");
-
-    if (params->lmarker != "")
-    {
-        plotParams.push_back(", marker=" + params->lmarker);
-        plotParams.push_back(", markersize=" + juce::String(params->lmarkerSize));
-        plotParams.push_back(", markeredgewidth=" + juce::String(params->lmarkerEdgeWith));
-        if (params->lmarkerColor != "")
-            plotParams.push_back(", markerfacecolor=" + juce::String(params->lmarkerColor));
-        if (params->lmarkeredgecolor != "")
-            plotParams.push_back(", markeredgecolor=" + juce::String(params->lmarkeredgecolor));
-    }*/
-        
-
-    /*if (color.selection.getText() != "")
-        plotParams.push_back(", c='" + color.selection.getText() + "'");*/
-
-    /*if (params->dashCapstyleKnob)
-        plotParams.push_back(", dash_capstyle=" + CapStyleValues[params->dashCapstyleKnob]);
-
-    if (dashJoinstyleKnob.vals.getValue())
-        plotParams.push_back(", dash_joinstyle=" + JoinStyleValues[dashJoinstyleKnob.vals.getValue()]);
-
-    if (solidCapstyleKnob.vals.getValue())
-        plotParams.push_back(", solid_capstyle=" + CapStyleValues[solidCapstyleKnob.vals.getValue()]);
-
-    if (solidJoinstyleKnob.vals.getValue())
-        plotParams.push_back(", solid_joinstyle=" + JoinStyleValues[solidJoinstyleKnob.vals.getValue()]);
-
-    if (drawstyleKnob.vals.getValue())
-        plotParams.push_back(", ds=" + DrawstyleValues[drawstyleKnob.vals.getValue()]);*/
-
-
-
-   /* if (markersBox.markers.active)
-        plotParams.push_back(", marker=" + markersBox.markers.code);
-
-    if (markersBox.markerSize.sldr.getValue() != 100)
-        plotParams.push_back(", markersize=" + juce::String(markersBox.markerSize.sldr.getValue() * 0.05f));
-
-    if (markersBox.markerfacecolor.selection.getText() != "")
-        plotParams.push_back(", mfc='" + markersBox.markerfacecolor.selection.getText() + "'");
-
-    if (markersBox.markerEdgeWith.sldr.getValue())
-        plotParams.push_back(", mew=" + juce::String(markersBox.markerEdgeWith.sldr.getValue() * 0.05f));
-
-    if (markersBox.markeredgecolor.selection.getText() != "")
-        plotParams.push_back(", mec='" + markersBox.markeredgecolor.selection.getText() + "'");
-
-    if (markersBox.markerFillstyleKnob.vals.getValue())
-        plotParams.push_back(", fillstyle=" + markersBox.FillStyleVals[markersBox.markerFillstyleKnob.vals.getValue()]);*/
-
-}
-
-void Line2DPanel::refresh()
-{
-    label.lbl.lbl.setText(params->llabel, juce::dontSendNotification);
-    label.lblName.IsOn = params->lvalueIsVisible;
-    label.lblName.repaint();
-
-    //Colours
-    color.selection.setText(params->lcolor, juce::dontSendNotification);
-
-    //Sliders
-    LineBox.alpha.sldr.setValue(params->lalpha * 100, juce::dontSendNotification);
-    LineBox.width.sldr.setValue(params->lwidth * 100, juce::dontSendNotification);
-    LineBox.lineStyleComp.style.vals.sldr.setValue(params->llineStyleComp, juce::dontSendNotification);
-
-    //markers
-    markersBox.markerSize.sldr.setValue(params->lmarkerSize*4, juce::dontSendNotification);
-    markersBox.markerEdgeWith.sldr.setValue(params->lmarkerEdgeWith*10, juce::dontSendNotification);
-    markersBox.markeredgecolor.selection.setText(params->lmarkeredgecolor, juce::dontSendNotification);
-    markersBox.markerfacecolor.selection.setText(params->lmarkerColor, juce::dontSendNotification);
-     
-
-     
-}
-
+ 
 Line2DPanel::MarkersBox::MarkersBox(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr)
     : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvred(_drvr) {
 
@@ -123,7 +37,7 @@ Line2DPanel::MarkersBox::MarkersBox(int x, int y, int w, int h, juce::Component*
     MarkerEdgeLbl.addChangeListener(this);
     MarkerFileLbl.addChangeListener(this);
    
-    markerfacecolor.name.text = "color";
+    //markerfacecolor.name.text = "color";
 }
 
 void Line2DPanel::MarkersBox::changeListenerCallback(juce::ChangeBroadcaster* source)
@@ -222,22 +136,6 @@ void TextPanel::refresh()
     fontSize.sldr.setValue(params->tsize , juce::dontSendNotification);
     fontFamily.vals.sldr.setValue(params->tfontfamily , juce::dontSendNotification);
    
-}
-
-
-
-
-
-
-void AxesPanel::refresh()
-{
-    //Colours    
-    color.selection.setText(params->gcolor, juce::dontSendNotification);
-
-    //Sliders
-    //styleBox.whichKnob.vals.sldr.setValue(params->gwhichKnob, juce::dontSendNotification);
-    //styleBox.axisKnob.vals.sldr.setValue(params->gaxisKnob, juce::dontSendNotification);
-    //styleBox.lineStyleComp.style.vals.sldr.setValue(params->glineStyleComp, juce::dontSendNotification);
 }
 
 AxesPanel::AxesPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
@@ -364,35 +262,28 @@ TextPanel::FontStyleKnob::FontStyleKnob(int x, int y, int w, int h, juce::Compon
     vals.sldr.setRange(0, 2, 1);
 }
 
-HistPanel::HistPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
-    : ChartPanel(x, y, w, h, parent, handler, _drvr) {
+HistPanel::HistPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : ChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
     //lineWidth.sldr.setRange(1, 500, 1);
-}
-
-void HistPanel::refresh()
-{
 }
 
 BarsPanel::BarsPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
   : moveChildComp(x, y, w, h), handled(handler, parent, this), drvred(_drvr) {
 }
-
-void BarsPanel::refresh()
-{
-}
-
-PiePanel::PiePanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
-    : ChartPanel(x, y, w, h,parent,handler,_drvr){
+ 
+PiePanel::PiePanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : ChartPanel(x, y, w, h, _ShowYinput, parent,handler,_drvr){
     
-    addChLabel(new chLabel(409, 92, 150, 25, "explode", this, itemParams, handler, drvr, &index, 3));
-    addChLabel(new chLabel(409, 110, 150, 25, "labels", this, itemParams, handler, drvr, &index, 3));
-    addChLabel(new chLabel(409, 135, 150, 25, "colors", this, itemParams, handler, drvr, &index, 3));
-    addChLabel(new chLabel(409, 160, 150, 25, "autopct", this, itemParams, handler, drvr, &index, 3));
+    addChLabel(new chLabel(409, 92, 150, 25, "explode", this, itemParams, handler, drvr, &index, guiType::_stringArray));     
+    addChLabel(new chLabel(409, 110, 150, 25, "labels", this, itemParams, handler, drvr, &index, guiType::_stringArray));
+    addChLabel(new chLabel(409, 135, 150, 25, "colors", this, itemParams, handler, drvr, &index, guiType::_stringArray));
+    addChLabel(new chLabel(409, 160, 150, 25, "autopct", this, itemParams, handler, drvr, &index, guiType::_stringArray));
+     
 
     addChKnob(new chKnobClassicBeta(235, 116, 70, 70, "pctdistance", this, itemParams, handler, drvr, &index, "pctdistance"));
     addChKnob(new chKnobClassicBeta(305, 116, 70, 70, "radius", this, itemParams, handler, drvr, &index, "radius"));
  
-    addToggleButton(new chToggleButtonAndLabel(609, 160, 85, 25, "shadow", this, itemParams, handler, drvr, &index, "shadow"));
+    addToggleButtonAndLabel(new chToggleButtonAndLabel(609, 160, 85, 25, "shadow", this, itemParams, handler, drvr, &index, "shadow"));
 
     addSelectionBox(new SelectionBox(102, 14, { "None", "True", "False" }, this, itemParams, handler, drvr, &index, "normalize"));
 
@@ -404,16 +295,17 @@ PiePanel::PiePanel(int x, int y, int w, int h, juce::Component* parent, pngHandl
 
  
 
-ChartPanel::ChartPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
-    : moveChildComp(x, y, w, h), handled(handler, parent, this), drvred(_drvr)
+ChartPanel::ChartPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : ShowYinput(_ShowYinput), moveChildComp(x, y, w, h), handled(handler, parent, this), drvred(_drvr)
 {
 }
 
 void ChartPanel::refresh()
 {
-    for (auto& c: paramComps)
+    
+    for (auto& c: guiComps)
     {
-        switch (c->guiType)
+        switch (c->GuiClass)
         {
         case 1:
         {
@@ -423,7 +315,9 @@ void ChartPanel::refresh()
         case 2:
         case 3:
         {
+
             static_cast<chLabel*>(c)->paramRefresh();
+             
             break;
         }
         case 4:
@@ -434,6 +328,16 @@ void ChartPanel::refresh()
         case 5:
         {
             static_cast<SelectionBox*>(c)->paramRefresh();
+            break;
+        }
+        case 6:
+        {
+            static_cast<moveChButton*>(c)->paramRefresh();
+            break;
+        }
+        case 7:
+        {
+            static_cast<colorsComponent*>(c)->paramRefresh();
             break;
         }
             
@@ -461,7 +365,13 @@ void ChartPanel::addChKnob(chKnobClassicBeta* _chKnob)
     paramComps.add(&_chKnob->sldr);
 }
 
-void ChartPanel::addToggleButton(chToggleButtonAndLabel* _btn)
+void ChartPanel::addToggleButton(moveChButton* _btn)
+{
+    guiComps.add(std::move(_btn));
+    paramComps.add(_btn);
+}
+
+void ChartPanel::addToggleButtonAndLabel(chToggleButtonAndLabel* _btn)
 {
     guiComps.add(std::move(_btn));
     paramComps.add(_btn);
@@ -471,6 +381,21 @@ void ChartPanel::addSelectionBox(SelectionBox* _selections)
 {
     guiComps.add(std::move(_selections));
     paramComps.add(_selections);
+}
+
+void ChartPanel::addMarkers(markers* _markers)
+{
+    guiComps.add(std::move(_markers));
+    paramComps.add(_markers);
+}
+
+void ChartPanel::addColorsComponent(colorsComponent* _colors)
+{
+    guiComps.add(std::move(_colors));
+    paramComps.add(&_colors->selection.lblName);
+    paramComps.add(&_colors->selection.lbl);
+
+     
 }
      
 

@@ -81,9 +81,11 @@ chLabel::chLabel(int x, int y, int w, int h, juce::String name, juce::Component*
         lbl.index = *_index;
         (*_index)++;
     }
-    
-    lbl.guiType = guiType;
-    lblName.guiType = 4;    
+
+    GuiClass = 2; //This is chLabel
+    lbl.guiType = guiType; //This is a string/string array
+    lblName.guiType = guiType::_bool;  // This is a boolean   
+
     if (name != "")
         lbl.paramText = name;
      
@@ -97,7 +99,7 @@ void chLabel::changeListenerCallback(juce::ChangeBroadcaster* source)
     sendSynchronousChangeMessage();
 }
 
-void chLabel::paramRefresh()
+void chLabel::paramRefresh() 
 {
     if (lbl.index >= 0)
     {
@@ -114,8 +116,9 @@ void marker::paint(juce::Graphics& g)
     g.drawRoundedRectangle(getLocalBounds().toFloat().reduced(2), 0.7f, 1.0f);
 }
 
-markers::markers(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr) 
-    : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvrShellNotifer(drvr)
+markers::markers(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr,
+    int* _index, juce::String _paramText, int _guiType)
+    : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvrShellNotifer(_drvr)
 {
     point.area.addChangeListener(this);
     pixel.area.addChangeListener(this);
@@ -152,15 +155,31 @@ markers::markers(int x, int y, int w, int h, juce::Component* parent, Params*& p
     caretright_centered_at_base.area.addChangeListener(this);
     caretup_centered_at_base.area.addChangeListener(this);
     caretdown_centered_at_base.area.addChangeListener(this);
+
+    if (_index != nullptr)
+    {
+        index = *_index;
+        (*_index)++;
+    }
+
+    
+
+    GuiClass = 5;
+    guiType = _guiType;
+    if (_paramText != "")
+        paramText = _paramText;
+
 }
 
 void markers::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
     code = static_cast<marker::markerArea*>(source)->code;
-    active = 1;
+    /*active = true;*/
+    
+    update(code);
 
-    if (params != nullptr)
-        params->lmarker = code;
+   /* if (params != nullptr)
+        params->lmarker = code;*/
 
     sendSynchronousChangeMessage();
 }
@@ -239,4 +258,11 @@ void SelectionBox::paramRefresh()
             
             
     }
+}
+
+void moveChButton::paramRefresh()
+{
+    btn.IsOn = params->paramsArray[index]->boolVal;
+    btn.refresh();
+     
 }

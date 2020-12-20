@@ -55,7 +55,10 @@ Axes::Axes(int x, int y, int w, int h, juce::Component* parent, pngHandler& hand
 void Axes::makeArgs()
 {   
     plotParams.clear();
-    plotParams.push_back("(" + *xValues.targetLineListItemVals + "),(" + *yValues.targetLineListItemVals + ")");
+    if (ShowYinput)
+        plotParams.push_back("(" + *xValues.targetLineListItemVals + "),(" + *yValues.targetLineListItemVals + ")");
+    else
+        plotParams.push_back("(" + *xValues.targetLineListItemVals + ")");
 }
 
 LineList::LineList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel , juce::Component* parent, pngHandler& handler)
@@ -80,7 +83,7 @@ void LineList::resized()
 
 void LineList::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
-    for (auto& p : bottomPanel.panels)
+    /*for (auto& p : bottomPanel.panels)
         p->setVisible(false);
      
      
@@ -100,14 +103,14 @@ void LineList::changeListenerCallback(juce::ChangeBroadcaster* source)
     
     lbl->textColor= juce::Colours::aqua;
 
-    bottomPanel.line2dPanel.params = &item->params;
+    bottomPanel.line2dPanel.itemParams = &item->params;
           
     bottomPanel.line2dPanel.refresh();
 
     axes.xValues.targetLineListItemVals = &item->xValues;
     axes.yValues.setVisible(true);
     axes.yValues.targetLineListItemVals = &item->yValues;
-    axes.refresh();
+    axes.refresh();*/
 }
  
 TextList::TextList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler)
@@ -336,12 +339,14 @@ void LeftPanel::changeListenerCallback(juce::ChangeBroadcaster* source)
         for (auto& i : itemsList)
             i->setVisible(false);
         itemsList[chartList.selected]->setVisible(true);
- 
+        
         bottomPanel.selectedPanel = bottomPanel.panels[chartList.selected];
+        itemsList[chartList.selected]->items[0]->lbl.sendSynchronousChangeMessage();
          
         chartList.setVisible(false);
         chartName.lbl.text = chartList.items[chartList.selected]->lbl.text;
         chartName.lbl.repaint();
+
         return;
     }
 
@@ -407,35 +412,6 @@ void BarsList::resized()
         i->setBounds(i->dims[0], i->dims[1], i->dims[2], i->dims[3]);
 }
 
-void BarsList::changeListenerCallback(juce::ChangeBroadcaster* source)
-{
-    for (auto& p : bottomPanel.panels)
-        p->setVisible(false);
-
-    MoveLabel* lbl = static_cast<MoveLabel*>(source);
-    BarsList::item* item = static_cast<BarsList::item*>(lbl->getParentComponent());
-    selectedItem = item;
-
-    bottomPanel.namebox.lbl.text = lbl->text;
-    bottomPanel.namebox.repaint();
-
-    for (auto i : items)
-    {
-        i->lbl.textColor = juce::Colours::slategrey;
-        i->repaint();
-    }
-
-    lbl->textColor = juce::Colours::aqua;
-
-    bottomPanel.barsPanel.params = &item->params;
-
-    bottomPanel.barsPanel.refresh();
-
-    axes.xValues.targetLineListItemVals = &item->xValues;
-    axes.yValues.setVisible(true);
-    axes.yValues.targetLineListItemVals = &item->yValues;
-    axes.refresh();
-}
 
 //PieList::PieList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler)
 //    : axes(_axes), bottomPanel(_bottomPanel), moveChildComp(x, y, w, h), handled(handler, parent, this)
@@ -539,6 +515,53 @@ void ItemList::addItem(const juce::String& text)
     item->lbl.text = text + juce::String(items.size());
 }
 
- 
+ItemList::item::item(int x, int y, int w, int h, juce::Array<paramedBeta*>& _paramComps, juce::Component* parent, pngHandler& handler)
+    : moveChildComp(x, y, w, h), handled(handler, parent, this) {
+    for (int i = 0; i < _paramComps.size(); i++)
+    {
+        switch (_paramComps[i]->guiType)
+        {
+        case (guiType::_float):
+        {
+            params.paramsArray.add(new paramNumber(_paramComps[i]->paramText));
+            break;
+        }
 
- 
+        case (guiType::_bool):
+        {
+            params.paramsArray.add(new paramBool(_paramComps[i]->paramText));
+            break;
+        }
+
+        case (guiType::_string):
+        {
+            params.paramsArray.add(new paramString(_paramComps[i]->paramText, params.paramsArray[i - 1]->boolVal));
+            break;
+        }
+        case (guiType::_stringQuots):
+        {
+            params.paramsArray.add(new paramStringWithQuotes(_paramComps[i]->paramText, params.paramsArray[i - 1]->boolVal));
+            break;
+        }
+        case (guiType::_stringArray):
+        {
+            params.paramsArray.add(new paramStringArray(_paramComps[i]->paramText, params.paramsArray[i - 1]->boolVal));
+            break;
+        }
+       
+        case (guiType::_list):
+        {
+            params.paramsArray.add(new paramList(_paramComps[i]->paramText));
+            break;
+        }
+
+        default:
+            break;
+        }
+
+
+
+
+    }
+
+}

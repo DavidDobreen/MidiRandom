@@ -484,6 +484,15 @@ void paramedBeta::update(bool isOn)
     }*/
 }
 
+void paramedBeta::SetIndex(int* _index)
+{
+    if (_index != nullptr)
+    {
+        index = *_index;
+        (*_index)++;
+    }
+}
+
 void paramedBeta::update(juce::String text)
 {
     params->paramsArray[index]->stringText = text;

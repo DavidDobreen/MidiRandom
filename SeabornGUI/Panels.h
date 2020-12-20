@@ -19,14 +19,18 @@ public:
     juce::OwnedArray<moveChildComp> guiComps;
     juce::Array<paramedBeta*> paramComps;
     int index = 0;
+    bool ShowYinput = true;
 
-    ChartPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    ChartPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
     ~ChartPanel() {}
     void refresh();
     void addChLabel(chLabel* _chLabel);
     void addChKnob(chKnobClassicBeta* _chKnob);
-    void addToggleButton(chToggleButtonAndLabel* _btn);
+    void addToggleButton(moveChButton* _btn);
+    void addToggleButtonAndLabel(chToggleButtonAndLabel* _btn);
     void addSelectionBox(SelectionBox* _selections);
+    void addMarkers(markers* _markers);
+    void addColorsComponent(colorsComponent* _markers);
 };
 
 class TextPanel : public juce::ChangeListener, public childComp, public handled, public drvrShellNotifer
@@ -92,7 +96,7 @@ public:
 
     chKnobClassicBeta fontSize{ 10,70,70,70,"size",this,params,handler ,drvr,nullptr };
     
-    colorsComponent color{ 373,57,161,25,this,params,handler,enumParmas::tcolor };
+    //colorsComponent color{ 373,57,161,25,this,params,handler,enumParmas::tcolor };
    // colorsComponent background{ 179,18,121,25,this,handler,  };
     //colorsComponent color{ 27,18,121,25,this,handler, };
 
@@ -152,7 +156,7 @@ public:
         /*SelectionBox lineStyleComp{ 41,17,{ "solid", "dashed", "dashdot","dotted" },&styleCont3, params,handler,drvr,enumParmas::glineStyleComp };*/
 
         MoveContainer markersCompLabels{ 50,120,240,20,this,handler };
-        moveChButton gridOnOff{ 0,0,15,15,"fx on botton2.png","fx off botton2.png",&markersCompLabels,params,handler,drvr,enumParmas::gridOn };
+        //moveChButton gridOnOff{ 0,0,15,15,"fx on botton2.png","fx off botton2.png",&markersCompLabels,params,handler,drvr,enumParmas::gridOn };
          
         fxLabel styleLbl1{ 50,0,50,20,"which", DEFAULT_LABEL_COLORS ,&styleCont1,&markersCompLabels,handler };
         fxLabel styleLbl2{ 100,0,50,20,"alpha", DEFAULT_LABEL_COLORS ,&styleCont2,&markersCompLabels,handler };
@@ -169,21 +173,18 @@ public:
     LegendBox legendBox { 655,26,260,135,this,params, handler,drvr };
     StyleBox styleBox{ 55,26,260,135,this,params, handler ,drvr };
             
-    colorsComponent color{ 373,57,161,25,this,params,handler,enumParmas::gcolor };
+   // colorsComponent color{ 373,57,161,25,this,params,handler,enumParmas::gcolor };
 
     AxesPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
     ~AxesPanel(){}
     chLabel xVals{ 409,92,150,25,"x-vals",this,params,handler, drvr ,nullptr };
     chLabel yVals{ 409,122,150,25,"y-vals",this,params,handler, drvr ,nullptr };
-
     
-      
     void MakeGridkwargs();
-    void refresh();
-
+    
 };
 
-class Line2DPanel : public childComp,  public handled, public drvrShellNotifer
+class Line2DPanel : public ChartPanel
 {
 public:
 
@@ -246,15 +247,15 @@ public:
         chBgComp bkgd{ "wave fx bg and frame and on_off panell2.png",this,handler };
 
         MoveContainer markersCont1{ 0,0,240,100,this,handler };
-        markers markers{ 10,10,250,100,&markersCont1,params,handler ,drvr};
+        //markers markers{ 10,10,250,100,&markersCont1,params,handler ,drvr};
 
         MoveContainer markersCont2{ 0,0,240,100,this,handler };
         chKnobClassicBeta markerSize{ 21,17,70,70,"Size",&markersCont2,params,handler,drvr,nullptr };
-        colorsComponent markerfacecolor{ 90,41,161,25,&markersCont2,params,handler,enumParmas::lmarkerColor };
+        //colorsComponent markerfacecolor{ 90,41,161,25,&markersCont2,params,handler,enumParmas::lmarkerColor };
 
         MoveContainer markersCont3{ 0,0,240,100,this,handler };
         chKnobClassicBeta markerEdgeWith{ 21,17,70,70,"Edge",&markersCont3,params,handler,drvr,nullptr };
-        colorsComponent markeredgecolor{ 90,41,161,25,&markersCont3,params, handler ,enumParmas::lmarkeredgecolor };
+        //colorsComponent markeredgecolor{ 90,41,161,25,&markersCont3,params, handler ,enumParmas::lmarkeredgecolor };
 
         MoveContainer markersCont4{ 0,0,240,100,this,handler };
         std::vector<juce::String>  FillStyleVals = { "'none'", "'full'", "'left'","'right'" ,"'bottom'" ,"'top'" };
@@ -282,7 +283,7 @@ public:
         chKnobClassicBeta width{ 121,17,70,70,"Width", &lineCont1,params,handler,drvr, nullptr };
 
         MoveContainer lineCont2{ 0,0,240,100,this,handler };
-        std::vector<juce::String>lineStlyeVals = { "'solid'", "'dashed'", "'dashdot'","'dotted'","'None'" };
+        std::vector<juce::String>lineStlyeVals = { "solid'", "'dashed'", "'dashdot'","'dotted'","'None'" };
         LineStyleComp lineStyleComp{ 21,17,250,150,&lineCont2,params,handler,drvr };
          
        
@@ -295,32 +296,32 @@ public:
         void changeListenerCallback(juce::ChangeBroadcaster* source);
     };
 
-    Params dummy;
-    Params* params = &dummy;
-    
-    MarkersBox markersBox{ 655,26,260,135,this,params, handler ,drvr};
-    LineStyleBox LineBox{ 55,26,260,135,this,params, handler ,drvr };
+    //Params dummy;
+    //Params* params = &dummy;
+    //
+    //MarkersBox markersBox{ 655,26,260,135,this,params, handler ,drvr};
+    //LineStyleBox LineBox{ 55,26,260,135,this,params, handler ,drvr };
    
-    colorsComponent color{ 373,57,161,25,this,params,handler,enumParmas::lcolor };
-    
-    /*DashCapstyleKnob dashCapstyleKnob{ 10,30,0,0,this,paramSetter,handler };
-    std::vector<juce::String>  CapStyleValues = { "'butt'", "'round'", "'projecting'" };
-    DashJoinstyleKnob dashJoinstyleKnob{ 10,100,0,0,this,paramSetter,handler };
-    std::vector<juce::String>  JoinStyleValues = { "'miter'", "'round'", "'bevel'" };*/
+    //colorsComponent color{ 373,57,161,25,this,params,handler,enumParmas::lcolor };
+    //
+    ///*DashCapstyleKnob dashCapstyleKnob{ 10,30,0,0,this,paramSetter,handler };
+    //std::vector<juce::String>  CapStyleValues = { "'butt'", "'round'", "'projecting'" };
+    //DashJoinstyleKnob dashJoinstyleKnob{ 10,100,0,0,this,paramSetter,handler };
+    //std::vector<juce::String>  JoinStyleValues = { "'miter'", "'round'", "'bevel'" };*/
 
-    /*DashCapstyleKnob solidCapstyleKnob{ 270,30,0,0,this,paramSetter,handler };
-    DashJoinstyleKnob solidJoinstyleKnob{ 270,100,0,0,this,paramSetter,handler };*/
+    ///*DashCapstyleKnob solidCapstyleKnob{ 270,30,0,0,this,paramSetter,handler };
+    //DashJoinstyleKnob solidJoinstyleKnob{ 270,100,0,0,this,paramSetter,handler };*/
 
-    std::vector<juce::String>  DrawstyleValues = { "'default'", "'steps'", "'steps-pre'", "'steps-mid'", "'steps-post'" };
-    //DrawstyleKnob drawstyleKnob { 9,77,250,150,this,params,handler,drvr };
+    //std::vector<juce::String>  DrawstyleValues = { "'default'", "'steps'", "'steps-pre'", "'steps-mid'", "'steps-post'" };
+    ////DrawstyleKnob drawstyleKnob { 9,77,250,150,this,params,handler,drvr };
 
-    //chLabel dashes{ 22,12,180,25,"dashes",this,params,handler,drvr};
-    chLabel label { 409,92,150,25,"label",this,params,handler, drvr ,nullptr };
-     
-    std::vector<juce::String> plotParams;
+    ////chLabel dashes{ 22,12,180,25,"dashes",this,params,handler,drvr};
+    //chLabel label { 409,92,150,25,"label",this,params,handler, drvr ,nullptr };
+    // 
+    //std::vector<juce::String> plotParams;
    
 
-    Line2DPanel(int x, int y, int w, int h, juce::Component* parent,  pngHandler& handler, Drvr& _drvr);
+    Line2DPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent,  pngHandler& handler, Drvr& _drvr);
    ~Line2DPanel(){}
 
     void MakeLine2Dkwargs();
@@ -350,7 +351,7 @@ public:
     SelectionBox binsLineStyle{ 802,14,{ "solid", "dashed", "dashdot", "dotted" },this, params,handler,drvr,enumParmas::binsLineStyle };
     chKnobClassicBeta lineWidth{ 235,116,70,70,"lineWidth",this , params ,handler,drvr , enumParmas::binsLineWidth };*/
     
-    HistPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    HistPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
     ~HistPanel(){}
     void refresh();
 };
@@ -359,13 +360,13 @@ class BarsPanel : public moveChildComp, public handled, public drvred
 {
 public:
     Params* params;
-    colorsComponent color{ 373,57,161,25,this,params,handler,enumParmas::barsColor };
-    colorsComponent edgeColor{ 553,57,161,25,this,params,handler,enumParmas::barsEdgeColor };
+    //colorsComponent color{ 373,57,161,25,this,params,handler,enumParmas::barsColor };
+    //colorsComponent edgeColor{ 553,57,161,25,this,params,handler,enumParmas::barsEdgeColor };
     chLabel xCords{ 409,92,150,25,"X-cords",this,params,handler, drvr ,nullptr };
     chLabel ticks{ 409,110,150,25,"ticks label",this,params,handler, drvr ,nullptr };
     chLabel xerr{ 609,92,150,25,"xerr",this,params,handler, drvr ,nullptr };
     chLabel yerr{ 609,110,150,25,"yerrl",this,params,handler, drvr ,nullptr };
-    colorsComponent errorColor{ 609,135,161,25,this,params,handler,enumParmas::barsErrColor };
+    //colorsComponent errorColor{ 609,135,161,25,this,params,handler,enumParmas::barsErrColor };
     chKnobClassicBeta errorCapSize{ 235,116,70,70,"capsize",this , params ,handler,drvr , nullptr };
     chLabel barWidth{ 409,135,150,25," bar width",this,params,handler, drvr ,nullptr };
     chLabel bottom{ 409,150,150,25,"range",this,params,handler, drvr ,nullptr };
@@ -379,7 +380,7 @@ public:
 
     BarsPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
     ~BarsPanel(){}
-    void refresh();
+    
 };
 
 
@@ -402,7 +403,7 @@ public:
 
 
 
-    PiePanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    PiePanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
     ~PiePanel(){      
          
     }

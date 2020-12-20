@@ -61,12 +61,25 @@ class paramString : public paramedType
 public:  
          
     bool& myBool;
-    paramString(juce::String _param, bool&  _myBool) : paramedType(_param) ,myBool(_myBool){}
+     
+    paramString(juce::String _param,  bool&  _myBool) : paramedType(_param) , myBool(_myBool){}
     ~paramString(){}
-    void makeKwarg(juce::String& args) {       
+    void makeKwarg(juce::String& args) {          
+            if (myBool && stringText != "") args += "," + param + "=" + stringText;  
+    }    
+};
+
+class paramStringWithQuotes : public paramedType
+{
+public:
+
+    bool& myBool;
+
+    paramStringWithQuotes(juce::String _param, bool& _myBool) : paramedType(_param), myBool(_myBool) {}
+    ~paramStringWithQuotes() {}
+    void makeKwarg(juce::String& args) {
         if (myBool && stringText != "") args += "," + param + "='" + stringText + "'";
     }
-     
 };
 
 class paramStringArray : public paramedType
@@ -301,6 +314,9 @@ public:
 //    TextParams() {}
 //};
 
+enum guiType {
+    _float = 1,_string, _stringQuots,_stringArray,_bool,_list
+};
 class paramedBeta
 {    
 public:      
@@ -315,6 +331,8 @@ public:
     void update(double val);
     void update(juce::String text);    
     void update(bool isOn);
+
+    void SetIndex(int* _index);
      
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(paramedBeta)
