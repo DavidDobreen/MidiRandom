@@ -40,7 +40,9 @@ void PythonShell::Matplot()
 
     int selected = lefPanel.chartList.selected;
     if (selected == 0) pltstr1 = "plt.plot(";
-    if (selected == 2) pltstr1 = "plt.pie(";
+    if (selected == 1) pltstr1 = "plt.hist(";
+    if (selected == 2) pltstr1 = "plt.bar(";
+    if (selected == 3) pltstr1 = "plt.pie(";
 
     for (auto& i : lefPanel.itemsList[selected]->items)
     {
@@ -79,6 +81,7 @@ void PythonShell::Matplot()
     }
 
     bottomPanel.panels[selected]->itemParams = &lefPanel.itemsList[selected]->selectedItem->params;
+
     //if (lefPanel.chartList.selected == 0)
     //      query = 0x000001ee963c7b80 "plt.plot((1,2,3,4),(1,2,3,4));"
     //{     query = 0x000001c5ff2a0d80 "plt.pie((1,2,3),normalize='');"   
@@ -246,7 +249,7 @@ void PythonShell::Matplot()
     //bottomPanel.panels[2]->itemParams = &lefPanel.itemsList[2]->selectedItem->params;
     //}
 
-    plotParams.clear();
+    /*plotParams.clear();
 
 
     juce::String GridParams = bottomPanel.axesPanel.params->MakeGridParams();
@@ -255,24 +258,24 @@ void PythonShell::Matplot()
         char* query = (char*)malloc(strlen(GridParams.toUTF8()));
         strcpy(query, GridParams.toUTF8());
         PyRun_SimpleString(query);
-    }
+    }*/
 
      
-    juce::String RangeParams = bottomPanel.axesPanel.params->MakeGridRangeParams(true);
+    /*juce::String RangeParams = bottomPanel.axesPanel.params->MakeGridRangeParams(true);
     if (RangeParams.isNotEmpty())
     {
         char* query = (char*)malloc(strlen(RangeParams.toUTF8()));
         strcpy(query, RangeParams.toUTF8());
         PyRun_SimpleString(query);
-    }
+    }*/
 
-    RangeParams = bottomPanel.axesPanel.params->MakeGridRangeParams(false);
-    if (RangeParams.isNotEmpty())
-    {
-        char* query = (char*)malloc(strlen(RangeParams.toUTF8()));
-        strcpy(query, RangeParams.toUTF8());
-        PyRun_SimpleString(query);
-    }
+    //RangeParams = bottomPanel.axesPanel.params->MakeGridRangeParams(false);
+    //if (RangeParams.isNotEmpty())
+    //{
+    //    char* query = (char*)malloc(strlen(RangeParams.toUTF8()));
+    //    strcpy(query, RangeParams.toUTF8());
+    //    PyRun_SimpleString(query);
+    //}
 
     
     /*pltstr1 = "plt.grid(True,";
@@ -293,29 +296,29 @@ void PythonShell::Matplot()
 
     PyRun_SimpleString(query);*/
 
-    int mlc = strlen(pltstr1) + 1;
-    char* query = (char*)malloc(mlc);
+    //int mlc = strlen(pltstr1) + 1;
+    //char* query = (char*)malloc(mlc);
 
 
-    //XLabel
-    bottomPanel.textPanel.params = &lefPanel.textList.items[0]->params;
-    if (bottomPanel.textPanel.params->tvalueIsVisible)
-    {
-        juce::String res = bottomPanel.textPanel.params->MakeTextParams();
-        pltstr1 = "plt.xlabel(";
-        close = ")";
-        mlc = strlen(pltstr1) + 1;
-        mlc += strlen(res.toUTF8());
-        mlc += strlen(close);
-        query = (char*)malloc(mlc);
-        strcpy(query, pltstr1);
-        strcat(query, res.toUTF8());
-        strcat(query, close);
+    ////XLabel
+    //bottomPanel.textPanel.params = &lefPanel.textList.items[0]->params;
+    //if (bottomPanel.textPanel.params->tvalueIsVisible)
+    //{
+    //    juce::String res = bottomPanel.textPanel.params->MakeTextParams();
+    //    pltstr1 = "plt.xlabel(";
+    //    close = ")";
+    //    mlc = strlen(pltstr1) + 1;
+    //    mlc += strlen(res.toUTF8());
+    //    mlc += strlen(close);
+    //    query = (char*)malloc(mlc);
+    //    strcpy(query, pltstr1);
+    //    strcat(query, res.toUTF8());
+    //    strcat(query, close);
 
-        PyRun_SimpleString(query);
-    }
+    //    PyRun_SimpleString(query);
+    //}
 
-    bottomPanel.textPanel.params = &lefPanel.textList.items[1]->params;
+    /*bottomPanel.textPanel.params = &lefPanel.textList.items[1]->params;
     if (bottomPanel.textPanel.params->tvalueIsVisible)
     {
         juce::String res = bottomPanel.textPanel.params->MakeTextParams();
@@ -330,9 +333,9 @@ void PythonShell::Matplot()
         strcat(query, close);
 
         PyRun_SimpleString(query);
-    }
+    }*/
 
-    bottomPanel.textPanel.params = &lefPanel.textList.items[2]->params;
+    /*bottomPanel.textPanel.params = &lefPanel.textList.items[2]->params;
     if (bottomPanel.textPanel.params->tvalueIsVisible)
     {
         juce::String res = bottomPanel.textPanel.params->MakeTextParams();
@@ -347,9 +350,9 @@ void PythonShell::Matplot()
         strcat(query, close);
 
         PyRun_SimpleString(query);
-    }
+    }*/
 
-    bottomPanel.textPanel.params = &lefPanel.textList.items[3]->params;
+    /*bottomPanel.textPanel.params = &lefPanel.textList.items[3]->params;
     if (bottomPanel.textPanel.params->tvalueIsVisible)
     {
         juce::String res = bottomPanel.textPanel.params->MakeTicksParams();
@@ -364,9 +367,9 @@ void PythonShell::Matplot()
         strcat(query, close);
 
         PyRun_SimpleString(query);
-    }
+    }*/
 
-    bottomPanel.textPanel.params = &lefPanel.textList.items[4]->params;
+    /*bottomPanel.textPanel.params = &lefPanel.textList.items[4]->params;
     if (bottomPanel.textPanel.params->tvalueIsVisible)
     {
         juce::String res = bottomPanel.textPanel.params->MakeTicksParams();
@@ -393,9 +396,9 @@ void PythonShell::Matplot()
     strcat(query, bottomPanel.axesPanel.params->legendLocation.toUTF8());
     strcat(query, close);
 
-    PyRun_SimpleString(query);
+    PyRun_SimpleString(query);*/
 
-    bottomPanel.textPanel.params = &lefPanel.textList.selectedItem->params;
+   /* bottomPanel.textPanel.params = &lefPanel.textList.selectedItem->params;*/
 
     /*lefPanel.textList.selectedLbl->sendSynchronousChangeMessage();
     lefPanel.lineList.selectedLbl->sendSynchronousChangeMessage();

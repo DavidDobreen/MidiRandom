@@ -218,8 +218,8 @@ void Legends::changeListenerCallback(juce::ChangeBroadcaster* source)
 
     MoveLabel* lbl = static_cast<MoveLabel*>(source);
     loc = lbl->text;
-    if (params != nullptr)
-        params->legendLocation = loc;
+    /*if (params != nullptr)
+        params->legendLocation = loc;*/
     lbl->textColor = juce::Colours::aqua;
     lbl->repaint();
     sendSynchronousChangeMessage();
@@ -265,4 +265,11 @@ void moveChButton::paramRefresh()
     btn.IsOn = params->paramsArray[index]->boolVal;
     btn.refresh();
      
+}
+
+AlphaSlider::AlphaSlider(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr, int* _index, juce::String _paramText, int _guiType)
+    : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvred(_drvr)
+{
+    addAndMakeVisible(fader);
+    fader.setBounds(fader.dims[0], fader.dims[1], fader.dims[2], fader.dims[3]);
 }

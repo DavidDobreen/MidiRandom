@@ -63,12 +63,11 @@ public:
    
     chBgComp bkgd{ "SAMPLE GRAY PANEL2.png",this,handler };
     namebox namebox{ 407,13,152,35,this,handler };
-    //HistPanel histPanel{ 0,0,dims[2],dims[3],this,handler ,drvr };
-    BarsPanel barsPanel{ 0,0,dims[2],dims[3],this,handler ,drvr };
-    //PiePanel piePanel{ 0,0,dims[2],dims[3],this,handler ,drvr };
-    TextPanel textPanel{ 0,0,dims[2],dims[3],this,handler ,drvr};
-    //Line2DPanel line2dPanel{ 0,0,dims[2],dims[3],this,handler,drvr };
-    AxesPanel axesPanel{ 0,0,dims[2],dims[3],this,handler,drvr };
+     
+     
+     TextPanel textPanel{ 0,0,dims[2],dims[3],this,handler ,drvr};
+     
+     AxesPanel axesPanel{ 0,0,dims[2],dims[3],this,handler,drvr };
 
     BottomPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr) 
         : childComp(x, y, w, h),handled(handler, parent, this) , drvred(_drvr) {
@@ -440,6 +439,8 @@ public:
         addPanel("Line");
         bottomPanel.panels.add(new HistPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], false,&bottomPanel, handler, drvr));
         addPanel("Hist");
+        bottomPanel.panels.add(new BarsPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], true, &bottomPanel, handler, drvr));
+        addPanel("Bars");
         bottomPanel.panels.add(new PiePanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], false,&bottomPanel, handler, drvr));
         addPanel("Pie");
 

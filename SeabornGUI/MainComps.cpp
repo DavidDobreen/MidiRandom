@@ -175,7 +175,7 @@ void TextList::changeListenerCallback(juce::ChangeBroadcaster* source)
     lbl->textColor = juce::Colours::aqua;
 
     bottomPanel.textPanel.params = &item->params;
-    bottomPanel.textPanel.refresh();
+    /*bottomPanel.textPanel.refresh();*/
 
      
 }

@@ -672,7 +672,34 @@ public:
         guiType = _guiType;        
         if (_paramText != "")
             paramText = _paramText;
+
+         
     }
     void paramRefresh() override;
        
+};
+
+class AlphaSlider :public moveChildComp, public paramedBeta, public handled, public drvred
+{
+public:
+
+    class AlphaFaderComp : public MySlider
+    {
+    public:
+        pngHandler& handler;
+        AlphaFaderComp(juce::String _name, int min, int max, int interval, int x, int y, int w, int h, juce::Component* parent, pngHandler& Handler)        
+            : MySlider(_name, min, max, interval, 1, 2), handler(Handler)
+        {
+            dims[0] = x, dims[1] = y, dims[2] = w, dims[3] = h;
+            handler.MySliders.push_back(std::make_pair(parent, this));
+        }
+    };
+
+    chBgComp bkgd{ "mixer fader bg _all off5.png",this,handler };
+
+    AlphaFaderComp fader{ "fader", 0,100,1,0,-10,41,160,this,handler };
+    AlphaSlider(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr,
+        int* _index, juce::String _paramText = "", int _guiType = guiType::_float);  
+     
+    ~AlphaSlider(){}
 };
