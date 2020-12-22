@@ -158,10 +158,10 @@ void TextList::changeListenerCallback(juce::ChangeBroadcaster* source)
     selectedItem = item;
     
 
-    if (lbl->text == "xTicks" || lbl->text == "yTicks")
+    /*if (lbl->text == "xTicks" || lbl->text == "yTicks")
         bottomPanel.textPanel.TickPanel = true;
     else
-        bottomPanel.textPanel.TickPanel = false;
+        bottomPanel.textPanel.TickPanel = false;*/
 
     bottomPanel.namebox.lbl.text = lbl->text;
     bottomPanel.namebox.repaint();
@@ -174,7 +174,7 @@ void TextList::changeListenerCallback(juce::ChangeBroadcaster* source)
 
     lbl->textColor = juce::Colours::aqua;
 
-    bottomPanel.textPanel.params = &item->params;
+   /* bottomPanel.textPanel.params = &item->params;*/
     /*bottomPanel.textPanel.refresh();*/
 
      
@@ -182,7 +182,7 @@ void TextList::changeListenerCallback(juce::ChangeBroadcaster* source)
 ChartList::ChartList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler)
     : axes(_axes), bottomPanel(_bottomPanel), moveChildComp(x, y, w, h), handled(handler, parent, this)
 {
-
+    area.addChangeListener(this);
    // addItem("Line");
    // addItem("Hist");
    // addItem("Bars");
@@ -218,6 +218,9 @@ ChartList::ChartList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bott
 
 void ChartList::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
+    if (source == &area)
+        setVisible(false);
+    else
     for (auto& i : items)
     {
         i->lbl.textColor = juce::Colours::slategrey;
@@ -228,14 +231,14 @@ void ChartList::changeListenerCallback(juce::ChangeBroadcaster* source)
 
 void ChartList::addItem(juce::String text)
 {
-    ChartList::item* item = new ChartList::item(4, 3 + items.size()*18, 76, 18, this, handler);
+    ChartList::item* item = new ChartList::item(0, items.size()*18, dims[2], 18, this, handler);
     item->lbl.text = text;
     item->lbl.index = items.size();
-    item->lbl.selected = &selected;
+    item->lbl.selected = &SelectedChart;
     item->lbl.addChangeListener(this);
     item->area.toFront(false);
     items.add(item);
-    selected = items.size() - 1;
+    SelectedChart = items.size() - 1;
 }
 
 void ChartList::item::itemArea::mouseEnter(const juce::MouseEvent& event)
@@ -248,11 +251,29 @@ void ChartList::item::itemArea::mouseEnter(const juce::MouseEvent& event)
 
 void LeftPanel::addPanel(const juce::String& text)
 {
-    chartList.addItem(text);
-    chartList.items.getLast()->lbl.cliked.addChangeListener(this);        
-    itemsList.add(new ItemList(130, 113, 93, 236, axes, bottomPanel, this, handler,chartList.selected));
-    itemsList.getLast()->addItem(text);
-    itemsList.getLast()->addItem(text);
+        chartList.addItem(text);
+        chartList.items.getLast()->lbl.cliked.addChangeListener(this);
+        chartList.SelectedChart = chartList.items.size() - 1;
+        itemsList.add(new ItemList(130, 113, 93, 236, axes, bottomPanel, this, handler, chartList.SelectedChart));
+        itemsList.getLast()->addItem(text,true,false);
+        itemsList.getLast()->addItem(text,true,false);
+
+         
+        bottomPanel.panels.add(new TextPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], "xlabel", &bottomPanel, handler, drvr));
+        textList.addItem("xlabel", false,true);
+        bottomPanel.panels.getLast()->pltstr1 = "plt.xlabel(";
+        bottomPanel.panels.add(new TextPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], "ylabel", &bottomPanel, handler, drvr));
+        textList.addItem("ylabel", false,true);
+        bottomPanel.panels.getLast()->pltstr1 = "plt.ylabel(";
+        bottomPanel.panels.add(new TextPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], "label", &bottomPanel, handler, drvr));
+        textList.addItem("title", false,true);
+        bottomPanel.panels.getLast()->pltstr1 = "plt.title(";
+        bottomPanel.panels.add(new TextPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], "xticks", &bottomPanel, handler, drvr));
+        textList.addItem("xticks", false,true);
+        bottomPanel.panels.add(new TextPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], "yticks", &bottomPanel, handler, drvr));
+        textList.addItem("yticks", false,true);
+
+
 }
 
 void LeftPanel::changeListenerCallback(juce::ChangeBroadcaster* source)
@@ -338,13 +359,20 @@ void LeftPanel::changeListenerCallback(juce::ChangeBroadcaster* source)
 
         for (auto& i : itemsList)
             i->setVisible(false);
-        itemsList[chartList.selected]->setVisible(true);
+        itemsList[chartList.SelectedChart]->setVisible(true);
+
+        for (auto& t : textList.items)
+            t->setVisible(false);
+
+        for (int i = 0; i < 5; i++)
+            textList.items[chartList.SelectedChart *5 +i]->setVisible(true);
         
-        bottomPanel.selectedPanel = bottomPanel.panels[chartList.selected];
-        itemsList[chartList.selected]->items[0]->lbl.sendSynchronousChangeMessage();
+       // bottomPanel.selectedPanel = bottomPanel.panels[chartList.selected];
+        bottomPanel.selectedPanel = chartList.SelectedChart*6;
+        itemsList[chartList.SelectedChart]->items[0]->lbl.sendSynchronousChangeMessage();
          
         chartList.setVisible(false);
-        chartName.lbl.text = chartList.items[chartList.selected]->lbl.text;
+        chartName.lbl.text = chartList.items[chartList.SelectedChart]->lbl.text;
         chartName.lbl.repaint();
 
         return;
@@ -482,12 +510,13 @@ void ItemList::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
     for (auto& p : bottomPanel.panels)
         p->setVisible(false);
-     
-    bottomPanel.selectedPanel->setVisible(true);
 
     MoveLabel* lbl = static_cast<MoveLabel*>(source);
     ItemList::item* item = static_cast<ItemList::item*>(lbl->getParentComponent());
     selectedItem = item;
+
+
+    bottomPanel.panels[bottomPanel.selectedPanel + (item->IsTextItem * item->index%5)]->setVisible(true);
 
     bottomPanel.namebox.lbl.text = lbl->text;
     bottomPanel.namebox.repaint();
@@ -499,20 +528,30 @@ void ItemList::changeListenerCallback(juce::ChangeBroadcaster* source)
     }
 
     lbl->textColor = juce::Colours::aqua;   
-    bottomPanel.selectedPanel->itemParams = &item->params;
-    bottomPanel.selectedPanel->refresh();
+    bottomPanel.panels[bottomPanel.selectedPanel+(item->IsTextItem * item->index%5)]->itemParams = &item->params;
+    bottomPanel.panels[bottomPanel.selectedPanel+ (item->IsTextItem * item->index%5)]->refresh();
 
     axes.xValues.targetLineListItemVals = &item->xValues;
     axes.yValues.targetLineListItemVals = &item->yValues;
     axes.refresh();
 }
 
-void ItemList::addItem(const juce::String& text)
+void ItemList::addItem(const juce::String& text,bool useIndex, bool isTextItem)
 { 
-    auto item = new ItemList::item(9, 8+(items.size()*18), 76, 18, bottomPanel.panels[selected]->paramComps, this, handler);   
+    DBG(selected * 6 + isTextItem * (items.size() % 5 + 1));
+    auto item = new ItemList::item(9, 8+((!isTextItem*items.size() + isTextItem*items.size()%5)*18), 76, 18, bottomPanel.panels[selected*6+isTextItem*(items.size()%5+1)]->paramComps, this, handler);
+    item->IsTextItem = isTextItem;    
+    
+    item->selected = &selected;
+     
     item->lbl.addChangeListener(this);
     items.add(item);
-    item->lbl.text = text + juce::String(items.size());
+    if (useIndex)
+         item->lbl.text = text + juce::String(items.size());
+    else
+        item->lbl.text = text;
+
+    item->index = items.size();  
 }
 
 ItemList::item::item(int x, int y, int w, int h, juce::Array<paramedBeta*>& _paramComps, juce::Component* parent, pngHandler& handler)

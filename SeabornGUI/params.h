@@ -18,7 +18,7 @@ public:
     juce::String param="";
     bool boolVal = false;
     juce::String stringText="";
-    float floatVal = 1.0;;
+    float floatVal = 1.0;
     
     paramedType(juce::String _param) : param(_param) {}
     ~paramedType(){}

@@ -19,8 +19,8 @@ PythonShell::PythonShell(LeftPanel& _lefPanel, BottomPanel& _bottomPanel, ChartA
     PyRun_SimpleString("import numpy as np");
     PyRun_SimpleString("matplotlib.use('Agg')");
 
-    PyRun_SimpleString("import seaborn as sns");
-    PyRun_SimpleString("tips = sns.load_dataset('tips')");
+    //PyRun_SimpleString("import seaborn as sns");
+    //PyRun_SimpleString("tips = sns.load_dataset('tips')");
 }
 
 PythonShell::~PythonShell()
@@ -36,38 +36,73 @@ void PythonShell::Matplot()
     PyRun_SimpleString("fig, ax = plt.subplots(figsize=(8,5))");
    
     const char* close = ");"; //use ";" to supress output
-    const char* pltstr1;
+    //const char* pltstr1;
 
-    int selected = lefPanel.chartList.selected;
-    if (selected == 0) pltstr1 = "plt.plot(";
-    if (selected == 1) pltstr1 = "plt.hist(";
-    if (selected == 2) pltstr1 = "plt.bar(";
-    if (selected == 3) pltstr1 = "plt.pie(";
-
-    for (auto& i : lefPanel.itemsList[selected]->items)
+    int selected = lefPanel.chartList.SelectedChart;
+    //pltstr1 = bottomPanel.panels[selected]->pltstr1;
+     
+    for (int i =0; i < lefPanel.itemsList[selected]->items.size(); i++)
     {
+        juce::String pltstr1 = bottomPanel.panels[selected*6]->pltstr1;
         plotParams.clear();
-        bottomPanel.panels[selected]->itemParams = &i->params;
-        lefPanel.axes.xValues.targetLineListItemVals = &i->xValues;
-        lefPanel.axes.yValues.targetLineListItemVals = &i->yValues;
-        lefPanel.axes.ShowYinput = bottomPanel.panels[selected]->ShowYinput;
+        //bottomPanel.panels[selected]->itemParams = &i->params;
+        lefPanel.axes.xValues.targetLineListItemVals = &lefPanel.itemsList[selected]->items[i]->xValues;
+        lefPanel.axes.yValues.targetLineListItemVals = &lefPanel.itemsList[selected]->items[i]->yValues;
+        lefPanel.axes.ShowYinput = bottomPanel.panels[selected * 6]->ShowYinput;
         lefPanel.axes.makeArgs();
 
         plotParams.insert(plotParams.end(), lefPanel.axes.plotParams.begin(), lefPanel.axes.plotParams.end());
 
         //calculate space for parameters
-        int mlc = strlen(pltstr1) + 1;
+        int mlc = strlen(pltstr1.toUTF8()) + 1;
         for (auto& p : plotParams)
             mlc += strlen(p.toUTF8());
         mlc += strlen(close);
 
-        juce::String ChartParams = bottomPanel.panels[selected]->itemParams->MakePieKwargs();
+        //juce::String ChartParams = bottomPanel.panels[selected]->itemParams->MakePieKwargs();
+        juce::String ChartParams = lefPanel.itemsList[selected]->items[i]->params.MakePieKwargs();
         mlc += strlen(ChartParams.toUTF8());
 
         //allocate space for parameters
         char* query = (char*)malloc(mlc);
 
-        strcpy(query, pltstr1);
+        strcpy(query, pltstr1.toUTF8());
+
+        //convert strings to chars and append
+        for (auto& p : plotParams)
+            strcat(query, p.toUTF8());
+
+        strcat(query, ChartParams.toUTF8());
+
+        strcat(query, close);
+
+        PyRun_SimpleString(query);
+
+
+
+    }
+
+
+    for (int i = 0; i < 5; i++)
+    {       
+        juce::String pltstr1 = bottomPanel.panels[selected*6+i+1]->pltstr1;
+        plotParams.clear();         
+        //bottomPanel.panels[selected]->itemParams = &lefPanel.textList.items[selected * 5 + i-1]->params;
+
+        //calculate space for parameters
+        int mlc = strlen(pltstr1.toUTF8()) + 1;
+        for (auto& p : plotParams)
+            mlc += strlen(p.toUTF8());
+        mlc += strlen(close);
+
+        //juce::String ChartParams = bottomPanel.panels[selected * 5 + i]->itemParams->MakePieKwargs().substring(1);
+        juce::String ChartParams = lefPanel.textList.items[selected * 5 + i]->params.MakePieKwargs().substring(1);
+        mlc += strlen(ChartParams.toUTF8());
+
+        //allocate space for parameters
+        char* query = (char*)malloc(mlc);
+
+        strcpy(query, pltstr1.toUTF8());
 
         //convert strings to chars and append
         for (auto& p : plotParams)
@@ -79,8 +114,14 @@ void PythonShell::Matplot()
 
         PyRun_SimpleString(query);
     }
+        
+
+    
+     
+
 
     bottomPanel.panels[selected]->itemParams = &lefPanel.itemsList[selected]->selectedItem->params;
+
 
     //if (lefPanel.chartList.selected == 0)
     //      query = 0x000001ee963c7b80 "plt.plot((1,2,3,4),(1,2,3,4));"
@@ -467,5 +508,6 @@ void PythonShell::Matplot()
     }*/
             
    //PyRun_SimpleString("plt.savefig('output.png',transparent=True)");
+   PyRun_SimpleString("plt.legend();");
    PyRun_SimpleString("plt.savefig('output.png')");
 }

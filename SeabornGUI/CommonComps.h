@@ -216,6 +216,7 @@ public:
         labelTextBox(int x, int y, int w, int h, /*fxLabel& _lblName*/moveFxLabel& _lblName, juce::Component* parent, Params*& params,pngHandler& handler,Drvr& drvr)
             : moveChildComp(x, y, w, h), lblName(_lblName), paramedBeta(params), handled(handler, parent, this), drvrShellNotifer(drvr){
             addAndMakeVisible(lbl);
+            
             lbl.onTextChange = [&] {
                 update(lbl.getText());                
                 
@@ -246,10 +247,10 @@ public:
     juce::String text;   
     //fxLabel lblName{ 0,0,30,18, "",DEFAULT_LABEL_COLORS,nullptr,this,handler };
     moveFxLabel lblName{ 0,0,30,18, "",DEFAULT_LABEL_COLORS,nullptr,this,params,handler };
-    labelTextBox lbl{ 60,0,136,18,lblName,this,params,handler,drvr};
+    labelTextBox lbl{ 60,0,90,18,lblName,this,params,handler,drvr};
 
     chLabel(int x, int y, int w, int h, juce::String name, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr, 
-        int* _index, int guiType = guiType::_stringQuots );
+        int* _index, int guiType = guiType::_stringQuots, juce::String paramText = "");
     ~chLabel(){}
     void changeListenerCallback(juce::ChangeBroadcaster* source);
     void paramRefresh() override;
@@ -397,15 +398,15 @@ public:
         LblName.text = lblText;
         LblName.repaint();
 
-        sldr.SetIndex(_index);
+        //sldr.SetIndex(_index);
 
         //see if you can use SetIndex
-        /*if (_index != nullptr)
+        if (_index != nullptr)
         {
             sldr.index = *_index;
             (*_index)++;
         }
-        */
+        
         GuiClass = 1;
         sldr.guiType = guiType;
         if (_paramText != "")
@@ -702,4 +703,43 @@ public:
         int* _index, juce::String _paramText = "", int _guiType = guiType::_float);  
      
     ~AlphaSlider(){}
+};
+
+class CompBox : public juce::ChangeListener, public moveChildComp,  public handled
+{
+public:
+    chBgComp bkgd{ "wave fx bg and frame and on_off panell2.png",this,handler };
+    juce::OwnedArray<MoveContainer> conts;
+    juce::OwnedArray<fxLabel> lbls; 
+    MoveContainer CompLabels{ 0,120,240,20,this,handler };
+     
+    CompBox(int x, int y, int w, int h, int NumOfComps, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr)
+        : moveChildComp(x, y, w, h), handled(handler, parent, this) {
+        for (int i = 0; i < NumOfComps; i++)
+        {
+            conts.add(new MoveContainer(0, 0, 240, 100, this, handler));
+            lbls.add(new fxLabel(50 + i * 200/ NumOfComps, 0,50, 20, "label", DEFAULT_LABEL_COLORS, conts[i], &CompLabels, handler));
+            lbls.getLast()->addChangeListener(this);
+        }
+    }
+    void changeListenerCallback(juce::ChangeBroadcaster* source) {
+        for (auto& l : lbls)
+        {
+            l->IsOn = false;
+            l->repaint();
+        }
+        for (auto& c : conts)
+        {
+            c->setVisible(false);
+            c->setVisible(false);
+        }
+           
+        fxLabel* lbl = dynamic_cast<fxLabel*>(source);
+        if (lbl != nullptr)
+        {
+            lbl->IsOn = true;
+            lbl->repaint();
+            lbl->comp->setVisible(true);
+        }
+    }
 };

@@ -20,6 +20,7 @@ public:
     juce::Array<paramedBeta*> paramComps;
     int index = 0;
     bool ShowYinput = true;
+    juce::String pltstr1;
 
     ChartPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
     ~ChartPanel() {}
@@ -33,7 +34,7 @@ public:
     void addColorsComponent(colorsComponent* _markers);
 };
 
-class TextPanel : public juce::ChangeListener, public childComp, public handled, public drvrShellNotifer
+class TextPanel :  public ChartPanel
 {
     class FontFamilyKnob :  public moveChildComp, public paramedBeta, public handled, public drvred
     
@@ -88,26 +89,13 @@ class TextPanel : public juce::ChangeListener, public childComp, public handled,
     };
 
 public:
-    Params* params;    
-    bool TickPanel = false;
-    
-    chLabel value { 409,92,150,25,"Value",this,params,handler,drvr, nullptr };
-    chLabel lbls{ 409,122,150,25,"labels",this,params,handler, drvr ,nullptr };
+       
+    CompBox LeftBox{ 108-108,26,260,135,3,this,itemParams, handler ,drvr };
+    CompBox RightBox{ 598,26,260,135,4,this,itemParams, handler ,drvr };
 
-    chKnobClassicBeta fontSize{ 10,70,70,70,"size",this,params,handler ,drvr,nullptr };
-    
-    //colorsComponent color{ 373,57,161,25,this,params,handler,enumParmas::tcolor };
-   // colorsComponent background{ 179,18,121,25,this,handler,  };
-    //colorsComponent color{ 27,18,121,25,this,handler, };
+     
 
-    FontFamilyKnob fontFamily{ 100,70,150,75,this,params,handler,drvr };
-    FontStyleKnob fontStyle{ 255,70,150,75,this,params,handler,drvr };
-    HallignmentKnob Halligment{ 610,70,150,75,this,handler };
-    VallignmentKnob Valligment{ 765,70,150,75,this,handler };
-
-    //chToggleButtonAndLabel fontvariant{ 842,11,85,25,this,handler };
-
-    TextPanel(int x, int y, int w, int h, juce::Component* parent,  pngHandler& handler, Drvr& _drvr);
+    TextPanel(int x, int y, int w, int h, juce::String paramText, juce::Component* parent,  pngHandler& handler, Drvr& _drvr);
     ~TextPanel(){}
 
     void changeListenerCallback(juce::ChangeBroadcaster* source) {}
@@ -278,6 +266,8 @@ public:
 class HistPanel : public ChartPanel
 {
 public:
+    CompBox LeftBox{ 108,26,260,135,3,this,itemParams, handler ,drvr };
+    CompBox RightBox{ 598,26,260,135,4,this,itemParams, handler ,drvr };
 
     HistPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
     ~HistPanel(){}  
