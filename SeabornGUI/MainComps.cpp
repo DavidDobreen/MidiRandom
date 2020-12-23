@@ -58,26 +58,6 @@ void Axes::makeArgs()
         plotParams.push_back("(" + *xValues.targetLineListItemVals + ")");
 }
 
-//LineList::LineList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel , juce::Component* parent, pngHandler& handler)
-//    : axes(_axes), bottomPanel(_bottomPanel), moveChildComp(x, y, w, h), handled(handler, parent, this)
-//{
-//    auto item1 = new item( 9,8,76,18,this,handler );
-//    item1->lbl.text = "item1";
-//    //item1->lbl.addChangeListener(this);
-//    items.add(item1);
-//
-//    auto item2 = new item(9, 26, 76, 18,this, handler);
-//    item2->lbl.text = "item2";
-//    //item2->lbl.addChangeListener(this);
-//    items.add(item2);   
-//}
-//
-//void LineList::resized()
-//{
-//    for (auto& i : items)
-//        i->setBounds(i->dims[0], i->dims[1], i->dims[2], i->dims[3]);
-//}
- 
 TextList::TextList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler)
     : axes(_axes), bottomPanel(_bottomPanel), moveChildComp(x, y, w, h), handled(handler, parent, this)
 {
@@ -115,9 +95,10 @@ void TextList::resized()
 
 void TextList::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
-    for (auto& p : bottomPanel.panels)
-        p->setVisible(false);
-    
+    /*for (auto& p : bottomPanel.panels)
+        p->setVisible(false);*/
+    bottomPanel.ActivePanel->setVisible(false);
+
     MoveLabel* lbl = static_cast<MoveLabel*>(source);   
     TextList::item* item = static_cast<TextList::item*>(lbl->getParentComponent());
     selectedItem = item;
@@ -162,8 +143,7 @@ void ChartList::changeListenerCallback(juce::ChangeBroadcaster* source)
     }        
 }
 
-void ChartList::addItem(juce::String text)
-{
+void ChartList::addItem(juce::String text){
     ChartList::item* item = new ChartList::item(0, items.size()*18, dims[2], 18, this, handler);
     item->lbl.text = text;
     item->lbl.index = items.size();
@@ -171,48 +151,42 @@ void ChartList::addItem(juce::String text)
     item->lbl.addChangeListener(this);
     item->area.toFront(false);
     items.add(item);
-    SelectedChart = items.size() - 1;
-}
+    SelectedChart = items.size() - 1;}
 
-void ChartList::item::itemArea::mouseEnter(const juce::MouseEvent& event)
-{
-    
+void ChartList::item::itemArea::mouseEnter(const juce::MouseEvent& event){   
     sendSynchronousChangeMessage();
     textColor = juce::Colours::aqua;
-    repaint();
-}
+    repaint();}
 
 void LeftPanel::addPanel(const juce::String& text)
 {
         chartList.addItem(text);
         chartList.items.getLast()->lbl.cliked.addChangeListener(this);
         chartList.SelectedChart = chartList.items.size() - 1;
+
         itemsList.add(new ItemList(130, 113, 93, 236, axes, bottomPanel, this, handler, chartList.SelectedChart));
-        itemsList.getLast()->addItem(text,true,false);
-        itemsList.getLast()->addItem(text,true,false);
-
+        itemsList.getLast()->addItem(text,ListTypes::chart);
+        itemsList.getLast()->addItem(text, ListTypes::chart);
          
-        bottomPanel.panels.add(new TextPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], "xlabel", &bottomPanel, handler, drvr));
-        textList.addItem("xlabel", false,true);
-        bottomPanel.panels.getLast()->pltstr1 = "plt.xlabel(";
-        bottomPanel.panels.add(new TextPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], "ylabel", &bottomPanel, handler, drvr));
-        textList.addItem("ylabel", false,true);
-        bottomPanel.panels.getLast()->pltstr1 = "plt.ylabel(";
-        bottomPanel.panels.add(new TextPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], "label", &bottomPanel, handler, drvr));
-        textList.addItem("title", false,true);
-        bottomPanel.panels.getLast()->pltstr1 = "plt.title(";
-        bottomPanel.panels.add(new TextPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], "xticks", &bottomPanel, handler, drvr));
-        textList.addItem("xticks", false,true);
-        bottomPanel.panels.add(new TextPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], "yticks", &bottomPanel, handler, drvr));
-        textList.addItem("yticks", false,true);
-
-
+        bottomPanel.TXpanels.add(new TextPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], "xlabel", &bottomPanel, handler, drvr));
+        textList.addItem("xlabel", ListTypes::text);
+        bottomPanel.TXpanels.getLast()->pltstr1 = "plt.xlabel(";
+        bottomPanel.TXpanels.add(new TextPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], "ylabel", &bottomPanel, handler, drvr));
+        textList.addItem("ylabel", ListTypes::text);
+        bottomPanel.TXpanels.getLast()->pltstr1 = "plt.ylabel(";
+        bottomPanel.TXpanels.add(new TextPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], "label", &bottomPanel, handler, drvr));
+        textList.addItem("title", ListTypes::text);
+        bottomPanel.TXpanels.getLast()->pltstr1 = "plt.title(";
+        bottomPanel.TXpanels.add(new TextPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], "xticks", &bottomPanel, handler, drvr));
+        textList.addItem("xticks", ListTypes::text);
+        bottomPanel.TXpanels.add(new TextPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], "yticks", &bottomPanel, handler, drvr));
+        textList.addItem("yticks", ListTypes::text);
 }
 
 void LeftPanel::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
- 
-    if (source == &chartName.lbl)
+     
+    if (source == &chartName.lbl) //mouse over
     {
         chartList.setVisible(!chartList.isVisible());
         if (chartList.isVisible()) chartList.toFront(true);
@@ -230,7 +204,7 @@ void LeftPanel::changeListenerCallback(juce::ChangeBroadcaster* source)
         for (int i = 0; i < 5; i++)
             textList.items[chartList.SelectedChart *5 +i]->setVisible(true);
  
-        bottomPanel.selectedPanel = chartList.SelectedChart*6;
+        bottomPanel.ActivePanel = bottomPanel.CHpanels[chartList.SelectedChart];       
         itemsList[chartList.SelectedChart]->items[0]->lbl.sendSynchronousChangeMessage();
          
         chartList.setVisible(false);
@@ -239,7 +213,6 @@ void LeftPanel::changeListenerCallback(juce::ChangeBroadcaster* source)
 
         return;
     }
-
 }
 
 ItemList::ItemList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler, int& _selected)
@@ -253,89 +226,121 @@ void ItemList::resized()
 
 void ItemList::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
-    for (auto& p : bottomPanel.panels)
+    for (auto & p : bottomPanel.AXpanels)
+        p->setVisible(false);
+    for (auto& p : bottomPanel.CHpanels)
+        p->setVisible(false);
+    for (auto& p : bottomPanel.TXpanels)
         p->setVisible(false);
 
     MoveLabel* lbl = static_cast<MoveLabel*>(source);
-    ItemList::item* item = static_cast<ItemList::item*>(lbl->getParentComponent());
-    selectedItem = item;
+    //ItemList::item* item = static_cast<ItemList::item*>(lbl->getParentComponent());
+    //selectedItem = item; // refrence the selected item
+    selectedItem = static_cast<ItemList::item*>(lbl->getParentComponent());
 
-
-    bottomPanel.panels[bottomPanel.selectedPanel + (item->IsTextItem * item->index%5)]->setVisible(true);
-
+    if (selectedItem->ListType == ListTypes::axes)
+        bottomPanel.ActivePanel = bottomPanel.AXpanels[selectedItem->index];
+    else if (selectedItem->ListType == ListTypes::chart)
+        bottomPanel.ActivePanel = bottomPanel.CHpanels[selected]; //selected chart in chart name        
+    else if (selectedItem->ListType == ListTypes::text)
+        bottomPanel.ActivePanel = bottomPanel.TXpanels[selectedItem->index];
+    else{bottomPanel.ActivePanel = nullptr;return;}
+        
+    bottomPanel.ActivePanelKind = selectedItem->ListType;
     bottomPanel.namebox.lbl.text = lbl->text;
     bottomPanel.namebox.repaint();
 
-    for (auto i : items)
-    {
+    for (auto i : items){
         i->lbl.textColor = juce::Colours::slategrey;
-        i->repaint();
+        i->repaint();}  //color grey all items in the list
+    lbl->textColor = juce::Colours::aqua;  
+    //refresh active panel
+    bottomPanel.ActivePanel->setVisible(true); 
+    bottomPanel.ActivePanel->itemParams = &selectedItem->params;
+    bottomPanel.ActivePanel->refresh();
+    //refrsh axes values if this is a new chart
+    if (bottomPanel.ActivePanelKind == ListTypes::chart) {
+        axes.xValues.targetLineListItemVals = &selectedItem->xValues;
+        axes.yValues.targetLineListItemVals = &selectedItem->yValues;
+        axes.refresh();
     }
-
-    lbl->textColor = juce::Colours::aqua;   
-    bottomPanel.panels[bottomPanel.selectedPanel+(item->IsTextItem * item->index%5)]->itemParams = &item->params;
-    bottomPanel.panels[bottomPanel.selectedPanel+ (item->IsTextItem * item->index%5)]->refresh();
-
-    axes.xValues.targetLineListItemVals = &item->xValues;
-    axes.yValues.targetLineListItemVals = &item->yValues;
-    axes.refresh();
+    
 }
 
-void ItemList::addItem(const juce::String& text,bool useIndex, bool isTextItem)
-{ 
-    DBG(selected * 6 + isTextItem * (items.size() % 5 + 1));
-    auto item = new ItemList::item(9, 8+((!isTextItem*items.size() + isTextItem*items.size()%5)*18), 76, 18, bottomPanel.panels[selected*6+isTextItem*(items.size()%5+1)]->paramComps, this, handler);
-    item->IsTextItem = isTextItem;    
+
+void ItemList::addItem(const juce::String& text, int ItemType){
+    //Need to know which list created a new item
+    bool isAxes = ItemType == ListTypes::axes;
+    bool isChart = ItemType == ListTypes::chart;
+    bool isText = ItemType == ListTypes::text;
+    //New item bounds in the list component
+    int x = 9;
+    int y;
+    int w = 76;
+    int h = 18;
+    if (isAxes || isChart) y = items.size();
+    else y = items.size() % 5;
+    y = 8 + y * h;
+    
+    juce::Array<paramedBeta*>* paramComps = nullptr;
+    if (ItemType == ListTypes::axes) paramComps = &bottomPanel.AXpanels.getLast()->paramComps;
+    else if (ItemType == ListTypes::chart) paramComps = &bottomPanel.CHpanels.getLast()->paramComps;
+    else if (ItemType == ListTypes::text) paramComps = &bottomPanel.TXpanels.getLast()->paramComps;
+    else return;
+
+    auto item = new ItemList::item(x, y, w, h, paramComps, this, handler);
+    //auto item = new ItemList::item(9, 8+((!isTextItem*items.size() + isTextItem*items.size()%5)*18), 76, 18, bottomPanel.panels[selected*6+isTextItem*(items.size()%5+1)]->paramComps, this, handler);
+    item->ListType = ItemType;
     
     item->selected = &selected;
      
     item->lbl.addChangeListener(this);
     items.add(item);
-    if (useIndex)
-         item->lbl.text = text + juce::String(items.size());
-    else
+    if (ItemType==ListTypes::text)
         item->lbl.text = text;
+    else       
+        item->lbl.text = text + juce::String(items.size());
 
-    item->index = items.size();  
+    item->index = items.size()-1;  
 }
 
-ItemList::item::item(int x, int y, int w, int h, juce::Array<paramedBeta*>& _paramComps, juce::Component* parent, pngHandler& handler)
+ItemList::item::item(int x, int y, int w, int h, juce::Array<paramedBeta*>* _paramComps, juce::Component* parent, pngHandler& handler)
     : moveChildComp(x, y, w, h), handled(handler, parent, this) {
-    for (int i = 0; i < _paramComps.size(); i++)
+    for (int i = 0; i < _paramComps->size(); i++)
     {
-        switch (_paramComps[i]->guiType)
+        switch ((*_paramComps)[i]->guiType)
         {
         case (guiType::_float):
         {
-            params.paramsArray.add(new paramNumber(_paramComps[i]->paramText));
+            params.paramsArray.add(new paramNumber((*_paramComps)[i]->paramText));
             break;
         }
 
         case (guiType::_bool):
         {
-            params.paramsArray.add(new paramBool(_paramComps[i]->paramText));
+            params.paramsArray.add(new paramBool((*_paramComps)[i]->paramText));
             break;
         }
 
         case (guiType::_string):
         {
-            params.paramsArray.add(new paramString(_paramComps[i]->paramText, params.paramsArray[i - 1]->boolVal));
+            params.paramsArray.add(new paramString((*_paramComps)[i]->paramText, params.paramsArray[i - 1]->boolVal));
             break;
         }
         case (guiType::_stringQuots):
         {
-            params.paramsArray.add(new paramStringWithQuotes(_paramComps[i]->paramText, params.paramsArray[i - 1]->boolVal));
+            params.paramsArray.add(new paramStringWithQuotes((*_paramComps)[i]->paramText, params.paramsArray[i - 1]->boolVal));
             break;
         }
         case (guiType::_stringArray):
         {
-            params.paramsArray.add(new paramStringArray(_paramComps[i]->paramText, params.paramsArray[i - 1]->boolVal));
+            params.paramsArray.add(new paramStringArray((*_paramComps)[i]->paramText, params.paramsArray[i - 1]->boolVal));
             break;
         }
        
         case (guiType::_list):
         {
-            params.paramsArray.add(new paramList(_paramComps[i]->paramText));
+            params.paramsArray.add(new paramList((*_paramComps)[i]->paramText));
             break;
         }
 

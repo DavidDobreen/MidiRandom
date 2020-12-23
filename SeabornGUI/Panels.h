@@ -102,7 +102,7 @@ public:
      
 };
 
-class AxesPanel : public moveChildComp, public handled, public drvred
+class AxesPanel : public ChartPanel
 {
 public:
 
@@ -164,7 +164,7 @@ public:
             
    // colorsComponent color{ 373,57,161,25,this,params,handler,enumParmas::gcolor };
 
-    AxesPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    AxesPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
     ~AxesPanel(){}
     chLabel xVals{ 409,92,150,25,"x-vals",this,params,handler, drvr ,nullptr };
     chLabel yVals{ 409,122,150,25,"y-vals",this,params,handler, drvr ,nullptr };

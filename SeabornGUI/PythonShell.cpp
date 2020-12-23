@@ -43,12 +43,12 @@ void PythonShell::Matplot()
      
     for (int i =0; i < lefPanel.itemsList[selected]->items.size(); i++)
     {
-        juce::String pltstr1 = bottomPanel.panels[selected*6]->pltstr1;
+        juce::String pltstr1 = bottomPanel.CHpanels[selected]->pltstr1;
         plotParams.clear();
         //bottomPanel.panels[selected]->itemParams = &i->params;
         lefPanel.axes.xValues.targetLineListItemVals = &lefPanel.itemsList[selected]->items[i]->xValues;
         lefPanel.axes.yValues.targetLineListItemVals = &lefPanel.itemsList[selected]->items[i]->yValues;
-        lefPanel.axes.ShowYinput = bottomPanel.panels[selected * 6]->ShowYinput;
+        lefPanel.axes.ShowYinput = bottomPanel.CHpanels[selected]->ShowYinput;
         lefPanel.axes.makeArgs();
 
         plotParams.insert(plotParams.end(), lefPanel.axes.plotParams.begin(), lefPanel.axes.plotParams.end());
@@ -82,10 +82,9 @@ void PythonShell::Matplot()
 
     }
 
-
     for (int i = 0; i < 5; i++)
     {       
-        juce::String pltstr1 = bottomPanel.panels[selected*6+i+1]->pltstr1;
+        juce::String pltstr1 = bottomPanel.TXpanels[selected*5+i]->pltstr1;
         plotParams.clear();         
         //bottomPanel.panels[selected]->itemParams = &lefPanel.textList.items[selected * 5 + i-1]->params;
 
@@ -120,7 +119,7 @@ void PythonShell::Matplot()
      
 
 
-    bottomPanel.panels[selected]->itemParams = &lefPanel.itemsList[selected]->selectedItem->params;
+    //bottomPanel.panels[selected]->itemParams = &lefPanel.itemsList[selected]->selectedItem->params;
 
 
     //if (lefPanel.chartList.selected == 0)
