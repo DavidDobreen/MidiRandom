@@ -42,7 +42,6 @@ Line2DPanel::Line2DPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Com
     LineBox.lineLbl1.sendSynchronousChangeMessage();
     markersBox.MarkerKindLbl.sendSynchronousChangeMessage();
 }
- 
 
 Line2DPanel::MarkersBox::MarkersBox(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr)
     : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvred(_drvr) {
@@ -129,10 +128,6 @@ TextPanel::TextPanel(int x, int y, int w, int h, juce::String paramText, juce::C
     //color.name.fontHight = 14;
 
 }
-
- 
-
- 
 
 AxesPanel::AxesPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
     : moveChildComp(x, y, w, h), handled(handler, parent, this), drvred(_drvr) {
@@ -279,8 +274,6 @@ HistPanel::HistPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Compone
     addSelectionBox(new SelectionBox(21, 17, { "bar", "barstacked", "step","stepfilled" }, LeftBox.conts[1], itemParams, handler, drvr, &index, "histtype"));
     addSelectionBox(new SelectionBox(121, 17, { "left", "mid", "right" }, LeftBox.conts[1], itemParams, handler, drvr, &index, "align"));
 
-      
-
     addChKnob(new chKnobClassicBeta(21, 17, 70, 70, "alpha", LeftBox.conts[0], itemParams, handler, drvr, &index, "alpha"));
     addChKnob(new chKnobClassicBeta(101, 17, 70, 70, "lineWidth", LeftBox.conts[0], itemParams, handler, drvr, &index, "lineWidth"));
     static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 500, 1);
@@ -342,123 +335,71 @@ PiePanel::PiePanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component
     addChLabel(new chLabel(409, 135, 150, 25, "colors", this, itemParams, handler, drvr, &index, guiType::_stringArray));
     addChLabel(new chLabel(409, 160, 150, 25, "autopct", this, itemParams, handler, drvr, &index, guiType::_stringArray));
      
-
     addChKnob(new chKnobClassicBeta(235, 116, 70, 70, "pctdistance", this, itemParams, handler, drvr, &index, "pctdistance"));
     addChKnob(new chKnobClassicBeta(11, 11, 70, 70, "radius", this, itemParams, handler, drvr, &index, "radius"));
  
     addToggleButtonAndLabel(new chToggleButtonAndLabel(609, 160, 85, 25, "shadow", this, itemParams, handler, drvr, &index, "shadow"));
-
     addSelectionBox(new SelectionBox(102, 14, { "None", "True", "False" }, this, itemParams, handler, drvr, &index, "normalize"));
-
-
-  /*  SelectionBox* normalize = new SelectionBox( 102,14,{ "None", "True", "False"},this, params,handler,drvr,-1,5,"normalize" );
-    guiComps.add(std::move(normalize));
-    paramComps.add(normalize);*/
 }
-
- 
 
 ChartPanel::ChartPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
-    : ShowYinput(_ShowYinput), moveChildComp(x, y, w, h), handled(handler, parent, this), drvred(_drvr)
-{
-}
+    : ShowYinput(_ShowYinput), moveChildComp(x, y, w, h), handled(handler, parent, this), drvred(_drvr){}
 
-void ChartPanel::refresh()
-{
-    
-    for (auto& c: guiComps)
-    {
-        switch (c->GuiClass)
-        {
-        case 1:
-        {
+void ChartPanel::refresh(){   
+    for (auto& c: guiComps){
+        switch (c->GuiClass){
+        case 1:{
             static_cast<chKnobClassicBeta*>(c)->paramRefresh();
-            break;
-        }
+            break;}
         case 2:
-        case 3:
-        {
-
-            static_cast<chLabel*>(c)->paramRefresh();
-             
-            break;
-        }
-        case 4:
-        {
+        case 3:{
+            static_cast<chLabel*>(c)->paramRefresh();            
+            break;}
+        case 4:{
             static_cast<chToggleButtonAndLabel*>(c)->paramRefresh();
-            break;
-        }
-        case 5:
-        {
+            break;}
+        case 5:{
             static_cast<SelectionBox*>(c)->paramRefresh();
-            break;
-        }
-        case 6:
-        {
+            break;}
+        case 6:{
             static_cast<moveChButton*>(c)->paramRefresh();
-            break;
-        }
-        case 7:
-        {
+            break;}
+        case 7:{
             static_cast<colorsComponent*>(c)->paramRefresh();
-            break;
-        }
-            
+            break;}            
         default:
-            break;
-        }
-        
-        
-         
-    
-        
+            break;}
     }                        
 }
 
-void ChartPanel::addChLabel(chLabel* _chLabel)
-{    
+void ChartPanel::addChLabel(chLabel* _chLabel){    
     guiComps.add(std::move(_chLabel));   
     paramComps.add(&_chLabel->lblName);
-    paramComps.add(&_chLabel->lbl);
-}
+    paramComps.add(&_chLabel->lbl);}
 
-void ChartPanel::addChKnob(chKnobClassicBeta* _chKnob)
-{
+void ChartPanel::addChKnob(chKnobClassicBeta* _chKnob){
     guiComps.add(std::move(_chKnob));
-    paramComps.add(&_chKnob->sldr);
-}
+    paramComps.add(&_chKnob->sldr);}
 
-void ChartPanel::addToggleButton(moveChButton* _btn)
-{
+void ChartPanel::addToggleButton(moveChButton* _btn){
     guiComps.add(std::move(_btn));
-    paramComps.add(_btn);
-}
+    paramComps.add(_btn);}
 
-void ChartPanel::addToggleButtonAndLabel(chToggleButtonAndLabel* _btn)
-{
+void ChartPanel::addToggleButtonAndLabel(chToggleButtonAndLabel* _btn){
     guiComps.add(std::move(_btn));
-    paramComps.add(_btn);
-}
+    paramComps.add(_btn);}
 
-void ChartPanel::addSelectionBox(SelectionBox* _selections)
-{
+void ChartPanel::addSelectionBox(SelectionBox* _selections){
     guiComps.add(std::move(_selections));
-    paramComps.add(_selections);
-}
+    paramComps.add(_selections);}
 
-void ChartPanel::addMarkers(markers* _markers)
-{
+void ChartPanel::addMarkers(markers* _markers){
     guiComps.add(std::move(_markers));
-    paramComps.add(_markers);
-}
+    paramComps.add(_markers);}
 
-void ChartPanel::addColorsComponent(colorsComponent* _colors)
-{
+void ChartPanel::addColorsComponent(colorsComponent* _colors){
     guiComps.add(std::move(_colors));
     paramComps.add(&_colors->selection.lblName);
-    paramComps.add(&_colors->selection.lbl);
-
-     
-}
+    paramComps.add(&_colors->selection.lbl);}
      
 

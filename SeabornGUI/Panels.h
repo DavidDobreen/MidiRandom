@@ -276,53 +276,15 @@ public:
 class BarsPanel : public ChartPanel
 {
 public:
-    //Params* params;
-    ////colorsComponent color{ 373,57,161,25,this,params,handler,enumParmas::barsColor };
-    ////colorsComponent edgeColor{ 553,57,161,25,this,params,handler,enumParmas::barsEdgeColor };
-    //chLabel xCords{ 409,92,150,25,"X-cords",this,params,handler, drvr ,nullptr };
-    //chLabel ticks{ 409,110,150,25,"ticks label",this,params,handler, drvr ,nullptr };
-    //chLabel xerr{ 609,92,150,25,"xerr",this,params,handler, drvr ,nullptr };
-    //chLabel yerr{ 609,110,150,25,"yerrl",this,params,handler, drvr ,nullptr };
-    ////colorsComponent errorColor{ 609,135,161,25,this,params,handler,enumParmas::barsErrColor };
-    //chKnobClassicBeta errorCapSize{ 235,116,70,70,"capsize",this , params ,handler,drvr , nullptr };
-    //chLabel barWidth{ 409,135,150,25," bar width",this,params,handler, drvr ,nullptr };
-    //chLabel bottom{ 409,150,150,25,"range",this,params,handler, drvr ,nullptr };
-    //chToggleButtonAndLabel align{ 709,160,85,25,"align",this,params,handler,drvr,nullptr };
-    //chKnobClassicBeta lineWidth{ 205,16,70,70,"line width",this , params ,handler,drvr , nullptr };
-    //chToggleButtonAndLabel log{ 609,160,85,25,"log",this,params,handler,drvr,nullptr };
-    //chKnobClassicBeta alpha{ 305,16,70,70,"alpha",this , params ,handler,drvr , nullptr };
-    ///*SelectionBox barsLineStyle{ 802,14,{ "solid", "dashed", "dashdot", "dotted" },this, params,handler,drvr,enumParmas::barsLineStyle };
-    //SelectionBox barsHatch{ 882,-4,{ "none", "/", "|","-","+","x","o","O",".","*" },this, params,handler,drvr,enumParmas::barsHatch };*/
     
-
     BarsPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~BarsPanel(){}
-    
+    ~BarsPanel(){}   
 };
 
 
 class PiePanel : public ChartPanel
 {
 public:
-    //chLabel explode{ 409,92,150,25,"explode",this,params,handler, drvr ,enumParmas::explodeEnabled };
-    //chLabel labels{ 409,110,150,25,"labels",this,params,handler, drvr ,enumParmas::pieLabelsEnabled };
-    //chLabel colors{ 409,135,150,25,"colors",this,params,handler, drvr ,enumParmas::pieColorsEnabled };
-    //chLabel autopct{ 409,160,150,25,"autopct",this,params,handler, drvr ,enumParmas::autopctEnabled };
-    //chKnobClassicBeta pctdistance{ 235,116,70,70,"pctdistance",this , params ,handler,drvr , enumParmas::pctdistance };
-    ////chToggleButtonAndLabel shadow{ 609,160,85,25,"shadow",this,params,handler,drvr,enumParmas::pieShadow };
-    ////SelectionBox normalize{ 102,14,{ "none", "True", "False"},this, params,handler,drvr,enumParmas::pieNormalize };
-    //chKnobClassicBeta labeldistance{ 205,16,70,70,"distance",this , params ,handler,drvr , enumParmas::labeldistance };
-    //chKnobClassicBeta startangle{ 305,16,70,70,"startangle",this , params ,handler,drvr , enumParmas::startangle };
-    ////chKnobClassicBeta radius{ 305,116,70,70,"radius",this , params ,handler,drvr , enumParmas::radius };
-    //chToggleButtonAndLabel counterclock{ 709,160,85,25,"counterclock",this,params,handler,drvr,enumParmas::counterclock };
-    //chToggleButtonAndLabel frame{ 409,160,85,25,"frame",this,params,handler,drvr,enumParmas::pieFrame };
-    //chToggleButtonAndLabel rotateLabels{ 409,160,85,25,"rotateLabels",this,params,handler,drvr,enumParmas::rotateLabels };
-
-
-
     PiePanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~PiePanel(){      
-         
-    }
-   
+    ~PiePanel(){ }   
 };

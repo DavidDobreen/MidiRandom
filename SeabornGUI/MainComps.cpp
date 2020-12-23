@@ -147,38 +147,7 @@ void TextList::changeListenerCallback(juce::ChangeBroadcaster* source)
 ChartList::ChartList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler)
     : axes(_axes), bottomPanel(_bottomPanel), moveChildComp(x, y, w, h), handled(handler, parent, this)
 {
-    area.addChangeListener(this);
-   // addItem("Line");
-   // addItem("Hist");
-   // addItem("Bars");
-    //addItem("Pie");
-     
-   
-
-   /* ChartList::item* item1 = new ChartList::item(4, 3, 76, 18, this, handler);
-    
-    item1->lbl.text = "Line";
-    item1->lbl.addChangeListener(this);
-    item1->area.toFront(false);
-    items.add(item1);
-
-    ChartList::item* item2 = new ChartList::item(4, 21, 76, 18, this, handler);    
-    item2->lbl.text = "Hist";
-    item2->lbl.addChangeListener(this);
-    item2->area.toFront(false);
-    items.add(item2);
-
-    ChartList::item* item3 = new ChartList::item(4, 39 ,76, 18, this, handler);
-    item3->lbl.text = "Bars";
-    item3->lbl.addChangeListener(this);
-    item3->area.toFront(false);
-    items.add(item3);
-
-    ChartList::item* item4 = new ChartList::item(4, 57, 76, 18, this, handler);
-    item4->lbl.text = "Pie";
-    item4->lbl.addChangeListener(this);
-    item4->area.toFront(false);
-    items.add(item4);*/
+    area.addChangeListener(this);  
 }
 
 void ChartList::changeListenerCallback(juce::ChangeBroadcaster* source)
@@ -190,8 +159,7 @@ void ChartList::changeListenerCallback(juce::ChangeBroadcaster* source)
     {
         i->lbl.textColor = juce::Colours::slategrey;
         i->lbl.repaint();
-    }
-        
+    }        
 }
 
 void ChartList::addItem(juce::String text)
@@ -272,28 +240,6 @@ void LeftPanel::changeListenerCallback(juce::ChangeBroadcaster* source)
         return;
     }
 
-}
-
-//HistList::HistList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler)
-//    : axes(_axes), bottomPanel(_bottomPanel), moveChildComp(x, y, w, h), handled(handler, parent, this)
-//{
-//    auto item1 = new item(9, 8, 76, 18, this, handler);
-//    item1->lbl.text = "Hist1";
-//    item1->lbl.addChangeListener(this);
-//    items.add(item1);
-//  
-//}
-//
-//void HistList::resized()
-//{
-//    for (auto& i : items)
-//        i->setBounds(i->dims[0], i->dims[1], i->dims[2], i->dims[3]);
-//}
-
-void BarsList::resized()
-{
-    for (auto& i : items)
-        i->setBounds(i->dims[0], i->dims[1], i->dims[2], i->dims[3]);
 }
 
 ItemList::ItemList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler, int& _selected)
