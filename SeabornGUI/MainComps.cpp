@@ -47,10 +47,7 @@ Axes::input::input(int x, int y, int w, int h, juce::Component* parent, pngHandl
             *targetLineListItemVals = lbl.getText(); };
 }
 
-Axes::Axes(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : moveChildComp(x, y, w, h), handled(handler, parent, this)
-{
-    
-}
+Axes::Axes(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : moveChildComp(x, y, w, h), handled(handler, parent, this){}
 
 void Axes::makeArgs()
 {   
@@ -61,57 +58,25 @@ void Axes::makeArgs()
         plotParams.push_back("(" + *xValues.targetLineListItemVals + ")");
 }
 
-LineList::LineList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel , juce::Component* parent, pngHandler& handler)
-    : axes(_axes), bottomPanel(_bottomPanel), moveChildComp(x, y, w, h), handled(handler, parent, this)
-{
-    auto item1 = new item( 9,8,76,18,this,handler );
-    item1->lbl.text = "item1";
-    item1->lbl.addChangeListener(this);
-    items.add(item1);
-
-    auto item2 = new item(9, 26, 76, 18,this, handler);
-    item2->lbl.text = "item2";
-    item2->lbl.addChangeListener(this);
-    items.add(item2);   
-}
-
-void LineList::resized()
-{
-    for (auto& i : items)
-        i->setBounds(i->dims[0], i->dims[1], i->dims[2], i->dims[3]);
-}
-
-void LineList::changeListenerCallback(juce::ChangeBroadcaster* source)
-{
-    /*for (auto& p : bottomPanel.panels)
-        p->setVisible(false);
-     
-     
-
-    MoveLabel* lbl = static_cast<MoveLabel*>(source);
-    LineList::item* item = static_cast<LineList::item*>(lbl->getParentComponent());
-    selectedItem = item;
-    
-    bottomPanel.namebox.lbl.text = lbl->text;
-    bottomPanel.namebox.repaint();
-    
-    for (auto i : items)
-    {
-        i->lbl.textColor = juce::Colours::slategrey;
-        i->repaint();
-    }
-    
-    lbl->textColor= juce::Colours::aqua;
-
-    bottomPanel.line2dPanel.itemParams = &item->params;
-          
-    bottomPanel.line2dPanel.refresh();
-
-    axes.xValues.targetLineListItemVals = &item->xValues;
-    axes.yValues.setVisible(true);
-    axes.yValues.targetLineListItemVals = &item->yValues;
-    axes.refresh();*/
-}
+//LineList::LineList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel , juce::Component* parent, pngHandler& handler)
+//    : axes(_axes), bottomPanel(_bottomPanel), moveChildComp(x, y, w, h), handled(handler, parent, this)
+//{
+//    auto item1 = new item( 9,8,76,18,this,handler );
+//    item1->lbl.text = "item1";
+//    //item1->lbl.addChangeListener(this);
+//    items.add(item1);
+//
+//    auto item2 = new item(9, 26, 76, 18,this, handler);
+//    item2->lbl.text = "item2";
+//    //item2->lbl.addChangeListener(this);
+//    items.add(item2);   
+//}
+//
+//void LineList::resized()
+//{
+//    for (auto& i : items)
+//        i->setBounds(i->dims[0], i->dims[1], i->dims[2], i->dims[3]);
+//}
  
 TextList::TextList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler)
     : axes(_axes), bottomPanel(_bottomPanel), moveChildComp(x, y, w, h), handled(handler, parent, this)
@@ -279,71 +244,6 @@ void LeftPanel::addPanel(const juce::String& text)
 void LeftPanel::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
  
-    /*for (auto& i : chartList.items)
-        i->setVisible(false);*/
-
-    
-    //Line chart
-    //if (source == &chartList.items[0]->lbl.cliked)
-    //{      
-    //    //histList.setVisible(false);
-    //    barsList.setVisible(false);
-    //    //pieList.setVisible(false);
-    //    lineList.setVisible(true);
-    //    
-    //    lineList.items[0]->lbl.sendSynchronousChangeMessage();
-    //    chartList.setVisible(false);
-    //    chartName.lbl.text = chartList.items[0]->lbl.text;
-    //    chartName.lbl.repaint();
-    //    return;
-    //}
-
-    ////Hist chart
-    //if (source == &chartList.items[1]->lbl.cliked)
-    //{      
-    //    lineList.setVisible(false);
-    //    barsList.setVisible(false);
-    //    //pieList.setVisible(false);
-    //   // histList.setVisible(true);        
-
-    //    //histList.items[0]->lbl.sendSynchronousChangeMessage();
-    //    chartList.setVisible(false);
-    //    chartName.lbl.text = chartList.items[1]->lbl.text;
-    //    chartName.lbl.repaint();
-    //    return;
-    //}
-
-    ////Bars chart
-    //if (source == &chartList.items[2]->lbl.cliked)
-    //{
-    //    lineList.setVisible(false);
-    //    //histList.setVisible(false);
-    //    //pieList.setVisible(false);
-    //    barsList.setVisible(true);
-
-    //    barsList.items[0]->lbl.sendSynchronousChangeMessage();
-    //    chartList.setVisible(false);
-    //    chartName.lbl.text = chartList.items[2]->lbl.text;
-    //    chartName.lbl.repaint();
-    //    return;
-    //}
-
-    ////Pie chart
-    //if (source == &chartList.items[3]->lbl.cliked)
-    //{
-    //    lineList.setVisible(false);
-    //    histList.setVisible(false);
-    //    barsList.setVisible(false);
-    //    pieList.setVisible(true);
-
-    //    pieList.items[0]->lbl.sendSynchronousChangeMessage();
-    //    chartList.setVisible(false);
-    //    chartName.lbl.text = chartList.items[3]->lbl.text;
-    //    chartName.lbl.repaint();
-    //    return;
-    //}
-        
-
     if (source == &chartName.lbl)
     {
         chartList.setVisible(!chartList.isVisible());
@@ -352,11 +252,6 @@ void LeftPanel::changeListenerCallback(juce::ChangeBroadcaster* source)
     }
     else //clicked message
     {
-        lineList.setVisible(false);
-        //histList.setVisible(false);
-        barsList.setVisible(false);
-        //pieList.setVisible(true);
-
         for (auto& i : itemsList)
             i->setVisible(false);
         itemsList[chartList.SelectedChart]->setVisible(true);
@@ -366,8 +261,7 @@ void LeftPanel::changeListenerCallback(juce::ChangeBroadcaster* source)
 
         for (int i = 0; i < 5; i++)
             textList.items[chartList.SelectedChart *5 +i]->setVisible(true);
-        
-       // bottomPanel.selectedPanel = bottomPanel.panels[chartList.selected];
+ 
         bottomPanel.selectedPanel = chartList.SelectedChart*6;
         itemsList[chartList.SelectedChart]->items[0]->lbl.sendSynchronousChangeMessage();
          
@@ -380,59 +274,21 @@ void LeftPanel::changeListenerCallback(juce::ChangeBroadcaster* source)
 
 }
 
-HistList::HistList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler)
-    : axes(_axes), bottomPanel(_bottomPanel), moveChildComp(x, y, w, h), handled(handler, parent, this)
-{
-    auto item1 = new item(9, 8, 76, 18, this, handler);
-    item1->lbl.text = "Hist1";
-    item1->lbl.addChangeListener(this);
-    items.add(item1);
-  
-}
-
-void HistList::resized()
-{
-    for (auto& i : items)
-        i->setBounds(i->dims[0], i->dims[1], i->dims[2], i->dims[3]);
-}
-
-//void HistList::changeListenerCallback(juce::ChangeBroadcaster* source)
+//HistList::HistList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler)
+//    : axes(_axes), bottomPanel(_bottomPanel), moveChildComp(x, y, w, h), handled(handler, parent, this)
 //{
-//    for (auto& p : bottomPanel.panels)
-//        p->setVisible(false);
-//
-//    MoveLabel* lbl = static_cast<MoveLabel*>(source);   
-//    HistList::item* item = static_cast<HistList::item*>(lbl->getParentComponent());
-//    selectedItem = item;
-//
-//    bottomPanel.namebox.lbl.text = lbl->text;
-//    bottomPanel.namebox.repaint();
-//
-//    for (auto i : items)
-//    {
-//        i->lbl.textColor = juce::Colours::slategrey;
-//        i->repaint();
-//    }
-//
-//    lbl->textColor = juce::Colours::aqua;
-//
-//    bottomPanel.histPanel.params = &item->params;
-//
-//    bottomPanel.histPanel.refresh();
-//
-//    axes.xValues.targetLineListItemVals = &item->xValues;
-//    axes.yValues.setVisible(false);
-//    axes.refresh();
+//    auto item1 = new item(9, 8, 76, 18, this, handler);
+//    item1->lbl.text = "Hist1";
+//    item1->lbl.addChangeListener(this);
+//    items.add(item1);
+//  
 //}
-
-BarsList::BarsList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler)
-    : axes(_axes), bottomPanel(_bottomPanel), moveChildComp(x, y, w, h), handled(handler, parent, this)
-{
-    auto item1 = new item(9, 8, 76, 18, this, handler);
-    item1->lbl.text = "Bars1";
-    item1->lbl.addChangeListener(this);
-    items.add(item1);
-}
+//
+//void HistList::resized()
+//{
+//    for (auto& i : items)
+//        i->setBounds(i->dims[0], i->dims[1], i->dims[2], i->dims[3]);
+//}
 
 void BarsList::resized()
 {
@@ -440,65 +296,8 @@ void BarsList::resized()
         i->setBounds(i->dims[0], i->dims[1], i->dims[2], i->dims[3]);
 }
 
-
-//PieList::PieList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler)
-//    : axes(_axes), bottomPanel(_bottomPanel), moveChildComp(x, y, w, h), handled(handler, parent, this)
-//{
-//    auto item1 = new PieList::item(9, 8, 76, 18, _bottomPanel.piePanel.paramComps, this, handler);
-//    item1->lbl.text = "Pie1";
-//    item1->lbl.addChangeListener(this);
-//    items.add(item1);
-//
-//    auto item2 = new PieList::item(9, 26, 76, 18, _bottomPanel.piePanel.paramComps, this, handler);
-//    item2->lbl.text = "Pie2";
-//    item2->lbl.addChangeListener(this);
-//    items.add(item2);
-//}
-
-//void PieList::resized()
-//{
-//    for (auto& i : items)
-//        i->setBounds(i->dims[0], i->dims[1], i->dims[2], i->dims[3]);
-//}
-
-//void PieList::changeListenerCallback(juce::ChangeBroadcaster* source)
-//{
-//    bottomPanel.axesPanel.setVisible(false);
-//    bottomPanel.textPanel.setVisible(false);
-//    bottomPanel.line2dPanel.setVisible(false);
-//    bottomPanel.histPanel.setVisible(false);
-//    bottomPanel.barsPanel.setVisible(false);
-//    bottomPanel.piePanel.setVisible(true);
-//
-//    MoveLabel* lbl = static_cast<MoveLabel*>(source);
-//    PieList::item* item = static_cast<PieList::item*>(lbl->getParentComponent());
-//    selectedItem = item;
-//
-//    bottomPanel.namebox.lbl.text = lbl->text;
-//    bottomPanel.namebox.repaint();
-//
-//    for (auto i : items)
-//    {
-//        i->lbl.textColor = juce::Colours::slategrey;
-//        i->repaint();
-//    }
-//
-//    lbl->textColor = juce::Colours::aqua;
-//
-//    bottomPanel.piePanel.itemParams = &item->params;
-//
-//    bottomPanel.piePanel.refresh();
-//
-//    axes.xValues.targetLineListItemVals = &item->xValues;
-//    axes.yValues.setVisible(true);
-//    axes.yValues.targetLineListItemVals = &item->yValues;
-//    axes.refresh();
-//}
-
 ItemList::ItemList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler, int& _selected)
-    : axes(_axes), bottomPanel(_bottomPanel), moveChildComp(x, y, w, h), handled(handler, parent, this), selected(_selected)
-{
-}
+    : axes(_axes), bottomPanel(_bottomPanel), moveChildComp(x, y, w, h), handled(handler, parent, this), selected(_selected){}
 
 void ItemList::resized()
 {
@@ -597,10 +396,5 @@ ItemList::item::item(int x, int y, int w, int h, juce::Array<paramedBeta*>& _par
         default:
             break;
         }
-
-
-
-
     }
-
 }
