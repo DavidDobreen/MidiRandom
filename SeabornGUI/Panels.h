@@ -281,10 +281,23 @@ public:
     ~BarsPanel(){}   
 };
 
-
 class PiePanel : public ChartPanel
 {
 public:
     PiePanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
     ~PiePanel(){ }   
+};
+
+class ScatterPanel : public ChartPanel
+{
+public:
+    ScatterPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    ~ScatterPanel() {}
+};
+
+class PolarPanel : public ChartPanel
+{
+public:
+    PolarPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    ~PolarPanel() {}
 };

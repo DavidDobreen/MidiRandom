@@ -40,7 +40,7 @@ public:
     ImageComp bkgd{ 0,0,dims[2],dims[3],png, this, handler };
     juce::String pngFrame = "Grid frame black2.png";
     ImageComp frame{ 0,0,dims[2],dims[3],pngFrame, this, handler };
-    MainChart chart{ 25, 55, 350, 576, this, handler };
+    MainChart chart{ 80, 55, 350, 576, this, handler };
     ShellWindow shell{ 25, 55, 576, 350, this, handler };
 
     ChartArea(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : childComp(x, y, w, h), handled(handler, parent, this) {}

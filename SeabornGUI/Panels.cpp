@@ -84,9 +84,9 @@ Line2DPanel::DashCapstyleKnob::DashCapstyleKnob(int x, int y, int w, int h, juce
 TextPanel::TextPanel(int x, int y, int w, int h, juce::String paramText, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
     : ChartPanel(x, y, w, h, false, parent, handler, _drvr) {
 
-     
+    pltstr1 = juce::String("plt."+ paramText+"(");
     //bool TickPanel = false;
-
+    if (paramText == "title") paramText = "label";
     addChLabel(new chLabel(409, 92, 150, 25, "value", this, itemParams, handler, drvr, &index, guiType::_stringQuots, paramText));
     addChLabel(new chLabel(409, 110, 150, 25, "labels", this, itemParams, handler, drvr, &index, guiType::_stringArray));
 
@@ -402,4 +402,14 @@ void ChartPanel::addColorsComponent(colorsComponent* _colors){
     paramComps.add(&_colors->selection.lblName);
     paramComps.add(&_colors->selection.lbl);}
      
+ScatterPanel::ScatterPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : ChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
+    pltstr1 = "plt.scatter(";
 
+    addChKnob(new chKnobClassicBeta(21, 17, 70, 70, "alpha", this, itemParams, handler, drvr, &index, "alpha"));
+}
+
+PolarPanel::PolarPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : ChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
+    pltstr1 = "plt.polar(";
+}

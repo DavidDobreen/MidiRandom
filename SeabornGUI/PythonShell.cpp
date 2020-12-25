@@ -36,19 +36,19 @@ void PythonShell::Matplot()
     PyRun_SimpleString("fig, ax = plt.subplots(figsize=(8,5))");
    
     const char* close = ");"; //use ";" to supress output
-    //const char* pltstr1;
+    
 
     int selected = lefPanel.chartList.SelectedChart;
-    //pltstr1 = bottomPanel.panels[selected]->pltstr1;
+    
      
-    for (int i =0; i < lefPanel.itemsList[selected]->items.size(); i++)
+    for (auto& i : lefPanel.Fig.axes[lefPanel.selected_axes]->plotList.items)
+    //for (int i =0; i < lefPanel.itemsList[selected]->items.size(); i++)
     {
-        juce::String pltstr1 = bottomPanel.CHpanels[selected]->pltstr1;
-        plotParams.clear();
-        //bottomPanel.panels[selected]->itemParams = &i->params;
-        lefPanel.axes.xValues.targetLineListItemVals = &lefPanel.itemsList[selected]->items[i]->xValues;
-        lefPanel.axes.yValues.targetLineListItemVals = &lefPanel.itemsList[selected]->items[i]->yValues;
-        lefPanel.axes.ShowYinput = bottomPanel.CHpanels[selected]->ShowYinput;
+        juce::String pltstr1 = bottomPanel.CHpanels[i->ChartType]->pltstr1;
+        plotParams.clear();         
+        lefPanel.axes.xValues.targetLineListItemVals = &i->xValues;
+        lefPanel.axes.yValues.targetLineListItemVals = &i->yValues;
+        lefPanel.axes.ShowYinput = bottomPanel.CHpanels[i->ChartType]->ShowYinput;
         lefPanel.axes.makeArgs();
 
         plotParams.insert(plotParams.end(), lefPanel.axes.plotParams.begin(), lefPanel.axes.plotParams.end());
@@ -59,8 +59,8 @@ void PythonShell::Matplot()
             mlc += strlen(p.toUTF8());
         mlc += strlen(close);
 
-        //juce::String ChartParams = bottomPanel.panels[selected]->itemParams->MakePieKwargs();
-        juce::String ChartParams = lefPanel.itemsList[selected]->items[i]->params.MakePieKwargs();
+       
+        juce::String ChartParams = i->params.MakePieKwargs();
         mlc += strlen(ChartParams.toUTF8());
 
         //allocate space for parameters
@@ -82,10 +82,11 @@ void PythonShell::Matplot()
 
     }
 
-    for (int i = 0; i < 5; i++)
+    for (auto& i : lefPanel.Fig.axes[lefPanel.selected_axes]->textList.items)
     {       
-        juce::String pltstr1 = bottomPanel.TXpanels[selected*5+i]->pltstr1;
+        juce::String pltstr1 = bottomPanel.TXpanels[i->index]->pltstr1;
         plotParams.clear();         
+        
         //bottomPanel.panels[selected]->itemParams = &lefPanel.textList.items[selected * 5 + i-1]->params;
 
         //calculate space for parameters
@@ -94,8 +95,8 @@ void PythonShell::Matplot()
             mlc += strlen(p.toUTF8());
         mlc += strlen(close);
 
-        //juce::String ChartParams = bottomPanel.panels[selected * 5 + i]->itemParams->MakePieKwargs().substring(1);
-        juce::String ChartParams = lefPanel.textList.items[selected * 5 + i]->params.MakePieKwargs().substring(1);
+        
+        juce::String ChartParams = i->params.MakePieKwargs().substring(1);
         mlc += strlen(ChartParams.toUTF8());
 
         //allocate space for parameters

@@ -104,6 +104,15 @@ BPMbox::~BPMbox()
 
 pngHandler::pngHandler(juce::File& path) : PNGdir(path)
 {
+	knobImageBlue = juce::PNGImageFormat::loadFrom(PNGdir.getChildFile("MAIN_KNOB_100_frames_NO_lines.png"));
+	knobImageRed = juce::PNGImageFormat::loadFrom(PNGdir.getChildFile("MAIN_KNOB_100_frames_NO_lines_RED.png"));
+	MixerFaderImage = juce::PNGImageFormat::loadFrom(PNGdir.getChildFile("mixer fader knob2.png"));
+	MixerPannerImage = juce::PNGImageFormat::loadFrom(PNGdir.getChildFile("mixer fader PAN knob2.png"));
+
+	mainKnob.knboPNG = &knobImageBlue;
+	SingleCellTabKnob.knboPNG = &knobImageRed;
+	mixerFader.knboPNG = &MixerFaderImage;
+	mixerPanner.knboPNG = &MixerPannerImage;
 }
 
 void pngHandler::bkgdRszr_push(juce::Component* a, bkgdComp* b)

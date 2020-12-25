@@ -228,6 +228,9 @@ public:
 	MixerPannerLookAndFeel mixerPanner;
 	std::vector<std::pair <juce::Component*, MySlider*> > MySliders;
 	std::vector<std::pair <juce::Component*, childComp*> > compRszr;
+	std::vector<std::pair <juce::Component*, bkgdComp*> > bkgdRszr;
+	std::vector<resizer<rOnOffRect>> btnsRszr;
+	std::vector<RSlider<int>> slidersRszr;
 
 	pngHandler(juce::File& path);
 	~pngHandler(){
@@ -240,7 +243,7 @@ public:
 	}
 
 	void InitGUI() {
-		 ;
+		 
 
 
 		/*juce::FileOutputStream output(juce::File::getSpecialLocation(juce::File::SpecialLocationType::userDesktopDirectory).getChildFile("logfile.txt"));
@@ -250,7 +253,10 @@ public:
 
 
 		//PNGdir = juce::File("C:\\PNG\\");
-		knobImageBlue = juce::PNGImageFormat::loadFrom(PNGdir.getChildFile("MAIN_KNOB_100_frames_NO_lines.png"));
+
+
+		//MOVED BELOW TO CONSTRUCTOR
+		/*knobImageBlue = juce::PNGImageFormat::loadFrom(PNGdir.getChildFile("MAIN_KNOB_100_frames_NO_lines.png"));
 		knobImageRed = juce::PNGImageFormat::loadFrom(PNGdir.getChildFile("MAIN_KNOB_100_frames_NO_lines_RED.png"));
 		MixerFaderImage = juce::PNGImageFormat::loadFrom(PNGdir.getChildFile("mixer fader knob2.png"));
 		MixerPannerImage = juce::PNGImageFormat::loadFrom(PNGdir.getChildFile("mixer fader PAN knob2.png"));
@@ -258,7 +264,7 @@ public:
 		mainKnob.knboPNG = &knobImageBlue;
 		SingleCellTabKnob.knboPNG = &knobImageRed;
 		mixerFader.knboPNG = &MixerFaderImage;
-		mixerPanner.knboPNG = &MixerPannerImage;
+		mixerPanner.knboPNG = &MixerPannerImage;*/
 
 
 
@@ -318,9 +324,8 @@ public:
 
 
 private:
-	std::vector<resizer<rOnOffRect>> btnsRszr;
-	std::vector<RSlider<int>> slidersRszr;
-	std::vector<std::pair <juce::Component*, bkgdComp*> > bkgdRszr;
+	
+	
 	
 
 	juce::Image knobImageBlue;
