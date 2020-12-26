@@ -91,8 +91,9 @@ public:
        TXpanels.add(new TextPanel(0, 0, dims[2], dims[3], "xlabel", this, handler, drvr));
        TXpanels.add(new TextPanel(0, 0, dims[2], dims[3], "ylabel", this, handler, drvr));
        TXpanels.add(new TextPanel(0, 0, dims[2], dims[3], "title", this, handler, drvr));
-       TXpanels.add(new TextPanel(0, 0, dims[2], dims[3], "xTicks", this, handler, drvr));
-       TXpanels.add(new TextPanel(0, 0, dims[2], dims[3], "yTicks", this, handler, drvr));
+       TXpanels.add(new TextPanel(0, 0, dims[2], dims[3], "xticks", this, handler, drvr));
+       TXpanels.add(new TextPanel(0, 0, dims[2], dims[3], "yticks", this, handler, drvr));
+       TXpanels.add(new LegendPanel(0, 0, dims[2], dims[3], "legend", this, handler, drvr));
     }
     ~BottomPanel(){}
   
@@ -304,21 +305,18 @@ public:
         
     Axes axes{ 0,49,dims[2],45,this,handler };
       
-    ChartList::item chartName{ 102, 21, 76, 18, this, handler };
+    //ChartList::item chartName{ 102, 21, 76, 18, this, handler };
 
     int selected_axes = 0;
 
-    ChartList chartList{ 98,48,84,100,axes, bottomPanel,this,handler };
+    ChartList chartList{ 98,48,84,140,axes, bottomPanel,this,handler };
     ItemList axesList{ 30,113,93,236,axes, bottomPanel,this,handler,selected_axes };
-    //ItemList plotList{ 130,113,93,236,axes, bottomPanel,this,handler,chartList.SelectedChart };
-    //ItemList textList{ 30,358,93,236,axes, bottomPanel,this,handler,chartList.SelectedChart };
- 
-
+    
     fig Fig{ axes,bottomPanel,this,handler };
     LeftPanel(int x, int y, int w, int h, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler, Drvr& _drvr) 
         : bottomPanel(_bottomPanel), childComp(x, y, w, h), handled(handler, parent, this) ,drvred(_drvr){
-        chartName.lbl.addChangeListener(this);
-        chartName.lbl.index = -1;
+        //chartName.lbl.addChangeListener(this);
+        //chartName.lbl.index = -1;
 
         chartList.addItem("Line");
         chartList.addItem("Hist");
@@ -358,6 +356,5 @@ public:
         
     void addAxes();
     void delAxes();
-    void addPanel(const juce::String& text);
     void changeListenerCallback(juce::ChangeBroadcaster* source);
 };

@@ -11,7 +11,6 @@
 #pragma once
 #include <JuceHeader.h>
 
-
 class paramedType
 {
 public:
@@ -105,8 +104,6 @@ public:
     }
 };
 
-
-
 class Params
 {
 public:
@@ -119,7 +116,6 @@ public:
  
 };
 
-
 enum guiType {
     _float = 1,_string, _stringQuots,_stringArray,_bool,_list
 };
@@ -128,7 +124,7 @@ class paramedBeta
 public:      
     Params*& params;
     int index=-1;
-    int guiType = 0; // 1=float, 2=string, 3=string array, 4 = bool, 5=list        
+    int guiType = 0;     
     juce::String paramText = "";
     
     paramedBeta(Params*& _params) : params(_params){}

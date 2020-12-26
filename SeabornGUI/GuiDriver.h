@@ -46,8 +46,8 @@ class drvrShellNotifer : public juce::ChangeBroadcaster
 {
 public:
     Drvr& drvr;
-    drvrShellNotifer(Drvr& _drvr) : drvr(_drvr)  {
-        drvr.ShellNotifiers.add(this);
+    drvrShellNotifer(Drvr& _drvr) : drvr(_drvr)  {     
+            drvr.ShellNotifiers.add(this);
     }
     ~drvrShellNotifer() { removeAllChangeListeners(); }
     

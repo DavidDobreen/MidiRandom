@@ -22,16 +22,25 @@ public:
     bool ShowYinput = true;
     juce::String pltstr1;
 
+    CompBox LeftBox{ 108,26,260,135,3,this,itemParams, handler ,drvr };
+    CompBox RightBox{ 598,26,260,135,4,this,itemParams, handler ,drvr };
+
     ChartPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
     ~ChartPanel() {}
+
+    void init();
     void refresh();
     void addChLabel(chLabel* _chLabel);
+    void addChLabelSmall(chLabelSmall* _chLabel);
     void addChKnob(chKnobClassicBeta* _chKnob);
     void addToggleButton(moveChButton* _btn);
     void addToggleButtonAndLabel(chToggleButtonAndLabel* _btn);
     void addSelectionBox(SelectionBox* _selections);
     void addMarkers(markers* _markers);
     void addColorsComponent(colorsComponent* _markers);
+    void addSlider(AlphaSlider* _slider);
+    void addLegends(Legends* _legends);
+    void addFourFloats(FourFloats* _floats);
 };
 
 class TextPanel :  public ChartPanel
@@ -90,8 +99,7 @@ class TextPanel :  public ChartPanel
 
 public:
        
-    CompBox LeftBox{ 108-108,26,260,135,3,this,itemParams, handler ,drvr };
-    CompBox RightBox{ 598,26,260,135,4,this,itemParams, handler ,drvr };
+    
 
      
 
@@ -113,7 +121,7 @@ public:
         chBgComp bkgd{ "wave fx bg and frame and on_off panell2.png",this,handler };
 
         MoveContainer legendCont1{ 0,0,240,100,this,handler };
-        Legends legends{ 10,10,250,100,&legendCont1,handler,drvr };
+        //Legends legends{ 10,10,250,100,&legendCont1,handler,drvr };
 
         MoveContainer legendCont2{ 0,0,240,100,this,handler };
         chKnobClassicBeta horizontal{ 21,17,70,70,"Horizon",&legendCont2,params,handler,drvr,nullptr };
@@ -166,8 +174,8 @@ public:
 
     AxesPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
     ~AxesPanel(){}
-    chLabel xVals{ 409,92,150,25,"x-vals",this,params,handler, drvr ,nullptr };
-    chLabel yVals{ 409,122,150,25,"y-vals",this,params,handler, drvr ,nullptr };
+    chLabel xVals{ 408,57,150,25,"x-vals",this,params,handler, drvr ,nullptr };
+    chLabel yVals{ 408,87,150,25,"y-vals",this,params,handler, drvr ,nullptr };
     
     void MakeGridkwargs();
     
@@ -241,10 +249,7 @@ public:
         void changeListenerCallback(juce::ChangeBroadcaster* source);
     };
  
-     LineStyleBox LineBox{ 108,26,260,135,this,itemParams, handler ,drvr };
-     MarkersBox markersBox{ 598,26,260,135,this,itemParams, handler ,drvr};
-    
-    
+
     ///*DashCapstyleKnob dashCapstyleKnob{ 10,30,0,0,this,paramSetter,handler };
     //std::vector<juce::String>  CapStyleValues = { "'butt'", "'round'", "'projecting'" };
     //DashJoinstyleKnob dashJoinstyleKnob{ 10,100,0,0,this,paramSetter,handler };
@@ -255,7 +260,6 @@ public:
 
     ////chLabel dashes{ 22,12,180,25,"dashes",this,params,handler,drvr};
    
-    AlphaSlider color{ 892, 5, 38, 178, this, itemParams, handler, drvr, &index };
     Line2DPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent,  pngHandler& handler, Drvr& _drvr);
    ~Line2DPanel(){}
 
@@ -266,8 +270,7 @@ public:
 class HistPanel : public ChartPanel
 {
 public:
-    CompBox LeftBox{ 108,26,260,135,3,this,itemParams, handler ,drvr };
-    CompBox RightBox{ 598,26,260,135,4,this,itemParams, handler ,drvr };
+    
 
     HistPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
     ~HistPanel(){}  
@@ -276,7 +279,7 @@ public:
 class BarsPanel : public ChartPanel
 {
 public:
-    
+      
     BarsPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
     ~BarsPanel(){}   
 };
@@ -300,4 +303,11 @@ class PolarPanel : public ChartPanel
 public:
     PolarPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
     ~PolarPanel() {}
+};
+
+class LegendPanel : public ChartPanel
+{
+public:
+    LegendPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    ~LegendPanel() {}
 };

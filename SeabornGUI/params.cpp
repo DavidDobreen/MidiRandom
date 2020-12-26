@@ -10,39 +10,22 @@
 
 #include "params.h"
 
-
-
-
-
-juce::String Params::MakePieKwargs()
-{
+juce::String Params::MakePieKwargs(){
     PlotKwargs = "";
     for (auto& p : paramsArray)
         p->makeKwarg(PlotKwargs);
+    return PlotKwargs;}
 
-    return PlotKwargs;
-}
+void paramedBeta::update(double val){
+    params->paramsArray[index]->floatVal = val;}
 
-void paramedBeta::update(double val)
-{
-    params->paramsArray[index]->floatVal = val; 
-}
+void paramedBeta::update(bool isOn){
+    params->paramsArray[index]->boolVal = isOn;}
 
-void paramedBeta::update(bool isOn)
-{
-    params->paramsArray[index]->boolVal = isOn;    
-}
+void paramedBeta::update(juce::String text){
+    params->paramsArray[index]->stringText = text;}
 
-void paramedBeta::SetIndex(int* _index)
-{
-    if (_index != nullptr)
-    {
+void paramedBeta::SetIndex(int* _index) {
+    if (_index != nullptr) {
         index = *_index;
-        (*_index)++;
-    }
-}
-
-void paramedBeta::update(juce::String text)
-{
-    params->paramsArray[index]->stringText = text;  
-}
+        (*_index)++;}}

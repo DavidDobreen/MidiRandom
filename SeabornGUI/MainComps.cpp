@@ -164,8 +164,9 @@ void LeftPanel::addAxes()
     ax->textList.addItem("xlabel", ListTypes::text);
     ax->textList.addItem("ylabel", ListTypes::text);
     ax->textList.addItem("title", ListTypes::text);
-    ax->textList.addItem("xTicks", ListTypes::text);
-    ax->textList.addItem("xYticks", ListTypes::text);
+    ax->textList.addItem("xticks", ListTypes::text);
+    ax->textList.addItem("yticks", ListTypes::text);
+    ax->textList.addItem("legend", ListTypes::text);
     handler.InitGUI();
     /*bottomPanel.AXpanels.add(new AxesPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], "??????", &bottomPanel, handler, drvr));
     axesList.addItem("ax", ListTypes::axes);
@@ -207,31 +208,6 @@ void LeftPanel::delAxes()
     axesList.resized();
     Fig.refresh();
  
-}
-
-void LeftPanel::addPanel(const juce::String& text)
-{
-        /*chartList.addItem(text);
-        chartList.items.getLast()->lbl.cliked.addChangeListener(this);
-        chartList.SelectedChart = chartList.items.size() - 1;
-
-        itemsList.add(new ItemList(130, 113, 93, 236, axes, bottomPanel, this, handler, chartList.SelectedChart));
-        itemsList.getLast()->addItem(text,ListTypes::chart);
-        itemsList.getLast()->addItem(text, ListTypes::chart);
-         
-        bottomPanel.TXpanels.add(new TextPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], "xlabel", &bottomPanel, handler, drvr));
-        textList.addItem("xlabel", ListTypes::text);
-        bottomPanel.TXpanels.getLast()->pltstr1 = "plt.xlabel(";
-        bottomPanel.TXpanels.add(new TextPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], "ylabel", &bottomPanel, handler, drvr));
-        textList.addItem("ylabel", ListTypes::text);
-        bottomPanel.TXpanels.getLast()->pltstr1 = "plt.ylabel(";
-        bottomPanel.TXpanels.add(new TextPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], "label", &bottomPanel, handler, drvr));
-        textList.addItem("title", ListTypes::text);
-        bottomPanel.TXpanels.getLast()->pltstr1 = "plt.title(";
-        bottomPanel.TXpanels.add(new TextPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], "xticks", &bottomPanel, handler, drvr));
-        textList.addItem("xticks", ListTypes::text);
-        bottomPanel.TXpanels.add(new TextPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], "yticks", &bottomPanel, handler, drvr));
-        textList.addItem("yticks", ListTypes::text);*/
 }
 
 void LeftPanel::changeListenerCallback(juce::ChangeBroadcaster* source)
@@ -289,12 +265,12 @@ void LeftPanel::changeListenerCallback(juce::ChangeBroadcaster* source)
 
 
 
-    if (source == &chartName.lbl) //mouse over
-    {
-        /*chartList.setVisible(!chartList.isVisible());
-        if (chartList.isVisible()) chartList.toFront(true);*/
-        return;
-    }
+    //if (source == &chartName.lbl) //mouse over
+    //{
+    //    /*chartList.setVisible(!chartList.isVisible());
+    //    if (chartList.isVisible()) chartList.toFront(true);*/
+    //    return;
+    //}
     else //clicked message
     {
         /*for (auto& i : itemsList)
@@ -368,30 +344,59 @@ void ItemList::changeListenerCallback(juce::ChangeBroadcaster* source)
     if (lbl != nullptr)
     {
         selectedItem = dynamic_cast<ItemList::item*>(lbl->getParentComponent());
-
+        LeftPanel* leftPanel = static_cast<LeftPanel*>(getParentComponent());
         if (selectedItem != nullptr)
         {
             if (selectedItem->ListType == ListTypes::axes)
             {
                 bottomPanel.ActivePanel = bottomPanel.AXpanels[0];
-                LeftPanel* leftPanel = static_cast<LeftPanel*>(getParentComponent());
+                
                 for (auto& ax : leftPanel->Fig.axes)
                 {
                     ax->plotList.setVisible(false);
                     ax->textList.setVisible(false);
                 }
-                    
+                  
                 leftPanel->Fig.axes[selectedItem->index]->plotList.setVisible(true);
                 leftPanel->Fig.axes[selectedItem->index]->textList.setVisible(true);
+
+                for (auto& i : leftPanel->Fig.axes[selectedItem->index]->plotList.items)
+                {
+                    i->lbl.textColor = juce::Colours::slategrey;
+                    i->repaint();
+                }
+
+
+                for (auto& i : leftPanel->Fig.axes[selectedItem->index]->textList.items)
+                {
+                    i->lbl.textColor = juce::Colours::slategrey;
+                    i->repaint();
+                }
             }
                 
             else if (selectedItem->ListType == ListTypes::chart)
-                bottomPanel.ActivePanel = bottomPanel.CHpanels[selectedItem->ChartType]; //selected chart in chart name    
+            {
+                leftPanel->axesList.items[leftPanel->selected_axes]->lbl.textColor = juce::Colours::orange;
+                leftPanel->axesList.items[leftPanel->selected_axes]->lbl.repaint();
+
+                for (auto& i : leftPanel->Fig.axes[leftPanel->selected_axes]->textList.items)
+                {
+                    i->lbl.textColor = juce::Colours::slategrey;
+                    i->repaint();
+                }
+                    
+                bottomPanel.ActivePanel = bottomPanel.CHpanels[selectedItem->ChartType];
+            }
+                  
 
             else if (selectedItem->ListType == ListTypes::text)
             {
-                bottomPanel.ActivePanel = bottomPanel.TXpanels[selected];
-                LeftPanel* leftPanel = static_cast<LeftPanel*>(getParentComponent());
+                leftPanel->axesList.items[leftPanel->selected_axes]->lbl.textColor = juce::Colours::orange;
+                leftPanel->Fig.axes[leftPanel->selected_axes]->plotList.items[leftPanel->Fig.axes[leftPanel->selected_axes]->chartListSelected]->lbl.textColor = juce::Colours::orange;
+                leftPanel->axesList.items[leftPanel->selected_axes]->lbl.repaint();
+                leftPanel->Fig.axes[leftPanel->selected_axes]->plotList.items[leftPanel->Fig.axes[leftPanel->selected_axes]->chartListSelected]->lbl.repaint();
+                bottomPanel.ActivePanel = bottomPanel.TXpanels[selectedItem->index];
+              
                 for (auto& ax : leftPanel->Fig.axes)                 
                     ax->textList.setVisible(false);
                 leftPanel->Fig.axes[leftPanel->selected_axes]->textList.setVisible(true);             
@@ -446,10 +451,10 @@ void ItemList::addItem(const juce::String& text, int ItemType){
     else if (ItemType == ListTypes::chart) paramComps = &bottomPanel.CHpanels[selected]->paramComps;
     else if (ItemType == ListTypes::text)
     {
-        paramComps = &bottomPanel.TXpanels[items.size()]->paramComps;
+        paramComps = &bottomPanel.TXpanels[items.size()]->paramComps;     
     }
-    else return;
-
+    
+     
     
     auto item = new ItemList::item(x, y, w, h, paramComps, this, handler);
     
@@ -483,6 +488,7 @@ ItemList::item::item(int x, int y, int w, int h, juce::Array<paramedBeta*>* _par
     : moveChildComp(x, y, w, h), handled(handler, parent, this) {
     for (int i = 0; i < _paramComps->size(); i++)
     {
+        DBG((*_paramComps)[i]->guiType);
         switch ((*_paramComps)[i]->guiType)
         {
         case (guiType::_float):

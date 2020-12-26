@@ -74,8 +74,7 @@ chLabel::chLabel(int x, int y, int w, int h, juce::String name, juce::Component*
     lbl.lbl.setEditable(true); 
 
     if (_index != nullptr)
-    {         
-        
+    {                 
         lblName.index = *_index;
         (*_index)++;
         lbl.index = *_index;
@@ -88,8 +87,13 @@ chLabel::chLabel(int x, int y, int w, int h, juce::String name, juce::Component*
 
     if (name != "" && paramText == "")
         lbl.paramText = name;
-    else if (name != "" && paramText != "")
+    if (name != "" && paramText != "")
+    {
         lbl.paramText = paramText;
+        lblName.text = name;
+    }
+
+        
 }
 
 void chLabel::changeListenerCallback(juce::ChangeBroadcaster* source)
@@ -174,19 +178,14 @@ markers::markers(int x, int y, int w, int h, juce::Component* parent, Params*& p
 
 void markers::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
-    code = static_cast<marker::markerArea*>(source)->code;
-    /*active = true;*/
-    
+    code = static_cast<marker::markerArea*>(source)->code;  
     update(code);
-
-   /* if (params != nullptr)
-        params->lmarker = code;*/
-
     sendSynchronousChangeMessage();
 }
 
-Legends::Legends(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
-    : moveChildComp(x, y, w, h), handled(handler, parent, this), drvrShellNotifer(_drvr)
+Legends::Legends(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr,
+    int* _index, juce::String _paramText , int _guiType)
+    : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvrShellNotifer(_drvr)
 {
     best.lbl.text = "best"; best.lbl.addChangeListener(this);
     upperRight.lbl.text = "upper right"; upperRight.lbl.addChangeListener(this);
@@ -200,7 +199,24 @@ Legends::Legends(int x, int y, int w, int h, juce::Component* parent, pngHandler
     upperCenter.lbl.text = "upper center"; upperCenter.lbl.addChangeListener(this);
     center.lbl.text = "center"; center.lbl.addChangeListener(this);
 
-    best.lbl.sendSynchronousChangeMessage();
+    
+
+    if (_index != nullptr)
+    {        
+        alwaysOn.index = *_index;
+        (*_index)++;
+        index = *_index;
+        (*_index)++;
+    }
+
+    GuiClass = 9;
+    guiType = _guiType;
+    if (_paramText != "")
+        paramText = _paramText;
+
+    alwaysOn.guiType = 1;
+    
+    //best.lbl.sendSynchronousChangeMessage();
 }
 
 void Legends::changeListenerCallback(juce::ChangeBroadcaster* source)
@@ -219,12 +235,11 @@ void Legends::changeListenerCallback(juce::ChangeBroadcaster* source)
 
     MoveLabel* lbl = static_cast<MoveLabel*>(source);
     loc = lbl->text;
-    /*if (params != nullptr)
-        params->legendLocation = loc;*/
     lbl->textColor = juce::Colours::aqua;
     lbl->repaint();
-    sendSynchronousChangeMessage();
-   
+    alwaysOn.update(true);
+    update(loc);
+    sendSynchronousChangeMessage(); 
 }
 
 void moveChildComp::CompArea::mouseDrag(const juce::MouseEvent& event)
@@ -268,9 +283,93 @@ void moveChButton::paramRefresh()
      
 }
 
-AlphaSlider::AlphaSlider(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr, int* _index, juce::String _paramText, int _guiType)
-    : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvred(_drvr)
+AlphaSlider::AlphaSlider(int x, int y, int w, int h, juce::Component* parent, Params*& _params, pngHandler& handler, Drvr& _drvr, int* _index, juce::String _paramText, int _guiType)
+    : moveChildComp(x, y, w, h), paramedBeta(_params), handled(handler, parent, this), drvred(_drvr)
 {
-    addAndMakeVisible(fader);
-    fader.setBounds(fader.dims[0], fader.dims[1], fader.dims[2], fader.dims[3]);
+    addAndMakeVisible(sldr);
+    sldr.setBounds(sldr.dims[0], sldr.dims[1],sldr.dims[2], sldr.dims[3]);
+
+    if (_index != nullptr)
+    {
+        sldr.index = *_index;
+        (*_index)++;
+    }
+
+    GuiClass = 8;
+    sldr.guiType = _guiType;
+    if (_paramText != "")
+        sldr.paramText = _paramText;
+}
+
+FourFloats::FourFloats(int x, int y, int w, int h, juce::Component* parent, Params*& _params, pngHandler& handler, Drvr& _drvr, int* _index, juce::String _paramText, int _guiType)
+    : moveChildComp(x, y, w, h), paramedBeta(_params), handled(handler, parent, this), drvrShellNotifer(_drvr)
+{
+    X.addChangeListener(this);
+    Y.addChangeListener(this);
+    W.addChangeListener(this);
+    H.addChangeListener(this);
+
+    if (_index != nullptr)
+    {
+        OnOff.index = *_index;
+        (*_index)++;
+        index = *_index;
+        (*_index)++;
+    }
+
+    GuiClass = 10;
+    guiType = _guiType;
+    if (_paramText != "")
+       paramText = _paramText;
+}
+
+void FourFloats::changeListenerCallback(juce::ChangeBroadcaster* source)
+{     
+    update(juce::String(X.getValue()*0.01f)+","+ juce::String(Y.getValue() * 0.01f) + "," + juce::String(W.getValue() * 0.01f) + "," + juce::String(H.getValue() * 0.01f));
+    sendSynchronousChangeMessage();
+}
+
+chLabelSmall::chLabelSmall(int x, int y, int w, int h, juce::String name, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr, int* _index, int guiType, juce::String paramText)
+    : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvrShellNotifer(drvr) {
+    lblName.text = name;
+    addAndMakeVisible(lbl);
+    lblName.addChangeListener(this);
+    lblName.fontHight = 15;
+    lbl.lbl.setEditable(true);
+
+    if (_index != nullptr)
+    {
+
+        lblName.index = *_index;
+        (*_index)++;
+        lbl.index = *_index;
+        (*_index)++;
+    }
+
+    GuiClass = 11; //This is chLabel
+    lbl.guiType = guiType; //This is a string/string array
+    lblName.guiType = guiType::_bool;  // This is a boolean   
+
+    if (name != "" && paramText == "")
+        lbl.paramText = name;
+    else if (name != "" && paramText != "")
+        lbl.paramText = paramText;
+}
+
+void chLabelSmall::changeListenerCallback(juce::ChangeBroadcaster* source)
+{
+    lblName.IsOn = !lblName.IsOn;
+    lblName.update(lblName.IsOn);
+    lblName.repaint();
+    sendSynchronousChangeMessage();
+}
+
+void chLabelSmall::paramRefresh()
+{
+    if (lbl.index >= 0)
+    {
+        lblName.IsOn = params->paramsArray[lblName.index]->boolVal;
+        lblName.repaint();
+        lbl.lbl.setText(params->paramsArray[lbl.index]->stringText, juce::dontSendNotification);
+    }
 }
