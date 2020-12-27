@@ -299,6 +299,8 @@ AlphaSlider::AlphaSlider(int x, int y, int w, int h, juce::Component* parent, Pa
     sldr.guiType = _guiType;
     if (_paramText != "")
         sldr.paramText = _paramText;
+
+    sldr.setValue(100);
 }
 
 FourFloats::FourFloats(int x, int y, int w, int h, juce::Component* parent, Params*& _params, pngHandler& handler, Drvr& _drvr, int* _index, juce::String _paramText, int _guiType)

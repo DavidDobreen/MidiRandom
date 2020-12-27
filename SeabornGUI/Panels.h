@@ -113,71 +113,9 @@ public:
 class AxesPanel : public ChartPanel
 {
 public:
-
-    class LegendBox : public juce::ChangeListener, public moveChildComp, public paramedBeta, public handled, public drvred
-    {
-    public:
-
-        chBgComp bkgd{ "wave fx bg and frame and on_off panell2.png",this,handler };
-
-        MoveContainer legendCont1{ 0,0,240,100,this,handler };
-        //Legends legends{ 10,10,250,100,&legendCont1,handler,drvr };
-
-        MoveContainer legendCont2{ 0,0,240,100,this,handler };
-        chKnobClassicBeta horizontal{ 21,17,70,70,"Horizon",&legendCont2,params,handler,drvr,nullptr };
-        chKnobClassicBeta vertical{ 91,17,70,70,"Vertical",&legendCont2,params,handler,drvr,nullptr };
-  
-        MoveContainer markersCompLabels{ 50,120,240,20,this,handler };
-        fxLabel legendLbl{ 0,0,50,20,"Legend", DEFAULT_LABEL_COLORS ,&legendCont1,&markersCompLabels,handler };
-        fxLabel locLbl{ 50,0,50,20,"Loc", DEFAULT_LABEL_COLORS ,&legendCont2,&markersCompLabels,handler };
-         
-        LegendBox(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr);
-        ~LegendBox(){}
-        void changeListenerCallback(juce::ChangeBroadcaster* source);
-    };
-
-    class StyleBox : public juce::ChangeListener, public moveChildComp, public paramedBeta, public handled, public drvred
-    {
-    public:
-
-        chBgComp bkgd{ "wave fx bg and frame and on_off panell2.png",this,handler };
-
-        MoveContainer styleCont1{ 0,0,240,100,this,handler };
-        /*SelectionBox whichAxes{ 144,17,{ "both", "x", "y" },&styleCont1, params,handler,drvr,enumParmas::gaxisKnob };
-        SelectionBox whichKinds{ 41,17,{ "both","major", "minor" },&styleCont1, params,handler,drvr,enumParmas::gwhichKnob };*/
-        
-        MoveContainer styleCont2{ 0,0,240,100,this,handler };
-        chKnobClassicBeta alpha{ 21,17,70,70,"Alpha",&styleCont2,params, handler,drvr,nullptr };
-
-        MoveContainer styleCont3{ 0,0,240,100,this,handler };
-        /*SelectionBox lineStyleComp{ 41,17,{ "solid", "dashed", "dashdot","dotted" },&styleCont3, params,handler,drvr,enumParmas::glineStyleComp };*/
-
-        MoveContainer markersCompLabels{ 50,120,240,20,this,handler };
-        //moveChButton gridOnOff{ 0,0,15,15,"fx on botton2.png","fx off botton2.png",&markersCompLabels,params,handler,drvr,enumParmas::gridOn };
-         
-        fxLabel styleLbl1{ 50,0,50,20,"which", DEFAULT_LABEL_COLORS ,&styleCont1,&markersCompLabels,handler };
-        fxLabel styleLbl2{ 100,0,50,20,"alpha", DEFAULT_LABEL_COLORS ,&styleCont2,&markersCompLabels,handler };
-        fxLabel styleLbl3{ 150,0,50,20,"style", DEFAULT_LABEL_COLORS ,&styleCont3,&markersCompLabels,handler };
-
-        StyleBox(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr);
-        ~StyleBox(){}
-        void changeListenerCallback(juce::ChangeBroadcaster* source);
-    };
-
-    Params* params;
-    std::vector<juce::String> plotParams;
-
-    LegendBox legendBox { 655,26,260,135,this,params, handler,drvr };
-    StyleBox styleBox{ 55,26,260,135,this,params, handler ,drvr };
-            
-   // colorsComponent color{ 373,57,161,25,this,params,handler,enumParmas::gcolor };
-
+ 
     AxesPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
     ~AxesPanel(){}
-    chLabel xVals{ 408,57,150,25,"x-vals",this,params,handler, drvr ,nullptr };
-    chLabel yVals{ 408,87,150,25,"y-vals",this,params,handler, drvr ,nullptr };
-    
-    void MakeGridkwargs();
     
 };
 
@@ -310,4 +248,11 @@ class LegendPanel : public ChartPanel
 public:
     LegendPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
     ~LegendPanel() {}
+};
+
+class AnnotPanel : public ChartPanel
+{
+public:
+    AnnotPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    ~AnnotPanel() {}
 };

@@ -63,6 +63,7 @@ public:
     juce::OwnedArray<ChartPanel> AXpanels; 
     juce::OwnedArray<ChartPanel> CHpanels;
     juce::OwnedArray<ChartPanel> TXpanels;
+    juce::OwnedArray<ChartPanel> ANpanels;
 
    
 
@@ -131,7 +132,7 @@ public:
 //   
 //};
 
-enum ListTypes { axes = 1, chart, text };
+enum ListTypes { axes = 1, chart, text ,annot};
 class ItemList : public juce::ChangeListener, public moveChildComp, public handled
 {
 public:
@@ -277,9 +278,11 @@ public:
 
         int chartListSelected = 0;
         int textListSelected = 0;
+        int annotListSelected = 0;
          
         ItemList plotList{ 130,113,93,236, axes, bottomPanel,parent,handler,chartListSelected };
         ItemList textList{ 30,358,93,236, axes, bottomPanel,parent,handler,textListSelected };
+        ItemList annotList{ 130,358,93,236, axes, bottomPanel,parent,handler,annotListSelected };
 
         ax(Axes& _axes, BottomPanel& _bottomPanel, juce::Component* _parent, pngHandler& _handler) :
         axes(_axes),bottomPanel(_bottomPanel),parent(_parent),handler(_handler){}
@@ -299,14 +302,9 @@ class LeftPanel : public juce::ChangeListener, public childComp, public handled,
 {
 public:
     chBgComp bkgd{ "MASTER GRAY PANEL2.png",this,handler };
-    BottomPanel& bottomPanel;
-    juce::OwnedArray<ItemList> Charts;   
-    juce::OwnedArray<ItemList> Texts;
-        
-    Axes axes{ 0,49,dims[2],45,this,handler };
-      
+    BottomPanel& bottomPanel;        
+    Axes axes{ 0,49,dims[2],45,this,handler };      
     //ChartList::item chartName{ 102, 21, 76, 18, this, handler };
-
     int selected_axes = 0;
 
     ChartList chartList{ 98,48,84,140,axes, bottomPanel,this,handler };
@@ -330,25 +328,6 @@ public:
         axesList.Add.addChangeListener(this);
         axesList.ledarea.mouseD.addChangeListener(this);
         axesList.ledarea.mouseU.addChangeListener(this);
-
-     
-       /* bottomPanel.AXpanels.add(new AxesPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], "??????", &bottomPanel, handler, drvr));
-        axesList.addItem("ax" + juce::String(bottomPanel.AXpanels.size() + 1), ListTypes::axes);
-        bottomPanel.CHpanels.add(new Line2DPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], true,&bottomPanel, handler, drvr));
-        addPanel("Line");
-        bottomPanel.CHpanels.add(new HistPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], false,&bottomPanel, handler, drvr));
-        addPanel("Hist");
-        bottomPanel.CHpanels.add(new BarsPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], true, &bottomPanel, handler, drvr));
-        addPanel("Bars");
-        bottomPanel.CHpanels.add(new PiePanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], false,&bottomPanel, handler, drvr));
-        addPanel("Pie");
-        bottomPanel.CHpanels.add(new ScatterPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], true, &bottomPanel, handler, drvr));
-        addPanel("Scatter");
-        bottomPanel.CHpanels.add(new PolarPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], true, &bottomPanel, handler, drvr));
-        addPanel("Polar");
-        
-        for (auto c : chartList.items)
-            c->lbl.cliked.addChangeListener(this);        */
     }
     ~LeftPanel(){
        

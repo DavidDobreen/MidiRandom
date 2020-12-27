@@ -82,6 +82,7 @@ Line2DPanel::DashJoinstyleKnob::DashJoinstyleKnob(int x, int y, int w, int h, ju
 Line2DPanel::DashCapstyleKnob::DashCapstyleKnob(int x, int y, int w, int h, juce::Component* parent,  pngHandler& handler)
     : moveChildComp(x, y, w, h),   handled(handler, parent, this) {}
 
+
 TextPanel::TextPanel(int x, int y, int w, int h, juce::String paramText, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
     : ChartPanel(x, y, w, h, false, parent, handler, _drvr) {
 
@@ -144,61 +145,24 @@ TextPanel::TextPanel(int x, int y, int w, int h, juce::String paramText, juce::C
 AxesPanel::AxesPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
     : ChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
 
-}
+    pltstr1 = juce::String("plt.grid(");
 
-void AxesPanel::MakeGridkwargs()
-{
-   /* plotParams.clear();
+    addToggleButtonAndLabel(new chToggleButtonAndLabel(609, 160, 85, 25, "show grid", this, itemParams, handler, drvr, &index, "b"));
 
-    plotParams.push_back(" which=" + whichKnobVals[params->gwhichKnob]);
+    addSelectionBox(new SelectionBox(408, 87, { "both", "major", "minor" }, this, itemParams, handler, drvr, &index, "which"));
+    addSelectionBox(new SelectionBox(504, 87, { "both", "x", "y" }, this, itemParams, handler, drvr, &index, "axis"));
 
-    if (params->gaxisKnob)
-        plotParams.push_back(", axis=" + axisKnobVals[params->gaxisKnob]);
+    addSlider(new AlphaSlider(892, 5, 38, 178, this, itemParams, handler, drvr, &index, "alpha"));
 
-    if (params->glineStyleComp)
-        plotParams.push_back(", ls=" + lineStlyeVals[params->glineStyleComp]);
+    addColorsComponent(new colorsComponent(408, 57, 171, 25, "color", this, itemParams, handler, drvr, &index, "color"));
 
-    if (params->galpha != 1.0f)
-        plotParams.push_back(", alpha=" + juce::String(params->galpha));
+    addChKnob(new chKnobClassicBeta(21, 17, 70, 70, "width", LeftBox.conts[0], itemParams, handler, drvr, &index, "linewidth"));
+    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 500, 1);
+    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setValue(100, juce::dontSendNotification);
 
-    if (params->gwidth != 1.0f)
-        plotParams.push_back(", lw=" + juce::String(params->gwidth));
+    addSelectionBox(new SelectionBox(21, 17, { "-", "--", "-.", ":", }, LeftBox.conts[1], itemParams, handler, drvr, &index, "linestyle"));
 
-    if (params->gcolor != "")
-        plotParams.push_back(", c='" + params->gcolor + "'");*/
-
-}
-
-AxesPanel::LegendBox::LegendBox(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr)
-    : moveChildComp(x, y, w, h), paramedBeta(params),handled(handler, parent, this), drvred(drvr)
-{
-    legendLbl.addChangeListener(this);
-    locLbl.addChangeListener(this);
-     
-    horizontal.sldr.setRange(0, 500, 1);
-    horizontal.sldr.setValue(100, juce::dontSendNotification);
     
-    horizontal.LblName.text = "horizontal";
-    vertical.LblName.text = "vertical";
-
-    legendLbl.sendSynchronousChangeMessage();
-}
-
-void AxesPanel::LegendBox::changeListenerCallback(juce::ChangeBroadcaster* source)
-{
-    legendLbl.IsOn = false; legendLbl.repaint();
-    locLbl.IsOn = false; locLbl.repaint();
-    
-    legendCont1.setVisible(false);
-    legendCont2.setVisible(false);
-     
-    fxLabel* lbl = dynamic_cast<fxLabel*>(source);
-    if (lbl != nullptr)
-    {
-        lbl->IsOn = true;
-        lbl->repaint();
-        lbl->comp->setVisible(true);
-    }
 }
 
 Line2DPanel::LineStyleBox::LineStyleBox(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr)
@@ -221,34 +185,6 @@ void Line2DPanel::LineStyleBox::changeListenerCallback(juce::ChangeBroadcaster* 
     lineCont2.setVisible(false);
     lineCont3.setVisible(false);
     
-    fxLabel* lbl = dynamic_cast<fxLabel*>(source);
-    if (lbl != nullptr)
-    {
-        lbl->IsOn = true;
-        lbl->repaint();
-        lbl->comp->setVisible(true);
-    }
-}
-
-AxesPanel::StyleBox::StyleBox(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr)
-    : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvred(drvr) {
-
-    styleLbl1.addChangeListener(this);
-    styleLbl2.addChangeListener(this);
-    styleLbl3.addChangeListener(this);
-
-}
-
-void AxesPanel::StyleBox::changeListenerCallback(juce::ChangeBroadcaster* source)
-{
-    styleLbl1.IsOn = false; styleLbl1.repaint();
-    styleLbl2.IsOn = false; styleLbl2.repaint();
-    styleLbl3.IsOn = false; styleLbl3.repaint();
-
-    styleCont1.setVisible(false);
-    styleCont2.setVisible(false);
-    styleCont3.setVisible(false);
-
     fxLabel* lbl = dynamic_cast<fxLabel*>(source);
     if (lbl != nullptr)
     {
@@ -312,17 +248,18 @@ BarsPanel::BarsPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Compone
 
     addColorsComponent(new colorsComponent(408, 57, 175, 25, "color",this, itemParams, handler, drvr, &index, "color"));
     addColorsComponent(new colorsComponent(408, 82, 175, 25, "edge",this, itemParams, handler, drvr, &index, "edgecolor"));
+    addChLabel(new chLabel(408, 107, 150, 25, "label", this, itemParams, handler, drvr, &index, guiType::_stringQuots));
     addColorsComponent(new colorsComponent(21, 17, 175, 25, "error",RightBox.conts[2], itemParams, handler, drvr, &index, "ecolor"));
 
     //addChLabel(new chLabel(409, 92, 150, 25, "X-cords", this, itemParams, handler, drvr, &index, guiType::_stringArray));
-    addChLabel(new chLabel(408, 107, 150, 25, "tick_label", this, itemParams, handler, drvr, &index, guiType::_stringArray));
+    addChLabel(new chLabel(408, 137, 150, 25, "ticks", this, itemParams, handler, drvr, &index, guiType::_stringArray, "tick_label"));
     addChLabel(new chLabel(21, 17, 150, 25, "xerr", RightBox.conts[0], itemParams, handler, drvr, &index, guiType::_stringArray));
     addChLabel(new chLabel(21, 47, 150, 25, "yerrl", RightBox.conts[0], itemParams, handler, drvr, &index, guiType::_stringArray));
     
     addChKnob(new chKnobClassicBeta(21, 17, 70, 70, "capsize", LeftBox.conts[1], itemParams, handler, drvr, &index, "capsize"));
      
-    addChLabel(new chLabel(408, 132, 150, 25, "width", this, itemParams, handler, drvr, &index, guiType::_float));
-    addChLabel(new chLabel(408, 157, 150, 25, "bottom", this, itemParams, handler, drvr, &index, guiType::_float));
+    addChLabel(new chLabel(21, 17, 150, 25, "width", LeftBox.conts[2], itemParams, handler, drvr, &index, guiType::_float));
+    addChLabel(new chLabel(21, 47, 150, 25, "bottom", LeftBox.conts[2], itemParams, handler, drvr, &index, guiType::_float));
      
     addToggleButtonAndLabel(new chToggleButtonAndLabel(709, 160, 85, 25, "align", this, itemParams, handler, drvr, &index, "align"));
      
@@ -360,7 +297,17 @@ ScatterPanel::ScatterPanel(int x, int y, int w, int h, bool _ShowYinput, juce::C
     : ChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
     pltstr1 = "plt.scatter(";
 
-    addChKnob(new chKnobClassicBeta(21, 17, 70, 70, "alpha", this, itemParams, handler, drvr, &index, "alpha"));
+    addColorsComponent(new colorsComponent(409, 57, 175, 25, "color", this, itemParams, handler, drvr, &index, "c"));
+    addColorsComponent(new colorsComponent(409, 87, 175, 25, "edge", this, itemParams, handler, drvr, &index, "edgecolors"));
+
+    
+    addChKnob(new chKnobClassicBeta(21, 17, 70, 70, "s", LeftBox.conts[0], itemParams, handler, drvr, &index, "s"));
+    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 100000, 1000);
+    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setValue(1000, juce::dontSendNotification);
+
+    addToggleButton(new moveChButton(6, 119, 15, 15, "fx on botton2.png", "fx off botton2.png", &RightBox, itemParams, handler, drvr, &index));
+    addMarkers(new markers(10, 10, 250, 100, RightBox.conts[0], itemParams, handler, drvr, &index, "marker"));
+    addChKnob(new chKnobClassicBeta(121, 17, 70, 70, "linewidths", RightBox.conts[1], itemParams, handler, drvr, &index, "line width"));
 }
 
 PolarPanel::PolarPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
@@ -375,21 +322,35 @@ LegendPanel::LegendPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Com
     addSlider(new AlphaSlider(892, 5, 38, 178, this, itemParams, handler, drvr, &index, "framealpha"));
 
     addColorsComponent(new colorsComponent(408, 57, 175, 25, "color",this, itemParams, handler, drvr, &index, "labelcolor"));
-    addChLabelSmall(new chLabelSmall(408, 87, 93, 15, "ncol", this, itemParams, handler, drvr, &index, guiType::_string));
-    addChLabelSmall(new chLabelSmall(408, 117, 93, 15, "numpoints", this, itemParams, handler, drvr, &index, guiType::_string));
-    addChLabelSmall(new chLabelSmall(408, 147, 93, 15, "scatterpoints", this, itemParams, handler, drvr, &index, guiType::_string));
+    addColorsComponent(new colorsComponent(408, 82, 175, 25, "face", this, itemParams, handler, drvr, &index, "facecolor"));
+    addColorsComponent(new colorsComponent(408, 107, 175, 25, "edge", this, itemParams, handler, drvr, &index, "edgecolor"));
+    addChLabel(new chLabel(408, 132, 150, 25, "title", this, itemParams, handler, drvr, &index, guiType::_stringQuots));
+    addChLabel(new chLabel(408, 157, 150, 25, "scatteryoffsets", this, itemParams, handler, drvr, &index, guiType::_stringArray));
 
-    addColorsComponent(new colorsComponent(21, 17, 175, 25, "face",LeftBox.conts[0], itemParams, handler, drvr, &index, "facecolor"));
-    addColorsComponent(new colorsComponent(21, 47, 175, 25, "edge",LeftBox.conts[0], itemParams, handler, drvr, &index, "edgecolor"));
+    addChLabelSmall(new chLabelSmall(13, 57, 93, 15, "ncol", this, itemParams, handler, drvr, &index, guiType::_string));
+    addChLabelSmall(new chLabelSmall(13, 877, 93, 15, "numpoints", this, itemParams, handler, drvr, &index, guiType::_string));
+    addChLabelSmall(new chLabelSmall(13, 117, 93, 15, "scatterpoints", this, itemParams, handler, drvr, &index, guiType::_string));
 
-    addChKnob(new chKnobClassicBeta(121, 17, 70, 70, "fontsize", LeftBox.conts[1], itemParams, handler, drvr, &index, "fontsize"));
+    addChKnob(new chKnobClassicBeta(21, 17, 70, 70, "fontsize", LeftBox.conts[0], itemParams, handler, drvr, &index, "fontsize"));
+    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 5000, 10);
+    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setValue(100, juce::dontSendNotification);     
+    addChKnob(new chKnobClassicBeta(121, 17, 70, 70, "title_fontsize", LeftBox.conts[0], itemParams, handler, drvr, &index, "fontsize"));
     static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 5000, 10);
     static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setValue(100, juce::dontSendNotification);
 
-    addChLabel(new chLabel(21, 17, 150, 25, "title", LeftBox.conts[2], itemParams, handler, drvr, &index, guiType::_stringQuots));
-    addChKnob(new chKnobClassicBeta(121, 17, 70, 70, "title_fontsize", LeftBox.conts[2], itemParams, handler, drvr, &index, "fontsize"));
-    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 5000, 10);
-    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setValue(100, juce::dontSendNotification);
+    LeftBox.lbls[1]->text = "border";
+    addChKnob(new chKnobClassicBeta(21, 17, 70, 70, "pad", LeftBox.conts[1], itemParams, handler, drvr, &index, "borderpad"));
+    addChKnob(new chKnobClassicBeta(121, 17, 70, 70, "axespad", LeftBox.conts[1], itemParams, handler, drvr, &index, "borderaxespad"));
+
+    LeftBox.lbls[2]->text = "handle";
+    addChKnob(new chKnobClassicBeta(50, 17, 70, 70, "length", LeftBox.conts[2], itemParams, handler, drvr, &index, "handlelength"));
+    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 1000, 10);
+    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setValue(200, juce::dontSendNotification);
+    addChKnob(new chKnobClassicBeta(150, 17, 70, 70, "text pad", LeftBox.conts[2], itemParams, handler, drvr, &index, "handletextpad"));
+    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 1000, 10);
+    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setValue(200, juce::dontSendNotification);
+
+     
 
     addLegends(new Legends(10, 10, 250, 100, RightBox.conts[0], itemParams, handler, drvr, &index));
 
@@ -400,11 +361,30 @@ LegendPanel::LegendPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Com
     static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 5000, 10);
     static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setValue(100, juce::dontSendNotification);
 
-    addToggleButtonAndLabel(new chToggleButtonAndLabel(309, 160, 85, 25, "fancybox", this, itemParams, handler, drvr, &index, "fancybox"));
-    addToggleButtonAndLabel(new chToggleButtonAndLabel(409, 160, 85, 25, "frameon", this, itemParams, handler, drvr, &index, "frameon"));
-    addToggleButtonAndLabel(new chToggleButtonAndLabel(509, 160, 85, 25, "markerfirst", this, itemParams, handler, drvr, &index, "markerfirst"));
-    addToggleButtonAndLabel(new chToggleButtonAndLabel(609, 160, 85, 25, "shadow", this, itemParams, handler, drvr, &index, "shadow"));
+    RightBox.lbls[3]->text = "space";
+    addChKnob(new chKnobClassicBeta(50, 17, 70, 70, "vertical", RightBox.conts[3], itemParams, handler, drvr, &index, "labelspacing"));
+    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 500, 1);
+    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setValue(200, juce::dontSendNotification);
+    addChKnob(new chKnobClassicBeta(150, 17, 70, 70, "coloumn", RightBox.conts[3], itemParams, handler, drvr, &index, "columnspacing"));
+    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 500, 1);
+    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setValue(200, juce::dontSendNotification);
+
+    addToggleButtonAndLabel(new chToggleButtonAndLabel(120, 160, 85, 25, "fancybox", this, itemParams, handler, drvr, &index, "fancybox"));
+    addToggleButtonAndLabel(new chToggleButtonAndLabel(250, 160, 85, 25, "frameon", this, itemParams, handler, drvr, &index, "frameon"));
+    addToggleButtonAndLabel(new chToggleButtonAndLabel(600, 160, 85, 25, "markerfirst", this, itemParams, handler, drvr, &index, "markerfirst"));
+    addToggleButtonAndLabel(new chToggleButtonAndLabel(730, 160, 85, 25, "shadow", this, itemParams, handler, drvr, &index, "shadow"));
 }
+
+
+AnnotPanel::AnnotPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : ChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
+
+    pltstr1 = "plt.annotate(";
+
+    addSlider(new AlphaSlider(892, 5, 38, 178, this, itemParams, handler, drvr, &index, "framealpha"));
+
+}
+
 
 
 
@@ -512,3 +492,4 @@ void ChartPanel::addFourFloats(FourFloats* _floats)
     paramComps.add(_floats);
 }
      
+

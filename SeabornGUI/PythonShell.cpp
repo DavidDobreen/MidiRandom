@@ -36,6 +36,37 @@ void PythonShell::Matplot()
     PyRun_SimpleString("fig, ax = plt.subplots(figsize=(8,5))");  
     const char* close = ");"; //use ";" to supress output
     //int selected = lefPanel.chartList.SelectedChart;     
+
+    if (lefPanel.axesList.items[lefPanel.selected_axes]->params.paramsArray[0]->boolVal)
+    {
+        juce::String pltstr1 = bottomPanel.AXpanels[lefPanel.selected_axes]->pltstr1;
+        plotParams.clear();
+
+        //calculate space for parameters
+        int mlc = strlen(pltstr1.toUTF8()) + 1;
+        for (auto& p : plotParams)
+            mlc += strlen(p.toUTF8());
+        mlc += strlen(close);
+
+        juce::String ChartParams = lefPanel.axesList.items[lefPanel.selected_axes]->params.MakePieKwargs().substring(1);
+        mlc += strlen(ChartParams.toUTF8());
+
+        //allocate space for parameters
+        char* query = (char*)malloc(mlc);
+
+        strcpy(query, pltstr1.toUTF8());
+
+        //convert strings to chars and append
+        for (auto& p : plotParams)
+            strcat(query, p.toUTF8());
+
+        strcat(query, ChartParams.toUTF8());
+
+        strcat(query, close);
+
+        PyRun_SimpleString(query);
+    }
+
     for (auto& i : lefPanel.Fig.axes[lefPanel.selected_axes]->plotList.items)
     {
         juce::String pltstr1 = bottomPanel.CHpanels[i->ChartType]->pltstr1;
@@ -72,6 +103,11 @@ void PythonShell::Matplot()
 
         PyRun_SimpleString(query);
     }
+
+    
+     
+        
+    
 
     for (auto& i : lefPanel.Fig.axes[lefPanel.selected_axes]->textList.items)
     {       
