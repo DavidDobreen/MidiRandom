@@ -149,8 +149,12 @@ AxesPanel::AxesPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Compone
 
     addToggleButtonAndLabel(new chToggleButtonAndLabel(609, 160, 85, 25, "show grid", this, itemParams, handler, drvr, &index, "b"));
 
-    addSelectionBox(new SelectionBox(408, 87, { "both", "major", "minor" }, this, itemParams, handler, drvr, &index, "which"));
-    addSelectionBox(new SelectionBox(504, 87, { "both", "x", "y" }, this, itemParams, handler, drvr, &index, "axis"));
+    addChLabel(new chLabel(408, 87, 150, 25, "xlim", this, itemParams, handler, drvr, &index, guiType::_function));
+    addChLabel(new chLabel(408, 117, 150, 25, "ylim", this, itemParams, handler, drvr, &index, guiType::_function));
+     
+
+    addSelectionBox(new SelectionBox(25, 26, { "both", "major", "minor" }, this, itemParams, handler, drvr, &index, "which"));
+    addSelectionBox(new SelectionBox(25, 100, { "both", "x", "y" }, this, itemParams, handler, drvr, &index, "axis"));
 
     addSlider(new AlphaSlider(892, 5, 38, 178, this, itemParams, handler, drvr, &index, "alpha"));
 
@@ -307,7 +311,7 @@ ScatterPanel::ScatterPanel(int x, int y, int w, int h, bool _ShowYinput, juce::C
 
     addToggleButton(new moveChButton(6, 119, 15, 15, "fx on botton2.png", "fx off botton2.png", &RightBox, itemParams, handler, drvr, &index));
     addMarkers(new markers(10, 10, 250, 100, RightBox.conts[0], itemParams, handler, drvr, &index, "marker"));
-    addChKnob(new chKnobClassicBeta(121, 17, 70, 70, "linewidths", RightBox.conts[1], itemParams, handler, drvr, &index, "line width"));
+    addChKnob(new chKnobClassicBeta(121, 17, 70, 70, "edge width", RightBox.conts[1], itemParams, handler, drvr, &index, "linewidths"));
 }
 
 PolarPanel::PolarPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
@@ -381,7 +385,11 @@ AnnotPanel::AnnotPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Compo
 
     pltstr1 = "plt.annotate(";
 
-    addSlider(new AlphaSlider(892, 5, 38, 178, this, itemParams, handler, drvr, &index, "framealpha"));
+    addChLabel(new chLabel(408, 57, 150, 25, "text", this, itemParams, handler, drvr, &index, guiType::_stringQuots));
+    addChLabel(new chLabel(408, 87, 150,25, "xy", this, itemParams, handler, drvr, &index, guiType::_stringArray));
+    addChLabel(new chLabel(408, 117, 150, 25, "xytext", this, itemParams, handler, drvr, &index, guiType::_stringArray));
+    addSlider(new AlphaSlider(892, 5, 38, 178, this, itemParams, handler, drvr, &index, "alpha"));
+    addSelectionBox(new SelectionBox(5, 5, { "data","figure points", "figure pixels", "figure fraction", "axes points","axes pixels","axes fraction","polar" }, LeftBox.conts[0], itemParams, handler, drvr, &index, "xycoords"));
 
 }
 

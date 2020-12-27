@@ -241,7 +241,8 @@ void LeftPanel::changeListenerCallback(juce::ChangeBroadcaster* source)
         handler.bkgdRszr.clear();
         bottomPanel.ANpanels.add(new AnnotPanel(0, 0, bottomPanel.dims[2], bottomPanel.dims[3], "annotate", &bottomPanel, handler, drvr));
         Fig.axes[selected_axes]->annotList.addItem("annot", ListTypes::annot);        
-        handler.InitGUI();              
+        handler.InitGUI();     
+        drvr.InitGUI();
         Fig.axes[selected_axes]->annotList.items.getLast()->lbl.sendSynchronousChangeMessage();
         bottomPanel.ActivePanel = bottomPanel.ANpanels.getLast();
         Fig.refresh();
@@ -269,7 +270,7 @@ void LeftPanel::changeListenerCallback(juce::ChangeBroadcaster* source)
         Fig.axes[selected_axes]->annotList.Remove.setVisible(false);
         Fig.axes[selected_axes]->annotList.Remove.setVisible(true);
         Fig.axes[selected_axes]->annotList.items.remove(Fig.axes[selected_axes]->annotList.selected);       
-        Fig.refresh();
+        Fig.refresh();        
         Fig.axes[selected_axes]->plotList.items.getLast()->lbl.sendSynchronousChangeMessage();
         return;
     }
@@ -507,7 +508,6 @@ ItemList::item::item(int x, int y, int w, int h, juce::Array<paramedBeta*>* _par
     : moveChildComp(x, y, w, h), handled(handler, parent, this) {
     for (int i = 0; i < _paramComps->size(); i++)
     {
-        DBG((*_paramComps)[i]->guiType);
         switch ((*_paramComps)[i]->guiType)
         {
         case (guiType::_float):
@@ -541,6 +541,12 @@ ItemList::item::item(int x, int y, int w, int h, juce::Array<paramedBeta*>* _par
         case (guiType::_list):
         {
             params.paramsArray.add(new paramList((*_paramComps)[i]->paramText));
+            break;
+        }
+
+        case (guiType::_function):
+        {
+            params.paramsArray.add(new paramFunction((*_paramComps)[i]->paramText, params.paramsArray[i - 1]->boolVal,params.functions));
             break;
         }
 

@@ -12,6 +12,7 @@
 
 juce::String Params::MakePieKwargs(){
     PlotKwargs = "";
+    functions.clear();
     for (auto& p : paramsArray)
         p->makeKwarg(PlotKwargs);
     return PlotKwargs;}

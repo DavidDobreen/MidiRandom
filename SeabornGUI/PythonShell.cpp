@@ -30,15 +30,16 @@ PythonShell::~PythonShell()
 
 void PythonShell::Matplot()
 {
-    
+
     plotParams.clear();
-   
-    PyRun_SimpleString("fig, ax = plt.subplots(figsize=(8,5))");  
+
+    PyRun_SimpleString("fig, ax = plt.subplots(figsize=(8,5))");
     const char* close = ");"; //use ";" to supress output
     //int selected = lefPanel.chartList.SelectedChart;     
 
-    if (lefPanel.axesList.items[lefPanel.selected_axes]->params.paramsArray[0]->boolVal)
+    for (auto& i : lefPanel.axesList.items)
     {
+
         juce::String pltstr1 = bottomPanel.AXpanels[lefPanel.selected_axes]->pltstr1;
         plotParams.clear();
 
@@ -49,95 +50,140 @@ void PythonShell::Matplot()
         mlc += strlen(close);
 
         juce::String ChartParams = lefPanel.axesList.items[lefPanel.selected_axes]->params.MakePieKwargs().substring(1);
-        mlc += strlen(ChartParams.toUTF8());
+        if (i->params.paramsArray[0]->boolVal)
+        {
+            mlc += strlen(ChartParams.toUTF8());
 
-        //allocate space for parameters
-        char* query = (char*)malloc(mlc);
+            //allocate space for parameters
+            char* query = (char*)malloc(mlc);
 
-        strcpy(query, pltstr1.toUTF8());
+            strcpy(query, pltstr1.toUTF8());
 
-        //convert strings to chars and append
-        for (auto& p : plotParams)
-            strcat(query, p.toUTF8());
+            //convert strings to chars and append
+            for (auto& p : plotParams)
+                strcat(query, p.toUTF8());
 
-        strcat(query, ChartParams.toUTF8());
+            strcat(query, ChartParams.toUTF8());
 
-        strcat(query, close);
+            strcat(query, close);
 
-        PyRun_SimpleString(query);
+            PyRun_SimpleString(query);
+        }
+
+        for (auto& f : i->params.functions)
+        {
+            char* query = (char*)malloc(strlen(f.toUTF8()));
+            strcpy(query, f.toUTF8());
+            PyRun_SimpleString(query);
+        }
+
+        for (auto& i : lefPanel.Fig.axes[lefPanel.selected_axes]->plotList.items)
+        {
+            juce::String pltstr1 = bottomPanel.CHpanels[i->ChartType]->pltstr1;
+            plotParams.clear();
+            lefPanel.axes.xValues.targetLineListItemVals = &i->xValues;
+            lefPanel.axes.yValues.targetLineListItemVals = &i->yValues;
+            lefPanel.axes.ShowYinput = bottomPanel.CHpanels[i->ChartType]->ShowYinput;
+            lefPanel.axes.makeArgs();
+
+            plotParams.insert(plotParams.end(), lefPanel.axes.plotParams.begin(), lefPanel.axes.plotParams.end());
+
+            //calculate space for parameters
+            int mlc = strlen(pltstr1.toUTF8()) + 1;
+            for (auto& p : plotParams)
+                mlc += strlen(p.toUTF8());
+            mlc += strlen(close);
+
+
+            juce::String ChartParams = i->params.MakePieKwargs();
+            mlc += strlen(ChartParams.toUTF8());
+
+            //allocate space for parameters
+            char* query = (char*)malloc(mlc);
+
+            strcpy(query, pltstr1.toUTF8());
+
+            //convert strings to chars and append
+            for (auto& p : plotParams)
+                strcat(query, p.toUTF8());
+
+            strcat(query, ChartParams.toUTF8());
+
+            strcat(query, close);
+
+            PyRun_SimpleString(query);
+
+
+
+
+        }
+
+        for (auto& i : lefPanel.Fig.axes[lefPanel.selected_axes]->textList.items)
+        {
+            juce::String pltstr1 = bottomPanel.TXpanels[i->index]->pltstr1;
+            plotParams.clear();
+
+            //calculate space for parameters
+            int mlc = strlen(pltstr1.toUTF8()) + 1;
+            for (auto& p : plotParams)
+                mlc += strlen(p.toUTF8());
+            mlc += strlen(close);
+
+            juce::String ChartParams = i->params.MakePieKwargs().substring(1);
+            mlc += strlen(ChartParams.toUTF8());
+
+            //allocate space for parameters
+            char* query = (char*)malloc(mlc);
+
+            strcpy(query, pltstr1.toUTF8());
+
+            //convert strings to chars and append
+            for (auto& p : plotParams)
+                strcat(query, p.toUTF8());
+
+            strcat(query, ChartParams.toUTF8());
+
+            strcat(query, close);
+
+            PyRun_SimpleString(query);
+        }
+
+        for (auto& i : lefPanel.Fig.axes[lefPanel.selected_axes]->annotList.items)
+        {
+            juce::String pltstr1 = bottomPanel.ANpanels[i->index]->pltstr1;
+            plotParams.clear();
+
+            //calculate space for parameters
+            int mlc = strlen(pltstr1.toUTF8()) + 1;
+            for (auto& p : plotParams)
+                mlc += strlen(p.toUTF8());
+            mlc += strlen(close);
+
+            juce::String ChartParams = i->params.MakePieKwargs().substring(1);
+            mlc += strlen(ChartParams.toUTF8());
+
+            //allocate space for parameters
+            char* query = (char*)malloc(mlc);
+
+            strcpy(query, pltstr1.toUTF8());
+
+            //convert strings to chars and append
+            for (auto& p : plotParams)
+                strcat(query, p.toUTF8());
+
+            strcat(query, ChartParams.toUTF8());
+
+            strcat(query, close);
+
+            PyRun_SimpleString(query);
+        }
     }
-
-    for (auto& i : lefPanel.Fig.axes[lefPanel.selected_axes]->plotList.items)
-    {
-        juce::String pltstr1 = bottomPanel.CHpanels[i->ChartType]->pltstr1;
-        plotParams.clear();         
-        lefPanel.axes.xValues.targetLineListItemVals = &i->xValues;
-        lefPanel.axes.yValues.targetLineListItemVals = &i->yValues;
-        lefPanel.axes.ShowYinput = bottomPanel.CHpanels[i->ChartType]->ShowYinput;
-        lefPanel.axes.makeArgs();
-
-        plotParams.insert(plotParams.end(), lefPanel.axes.plotParams.begin(), lefPanel.axes.plotParams.end());
-
-        //calculate space for parameters
-        int mlc = strlen(pltstr1.toUTF8()) + 1;
-        for (auto& p : plotParams)
-            mlc += strlen(p.toUTF8());
-        mlc += strlen(close);
-
-       
-        juce::String ChartParams = i->params.MakePieKwargs();
-        mlc += strlen(ChartParams.toUTF8());
-
-        //allocate space for parameters
-        char* query = (char*)malloc(mlc);
-
-        strcpy(query, pltstr1.toUTF8());
-
-        //convert strings to chars and append
-        for (auto& p : plotParams)
-            strcat(query, p.toUTF8());
-
-        strcat(query, ChartParams.toUTF8());
-
-        strcat(query, close);
-
-        PyRun_SimpleString(query);
-    }
+  
+    
 
     
-     
-        
-    
 
-    for (auto& i : lefPanel.Fig.axes[lefPanel.selected_axes]->textList.items)
-    {       
-        juce::String pltstr1 = bottomPanel.TXpanels[i->index]->pltstr1;
-        plotParams.clear();         
-        
-        //calculate space for parameters
-        int mlc = strlen(pltstr1.toUTF8()) + 1;
-        for (auto& p : plotParams)
-            mlc += strlen(p.toUTF8());
-        mlc += strlen(close);
-      
-        juce::String ChartParams = i->params.MakePieKwargs().substring(1);
-        mlc += strlen(ChartParams.toUTF8());
 
-        //allocate space for parameters
-        char* query = (char*)malloc(mlc);
-
-        strcpy(query, pltstr1.toUTF8());
-
-        //convert strings to chars and append
-        for (auto& p : plotParams)
-            strcat(query, p.toUTF8());
-
-        strcat(query, ChartParams.toUTF8());
-
-        strcat(query, close);
-
-        PyRun_SimpleString(query);
-    }
 
     //}
 
@@ -211,6 +257,6 @@ void PythonShell::Matplot()
     }*/
             
    //PyRun_SimpleString("plt.savefig('output.png',transparent=True)");
-  // PyRun_SimpleString("plt.legend();");
-   PyRun_SimpleString("plt.savefig('output.png')");
+    // PyRun_SimpleString("plt.legend();");
+    PyRun_SimpleString("plt.savefig('output.png')");
 }

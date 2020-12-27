@@ -88,8 +88,7 @@ public:
 
 class paramList : public paramedType
 {
-public:
-    //juce::String val;
+public:    
     paramList(juce::String _param) : paramedType(_param) {}
     ~paramList(){}
     void makeKwarg(juce::String& args) {
@@ -104,6 +103,19 @@ public:
     }
 };
 
+class paramFunction : public paramedType
+{
+public:
+    bool& myBool;
+    std::vector<juce::String>& functions;
+    paramFunction(juce::String _param, bool& _myBool, std::vector<juce::String>& _functions) : paramedType(_param),myBool(_myBool),functions(_functions) {}
+    ~paramFunction() {}
+
+    void makeKwarg(juce::String& args) {
+        if (myBool && stringText != "") functions.push_back("plt."+ param + "(" + stringText + ");");
+    }
+};
+
 class Params
 {
 public:
@@ -111,13 +123,14 @@ public:
     juce::OwnedArray<paramedType> paramsArray;
 
     juce::String PlotKwargs;
+    std::vector<juce::String> functions;
      
     juce::String MakePieKwargs();
- 
+    
 };
 
 enum guiType {
-    _float = 1,_string, _stringQuots,_stringArray,_bool,_list
+    _float = 1,_string, _stringQuots,_stringArray,_bool,_list,_function
 };
 class paramedBeta
 {    
