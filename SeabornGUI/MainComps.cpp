@@ -544,6 +544,18 @@ ItemList::item::item(int x, int y, int w, int h, juce::Array<paramedBeta*>* _par
             break;
         }
 
+        case (guiType::_dictStart):
+        {
+            params.paramsArray.add(new paramDictstart((*_paramComps)[i]->paramText));
+            break;
+        }
+
+        case (guiType::_dictEnd):
+        {
+            params.paramsArray.add(new paramDictEnd((*_paramComps)[i]->paramText));
+            break;
+        }
+
         case (guiType::_function):
         {
             params.paramsArray.add(new paramFunction((*_paramComps)[i]->paramText, params.paramsArray[i - 1]->boolVal,params.functions));

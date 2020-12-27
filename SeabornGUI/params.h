@@ -103,6 +103,36 @@ public:
     }
 };
 
+class paramDictstart : public paramedType
+{
+public:  
+    paramDictstart(juce::String _param) : paramedType(_param) {}
+    ~paramDictstart() {}
+
+    void makeKwarg(juce::String& args) {
+        if (param != "" && boolVal) args += "," + param + "=dict(";
+    }
+};
+class paramDictEnd : public paramedType
+{
+public:
+    paramDictEnd(juce::String _param) : paramedType(_param) {}
+    ~paramDictEnd() {}
+
+    void makeKwarg(juce::String& args) {
+        if (param != "")
+        {
+            int x = args.indexOf("(,");
+            if (x > 0)
+            {
+                auto newString = args.replace("(,", "(");
+                args = newString + param;
+            }                       
+        }        
+    }
+};
+
+
 class paramFunction : public paramedType
 {
 public:
@@ -130,7 +160,7 @@ public:
 };
 
 enum guiType {
-    _float = 1,_string, _stringQuots,_stringArray,_bool,_list,_function
+    _float = 1,_string, _stringQuots,_stringArray,_bool,_list,_dictStart,_dictEnd,_function
 };
 class paramedBeta
 {    

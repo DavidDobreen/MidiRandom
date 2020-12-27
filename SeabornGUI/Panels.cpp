@@ -391,11 +391,33 @@ AnnotPanel::AnnotPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Compo
     addSlider(new AlphaSlider(892, 5, 38, 178, this, itemParams, handler, drvr, &index, "alpha"));
     addSelectionBox(new SelectionBox(5, 5, { "data","figure points", "figure pixels", "figure fraction", "axes points","axes pixels","axes fraction","polar" }, LeftBox.conts[0], itemParams, handler, drvr, &index, "xycoords"));
 
+
+    //arraw dict start
+    addToggleButton(new moveChButton(6, 119, 15, 15, "fx on botton2.png", "fx off botton2.png", &RightBox, itemParams, handler, drvr, &index,"arrowprops",guiType::_dictStart));
+    addChLabelSmall(new chLabelSmall(21, 17, 93, 15, "posA", RightBox.conts[0], itemParams, handler, drvr, &index, guiType::_string));
+    addChLabelSmall(new chLabelSmall(21, 37, 93, 15, "posB", RightBox.conts[0], itemParams, handler, drvr, &index, guiType::_string));
+    addChLabelSmall(new chLabelSmall(121, 17, 93, 15, "shrinkA", RightBox.conts[0], itemParams, handler, drvr, &index, guiType::_string));
+    addChLabelSmall(new chLabelSmall(121, 37, 93, 15, "shrinkB", RightBox.conts[0], itemParams, handler, drvr, &index, guiType::_string));
+
+    addColorsComponent(new colorsComponent(21, 17, 175, 25, "color", RightBox.conts[1], itemParams, handler, drvr, &index,"facecolor"));
+    addColorsComponent(new colorsComponent(21, 17, 175, 25, "edge", RightBox.conts[1], itemParams, handler, drvr, &index,"edgecolor"));
+
+    addChKnob(new chKnobClassicBeta(21, 17, 70, 70, "width", RightBox.conts[2], itemParams, handler, drvr, &index, "width"));
+    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 2000, 1);
+    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setValue(200, juce::dontSendNotification);
+    addChKnob(new chKnobClassicBeta(91, 17, 70, 70, "headwidth", RightBox.conts[2], itemParams, handler, drvr, &index, "headwidth"));
+    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 2000, 1);
+    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setValue(200, juce::dontSendNotification);
+    addChKnob(new chKnobClassicBeta(161, 17, 70, 70, "headlength", RightBox.conts[2], itemParams, handler, drvr, &index, "headlength"));
+    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 2000, 1);
+    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setValue(200, juce::dontSendNotification);
+    addChKnob(new chKnobClassicBeta(21, 17, 70, 70, "shrink", RightBox.conts[3], itemParams, handler, drvr, &index, "shrink"));
+     
+    paramComps.add(new paramedBeta(itemParams));
+    paramComps.getLast()->guiType = guiType::_dictEnd;
+    paramComps.getLast()->paramText = ")";
+    // arrow dict end
 }
-
-
-
-
 
 ChartPanel::ChartPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
     : ShowYinput(_ShowYinput), moveChildComp(x, y, w, h), handled(handler, parent, this), drvred(_drvr){}

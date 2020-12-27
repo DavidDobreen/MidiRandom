@@ -133,6 +133,9 @@ public:
             index = *_index;
             (*_index)++;
         }       
+
+        if (_paramText != "")
+            paramText = _paramText;
         drvr.ShellNotifiers.add(this);
     }
 
@@ -306,7 +309,7 @@ public:
         ~icon(){}
     };
 
-    class iconArea : public juce::ChangeListener, public moveChildComp, public handled
+    class iconArea : public juce::ChangeListener, public moveChildComp, public handled, public drvred
     {
     public:
 
@@ -316,8 +319,8 @@ public:
 
         SafePointer<Component> win;
 
-        iconArea(int x, int y, int w, int h, chLabel& _selection, juce::Component* parent, /*Params*& params,*/ pngHandler& handler)
-            : selection(_selection), moveChildComp(x, y, w, h), /*paramedBeta(params),*/ handled(handler, parent, this) {}
+        iconArea(int x, int y, int w, int h, chLabel& _selection, juce::Component* parent, pngHandler& handler,Drvr& _drvr)
+            : selection(_selection), moveChildComp(x, y, w, h),  handled(handler, parent, this),drvred(_drvr) {}
         ~iconArea(){}
         
         void mouseDown(const juce::MouseEvent& event) {
@@ -357,11 +360,9 @@ public:
 
     };
    
-
-
     chLabel selection{ 0, 0, 150, 25, "color", this, params, handler, drvr, &index, guiType::_stringQuots };
     colorsComponent::icon icon{ 150,-7,41,22,this,handler };
-    colorsComponent::iconArea area{ 150,-7,41,22,selection,this,handler };
+    colorsComponent::iconArea area{ 150,-7,41,22,selection,this,handler,drvr };
     
     colorsComponent(int x, int y, int w, int h, juce::String lblName, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr,
         int* _index, juce::String _paramText = "", int guiType = guiType::_stringQuots)
@@ -374,15 +375,11 @@ public:
             selection.lbl.index = *_index;
             (*_index)++;
         }       
-        selection.lblName.IsOn = true;
-        selection.lblName.text = lblName;
-
-        
-        GuiClass = 8;         
-        
+        //selection.lblName.IsOn = true;
+        selection.lblName.text = lblName;        
+        GuiClass = 8;                
         selection.lblName.guiType = guiType::_bool;
          
-
         if (_paramText != "")
             selection.lbl.paramText = _paramText;
     }
