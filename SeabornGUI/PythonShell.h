@@ -35,9 +35,7 @@ public:
     ChartArea& chartArea;
     LeftPanel& lefPanel;
     BottomPanel& bottomPanel;
-
-    std::vector<juce::String> plotParams;
-
+    
     PythonShell(LeftPanel& _lefPanel, BottomPanel& _bottomPanel, ChartArea& chart);
     ~PythonShell();
 

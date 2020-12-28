@@ -400,7 +400,7 @@ AnnotPanel::AnnotPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Compo
     addChLabelSmall(new chLabelSmall(121, 37, 93, 15, "shrinkB", RightBox.conts[0], itemParams, handler, drvr, &index, guiType::_string));
 
     addColorsComponent(new colorsComponent(21, 17, 175, 25, "color", RightBox.conts[1], itemParams, handler, drvr, &index,"facecolor"));
-    addColorsComponent(new colorsComponent(21, 17, 175, 25, "edge", RightBox.conts[1], itemParams, handler, drvr, &index,"edgecolor"));
+    addColorsComponent(new colorsComponent(21, 47, 175, 25, "edge", RightBox.conts[1], itemParams, handler, drvr, &index,"edgecolor"));
 
     addChKnob(new chKnobClassicBeta(21, 17, 70, 70, "width", RightBox.conts[2], itemParams, handler, drvr, &index, "width"));
     static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 2000, 1);

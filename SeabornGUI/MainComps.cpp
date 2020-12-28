@@ -49,13 +49,13 @@ Axes::input::input(int x, int y, int w, int h, juce::Component* parent, pngHandl
 
 Axes::Axes(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : moveChildComp(x, y, w, h), handled(handler, parent, this){}
 
-void Axes::makeArgs()
+juce::String Axes::makeArgs()
 {   
-    plotParams.clear();
+    //plotParams.clear();
     if (ShowYinput)
-        plotParams.push_back("(" + *xValues.targetLineListItemVals + "),(" + *yValues.targetLineListItemVals + ")");
+        return "(" + *xValues.targetLineListItemVals + "),(" + *yValues.targetLineListItemVals + ")";
     else
-        plotParams.push_back("(" + *xValues.targetLineListItemVals + ")");
+        return "(" + *xValues.targetLineListItemVals + ")";
 }
 
 //TextList::TextList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler)

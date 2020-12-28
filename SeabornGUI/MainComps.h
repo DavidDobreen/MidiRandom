@@ -43,14 +43,14 @@ public:
     };
 
     bool ShowYinput = true;
-    std::vector<juce::String> plotParams;
+     
 
     input xValues{ 25,0,228,17,this,handler };
     input yValues{ 25,25,228,17,this,handler };
 
     Axes(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler);
 
-    void makeArgs();
+    juce::String makeArgs();
     void refresh() {
         xValues.refresh();
         yValues.refresh();
