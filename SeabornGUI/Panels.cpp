@@ -71,13 +71,6 @@ void Line2DPanel::MarkersBox::changeListenerCallback(juce::ChangeBroadcaster* so
     }
 }
 
-Line2DPanel::DashJoinstyleKnob::DashJoinstyleKnob(int x, int y, int w, int h, juce::Component* parent,  pngHandler& handler)
-    : moveChildComp(x, y, w, h), handled(handler, parent, this) {}
-
-Line2DPanel::DashCapstyleKnob::DashCapstyleKnob(int x, int y, int w, int h, juce::Component* parent,  pngHandler& handler)
-    : moveChildComp(x, y, w, h),   handled(handler, parent, this) {}
-
-
 TextPanel::TextPanel(int x, int y, int w, int h, juce::String paramText, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
     : ChartPanel(x, y, w, h, false, parent, handler, _drvr) {
 
@@ -180,17 +173,7 @@ void Line2DPanel::LineStyleBox::changeListenerCallback(juce::ChangeBroadcaster* 
         lbl->comp->setVisible(true);
     }
 }
-
-TextPanel::FontFamilyKnob::FontFamilyKnob(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr)
-    : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvred(drvr) {
-    vals.sldr.setRange(0, 5, 1);
-}
-
-TextPanel::FontStyleKnob::FontStyleKnob(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr)
-    : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvred(drvr) {
-    vals.sldr.setRange(0, 2, 1);
-}
-
+ 
 HistPanel::HistPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
     : ChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
     pltstr1 = "n,bins,patches = ax.hist(";
@@ -316,9 +299,9 @@ LegendPanel::LegendPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Com
     addChLabel(new chLabel(408, 132, 150, 25, "title", this, itemParams, handler, drvr, &index,"",guiType::_stringQuots));
     addChLabel(new chLabel(408, 157, 150, 25, "scatteryoffsets", this, itemParams, handler, drvr, &index, "",guiType::_stringArray));
 
-    addChLabelSmall(new chLabelSmall(13, 57, 93, 15, "ncol", this, itemParams, handler, drvr, &index, guiType::_string));
-    addChLabelSmall(new chLabelSmall(13, 877, 93, 15, "numpoints", this, itemParams, handler, drvr, &index, guiType::_string));
-    addChLabelSmall(new chLabelSmall(13, 117, 93, 15, "scatterpoints", this, itemParams, handler, drvr, &index, guiType::_string));
+    addChLabelSmall(new chLabelSmall(13, 57, 93, 15, "ncol", this, itemParams, handler, drvr, &index, "",guiType::_string));
+    addChLabelSmall(new chLabelSmall(13, 877, 93, 15, "numpoints", this, itemParams, handler, drvr, &index, "",guiType::_string));
+    addChLabelSmall(new chLabelSmall(13, 117, 93, 15, "scatterpoints", this, itemParams, handler, drvr, &index, "",guiType::_string));
 
     addChKnob(new chKnobClassicBeta(21, 17, 70, 70, "fontsize", LeftBox.conts[0], itemParams, handler, drvr, &index, "fontsize"));
     static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 5000, 10);
@@ -364,7 +347,6 @@ LegendPanel::LegendPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Com
     addToggleButtonAndLabel(new chToggleButtonAndLabel(730, 160, 85, 25, "shadow", this, itemParams, handler, drvr, &index, "shadow"));
 }
 
-
 AnnotPanel::AnnotPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
     : ChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
 
@@ -379,10 +361,10 @@ AnnotPanel::AnnotPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Compo
 
     //arraw dict start
     addToggleButton(new moveChButton(6, 119, 15, 15, "fx on botton2.png", "fx off botton2.png", &RightBox, itemParams, handler, drvr, &index,"arrowprops",guiType::_dictStart));
-    addChLabelSmall(new chLabelSmall(21, 17, 93, 15, "posA", RightBox.conts[0], itemParams, handler, drvr, &index, guiType::_string));
-    addChLabelSmall(new chLabelSmall(21, 37, 93, 15, "posB", RightBox.conts[0], itemParams, handler, drvr, &index, guiType::_string));
-    addChLabelSmall(new chLabelSmall(121, 17, 93, 15, "shrinkA", RightBox.conts[0], itemParams, handler, drvr, &index, guiType::_string));
-    addChLabelSmall(new chLabelSmall(121, 37, 93, 15, "shrinkB", RightBox.conts[0], itemParams, handler, drvr, &index, guiType::_string));
+    addChLabelSmall(new chLabelSmall(21, 17, 93, 15, "posA", RightBox.conts[0], itemParams, handler, drvr, &index,"", guiType::_string));
+    addChLabelSmall(new chLabelSmall(21, 37, 93, 15, "posB", RightBox.conts[0], itemParams, handler, drvr, &index, "",guiType::_string));
+    addChLabelSmall(new chLabelSmall(121, 17, 93, 15, "shrinkA", RightBox.conts[0], itemParams, handler, drvr, &index, "",guiType::_string));
+    addChLabelSmall(new chLabelSmall(121, 37, 93, 15, "shrinkB", RightBox.conts[0], itemParams, handler, drvr, &index, "",guiType::_string));
 
     addColorsComponent(new colorsComponent(21, 17, 175, 25, "color", RightBox.conts[1], itemParams, handler, drvr, &index,"facecolor"));
     addColorsComponent(new colorsComponent(21, 47, 175, 25, "edge", RightBox.conts[1], itemParams, handler, drvr, &index,"edgecolor"));
@@ -403,6 +385,39 @@ AnnotPanel::AnnotPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Compo
     paramComps.getLast()->paramText = ")";
     // arrow dict end
 }
+
+ReplotPanel::ReplotPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : ChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
+
+    pltstr1 = "sns.relplot(";
+   
+
+    addChLabel(new chLabel(408, 57, 150, 25, "data", this, itemParams, handler, drvr, &index, "", guiType::_string));
+    addChLabel(new chLabel(408, 87, 150, 25, "hue", this, itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+    addChLabel(new chLabel(408, 117, 150, 25, "size", this, itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+    addChLabel(new chLabel(408, 147, 150, 25, "style", this, itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+
+    addChLabel(new chLabel(21, 17, 150, 25, "row", LeftBox.conts[0], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+    addChLabel(new chLabel(21, 47, 150, 25, "col", LeftBox.conts[0], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+    addChLabelSmall(new chLabelSmall(221, 47, 150, 25, "col_wrap", LeftBox.conts[0], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+
+    addChLabel(new chLabel(21, 17, 150, 25, "row_order", LeftBox.conts[1], itemParams, handler, drvr, &index, "", guiType::_stringArray));
+    addChLabel(new chLabel(21, 47, 150, 25, "col_order", LeftBox.conts[1], itemParams, handler, drvr, &index, "", guiType::_stringArray));
+
+    addChLabel(new chLabel(21, 17, 150, 25, "sizes", LeftBox.conts[2], itemParams, handler, drvr, &index, "", guiType::_stringArray));
+    addChLabel(new chLabel(21, 47, 150, 25, "size_order", LeftBox.conts[2], itemParams, handler, drvr, &index, "", guiType::_stringArray));
+    addChLabel(new chLabel(21, 47, 150, 25, "size_norm", LeftBox.conts[2], itemParams, handler, drvr, &index, "", guiType::_stringArray));
+
+    addChLabel(new chLabel(21, 17, 150, 25, "palette", RightBox.conts[0], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+    addChLabel(new chLabel(21, 47, 150, 25, "hue_order", RightBox.conts[0], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+    addChLabel(new chLabel(21, 77, 150, 25, "hue_norm", RightBox.conts[0], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+
+    addChLabel(new chLabel(21, 17, 150, 25, "style", RightBox.conts[1], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+
+
+}
+
+
 
 ChartPanel::ChartPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
     : ShowYinput(_ShowYinput), moveChildComp(x, y, w, h), handled(handler, parent, this), drvred(_drvr){}

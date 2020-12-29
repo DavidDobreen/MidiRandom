@@ -331,7 +331,7 @@ void FourFloats::changeListenerCallback(juce::ChangeBroadcaster* source)
     sendSynchronousChangeMessage();
 }
 
-chLabelSmall::chLabelSmall(int x, int y, int w, int h, juce::String name, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr, int* _index, int guiType, juce::String paramText)
+chLabelSmall::chLabelSmall(int x, int y, int w, int h, juce::String name, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr, int* _index, juce::String _paramText, int _guiType)
     : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvrShellNotifer(drvr) {
     lblName.text = name;
     addAndMakeVisible(lbl);
@@ -349,13 +349,13 @@ chLabelSmall::chLabelSmall(int x, int y, int w, int h, juce::String name, juce::
     }
 
     GuiClass = 11; //This is chLabel
-    lbl.guiType = guiType; //This is a string/string array
+    lbl.guiType = _guiType; //This is a string/string array
     lblName.guiType = guiType::_bool;  // This is a boolean   
 
-    if (name != "" && paramText == "")
+    if (name != "" && _paramText == "")
         lbl.paramText = name;
-    else if (name != "" && paramText != "")
-        lbl.paramText = paramText;
+    else if (name != "" && _paramText != "")
+        lbl.paramText = _paramText;        
 }
 
 void chLabelSmall::changeListenerCallback(juce::ChangeBroadcaster* source)

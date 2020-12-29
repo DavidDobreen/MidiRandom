@@ -292,7 +292,7 @@ public:
     labelTextBox lbl{ 60,0,33,15,lblName,this,params,handler,drvr };
 
     chLabelSmall(int x, int y, int w, int h, juce::String name, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr,
-        int* _index, int guiType = guiType::_stringQuots, juce::String paramText = "");
+        int* _index, juce::String paramText = "", int guiType = guiType::_stringQuots);
     ~chLabelSmall() {}
     void changeListenerCallback(juce::ChangeBroadcaster* source);
     void paramRefresh() override;

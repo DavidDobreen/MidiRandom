@@ -14,9 +14,13 @@
 class MainChart : public childComp, public handled 
 {
 public:   
-    juce::ImageComponent bkgd;     
+    juce::ImageComponent bkgd; 
+    juce::Viewport ChartViewPort;
     MainChart(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : childComp(x, y, w, h), handled(handler, parent, this){
-        addAndMakeVisible(bkgd);
+        //addAndMakeVisible(bkgd);
+        addAndMakeVisible(ChartViewPort);
+        ChartViewPort.setBounds(0,0,910,580);
+        ChartViewPort.setViewedComponent(&bkgd);
     }
 private:
 };
@@ -50,7 +54,7 @@ public:
     ImageComp bkgd{ 0,0,dims[2],dims[3],png, this, handler };
     juce::String pngFrame = "Grid frame black2.png";
     ImageComp frame{ 0,0,dims[2],dims[3],pngFrame, this, handler };
-    MainChart chart{ 80, 55, 350, 576, this, handler };
+    MainChart chart{ 15, 15, 350, 576, this, handler };
     ShellWindow shell{ 20, 20, dims[2]-50, dims[3]-55, this, handler };
 
 

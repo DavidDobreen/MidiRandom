@@ -88,6 +88,7 @@ public:
        CHpanels.add(new PiePanel(0, 0, dims[2], dims[3], false, this, handler, drvr));       
        CHpanels.add(new ScatterPanel(0, 0, dims[2], dims[3], true, this, handler, drvr));      
        CHpanels.add(new PolarPanel(0, 0, dims[2], dims[3], true, this, handler, drvr)); 
+       CHpanels.add(new ReplotPanel(0, 0, dims[2], dims[3], true, this, handler, drvr));
 
        TXpanels.add(new TextPanel(0, 0, dims[2], dims[3], "xlabel", this, handler, drvr));
        TXpanels.add(new TextPanel(0, 0, dims[2], dims[3], "ylabel", this, handler, drvr));
@@ -322,6 +323,7 @@ public:
         chartList.addItem("Pie");
         chartList.addItem("Scatter");
         chartList.addItem("Polar");
+        chartList.addItem("RelPlot");
         for (auto& i : chartList.items)
             i->lbl.cliked.addChangeListener(this);
 

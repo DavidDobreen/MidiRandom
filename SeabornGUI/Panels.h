@@ -256,3 +256,15 @@ public:
     AnnotPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
     ~AnnotPanel() {}
 };
+
+
+/*
+Seaborn
+*/
+
+class ReplotPanel : public ChartPanel
+{
+public:
+    ReplotPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    ~ReplotPanel() {}
+};
