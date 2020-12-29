@@ -18,6 +18,7 @@ public:
     bool boolVal = false;
     juce::String stringText="";
     float floatVal = 1.0;
+    float scalar = 0.01f;
     
     paramedType(juce::String _param) : param(_param) {}
     ~paramedType(){}
@@ -77,7 +78,7 @@ class paramNumber : public paramedType
 {
 public:   
     float val;  
-    float scalar = 0.01f;
+     
     paramNumber(juce::String _param) : paramedType(_param)   {}
     ~paramNumber(){}
     void makeKwarg(juce::String& args) {
@@ -142,7 +143,52 @@ public:
     ~paramFunction() {}
 
     void makeKwarg(juce::String& args) {
-        if (myBool && stringText != "") functions.push_back("plt."+ param + "(" + stringText + ");");
+        if (myBool && stringText != "") functions.push_back(param + "(" + stringText + ");");
+    }
+};
+
+class paramFunctionWithQuotes : public paramedType
+{
+public:
+    bool& myBool;
+    std::vector<juce::String>& functions;
+    paramFunctionWithQuotes(juce::String _param, bool& _myBool, std::vector<juce::String>& _functions) : paramedType(_param), myBool(_myBool), functions(_functions) {}
+    ~paramFunctionWithQuotes() {}
+
+    void makeKwarg(juce::String& args) {
+        if (myBool && stringText != "") functions.push_back(param + "('" + stringText + "');");
+    }
+};
+class paramFunctionFloat : public paramedType
+{
+public:
+     
+    std::vector<juce::String>& functions;
+    paramFunctionFloat(juce::String _param, std::vector<juce::String>& _functions) : paramedType(_param), functions(_functions) {}
+    ~paramFunctionFloat() {}
+
+    void makeKwarg(juce::String& args) {
+        if (floatVal != 1.0f) functions.push_back(param + "(" + juce::String(floatVal * (scalar)) +");");
+         
+    }
+};
+
+class paramFunctionList : public paramedType
+{
+public:
+
+    std::vector<juce::String>& functions;
+    paramFunctionList(juce::String _param, std::vector<juce::String>& _functions) : paramedType(_param), functions(_functions) {}
+    ~paramFunctionList() {}
+
+    void makeKwarg(juce::String& args) {      
+        if (stringText != "")
+        {
+            if (stringText == "None" || stringText == "True" || stringText == "False")
+                functions.push_back(param + "(" + stringText + ");");
+            else
+                functions.push_back(param + "('" + stringText + "');");                 
+        }
     }
 };
 
@@ -160,7 +206,7 @@ public:
 };
 
 enum guiType {
-    _float = 1,_string, _stringQuots,_stringArray,_bool,_list,_dictStart,_dictEnd,_function
+    _float = 1,_string, _stringQuots,_stringArray,_bool,_list,_dictStart,_dictEnd,_function, _functionWithQuotes,_functionFloat,_functionList
 };
 class paramedBeta
 {    

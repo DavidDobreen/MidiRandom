@@ -32,10 +32,14 @@ void PythonShell::Matplot()
 {
     chartArea.shell.editor.clear();
     chartArea.shell.editor.setCaretPosition(0);     
-    chartArea.shell.editor.insertTextAtCaret("fig, ax = plt.subplots(figsize=(8,5))\n");
+    chartArea.shell.editor.insertTextAtCaret("fig = plt.figure()\n");
+    chartArea.shell.editor.insertTextAtCaret("fig.set_size_inches(8,5)\n");
+    //chartArea.shell.editor.insertTextAtCaret("fig, ax = plt.subplots(figsize=(8,5))\n");
          
     for (auto& i : lefPanel.axesList.items)
     {
+        chartArea.shell.editor.insertTextAtCaret("ax = fig.add_subplot()\n");
+        
         juce::String pltstr1 = bottomPanel.AXpanels[lefPanel.selected_axes]->pltstr1;        
         juce::String ChartParams = lefPanel.axesList.items[lefPanel.selected_axes]->params.MakePieKwargs().substring(1);
         if (i->params.paramsArray[0]->boolVal)        
@@ -52,6 +56,9 @@ void PythonShell::Matplot()
             lefPanel.axes.ShowYinput = bottomPanel.CHpanels[i->ChartType]->ShowYinput;
             juce::String ChartParams = i->params.MakePieKwargs();
             chartArea.shell.editor.insertTextAtCaret(pltstr1+lefPanel.axes.makeArgs()+ ChartParams+");\n");
+
+            for (auto& f : i->params.functions)
+                chartArea.shell.editor.insertTextAtCaret(f + "\n");
         }
 
         for (auto& i : lefPanel.Fig.axes[lefPanel.selected_axes]->textList.items)
@@ -59,19 +66,29 @@ void PythonShell::Matplot()
             juce::String pltstr1 = bottomPanel.TXpanels[i->index]->pltstr1;
             juce::String ChartParams = i->params.MakePieKwargs().substring(1);
             chartArea.shell.editor.insertTextAtCaret(pltstr1 + ChartParams + ");\n");
+
+            for (auto& f : i->params.functions)
+                chartArea.shell.editor.insertTextAtCaret(f + "\n");
         }
 
         for (auto& i : lefPanel.Fig.axes[lefPanel.selected_axes]->annotList.items)
         {
             juce::String pltstr1 = bottomPanel.ANpanels[i->index]->pltstr1;
             juce::String ChartParams = i->params.MakePieKwargs().substring(1);          
-            chartArea.shell.editor.insertTextAtCaret(pltstr1+ChartParams+");\n");          
+            chartArea.shell.editor.insertTextAtCaret(pltstr1+ChartParams+");\n");    
+
+            for (auto& f : i->params.functions)
+                chartArea.shell.editor.insertTextAtCaret(f + "\n");
         }
     }
              
     //PyRun_SimpleString("plt.savefig('output.png',transparent=True)");    
     chartArea.shell.editor.insertTextAtCaret("plt.savefig('output.png')\n");
-   
+
+}
+
+void PythonShell::RunShell()
+{
     std::vector<juce::String> lines;
     juce::String all = chartArea.shell.editor.getText();
     int start = 0;
@@ -83,6 +100,7 @@ void PythonShell::Matplot()
         start = br + 1;
     }
 
-    for (auto& l: lines)
-         PyRun_SimpleString(l.toUTF8());
+    for (auto& l : lines)
+        PyRun_SimpleString(l.toUTF8());
+    chartArea.DrawChart();
 }

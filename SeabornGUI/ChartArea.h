@@ -25,6 +25,9 @@ class ShellWindow : public moveChildComp, public handled
 {
 public:
     juce::TextEditor editor;
+
+    
+
     ShellWindow(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : moveChildComp(x, y, w, h), handled(handler, parent, this) {
         addAndMakeVisible(editor);
         editor.setCaretVisible(true);
@@ -49,6 +52,8 @@ public:
     ImageComp frame{ 0,0,dims[2],dims[3],pngFrame, this, handler };
     MainChart chart{ 80, 55, 350, 576, this, handler };
     ShellWindow shell{ 20, 20, dims[2]-50, dims[3]-55, this, handler };
+
+
 
     ChartArea(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : childComp(x, y, w, h), handled(handler, parent, this) {}
     ~ChartArea(){}

@@ -39,21 +39,11 @@ public:
     PythonShell(LeftPanel& _lefPanel, BottomPanel& _bottomPanel, ChartArea& chart);
     ~PythonShell();
 
-    void changeListenerCallback(juce::ChangeBroadcaster* source) {
-          
-       /* f = !f;
-        if (f)
-            PyRun_SimpleString("sns_plot = sns.relplot(x = 'total_bill', y = 'tip', color = 'orange', data = tips)");   
-        else
-             PyRun_SimpleString("sns_plot = sns.relplot(x = 'total_bill', y = 'tip', color = 'green', data = tips)");
-        PyRun_SimpleString("sns_plot.savefig('output.png')");*/  
-
-
-       
-        Matplot();
-       
-        chartArea.DrawChart();
+    void changeListenerCallback(juce::ChangeBroadcaster* source) {         
+        Matplot();   
+        RunShell();
     }
 
     void Matplot();
+    void RunShell();
 };

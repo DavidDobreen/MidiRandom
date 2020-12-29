@@ -247,7 +247,7 @@ public:
     labelTextBox lbl{ 60,0,90,18,lblName,this,params,handler,drvr};
 
     chLabel(int x, int y, int w, int h, juce::String name, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr, 
-        int* _index, int guiType = guiType::_stringQuots, juce::String paramText = "");
+        int* _index,  juce::String _paramText = "", int guiType = guiType::_stringQuots );
     ~chLabel(){}
     void changeListenerCallback(juce::ChangeBroadcaster* source);
     void paramRefresh() override;
@@ -360,12 +360,12 @@ public:
 
     };
    
-    chLabel selection{ 0, 0, 150, 25, "color", this, params, handler, drvr, &index, guiType::_stringQuots };
+    chLabel selection{ 0, 0, 150, 25, "color", this, params, handler, drvr, &index, "",guiType::_stringQuots };
     colorsComponent::icon icon{ 150,-7,41,22,this,handler };
     colorsComponent::iconArea area{ 150,-7,41,22,selection,this,handler,drvr };
     
     colorsComponent(int x, int y, int w, int h, juce::String lblName, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr,
-        int* _index, juce::String _paramText = "", int guiType = guiType::_stringQuots)
+        int* _index, juce::String _paramText = "", int _guiType = guiType::_stringQuots)
         : moveChildComp(x, y, w, h), paramedBeta(params),handled(handler, parent, this), drvred(_drvr) {
         addAndMakeVisible(selection);
         if (_index != nullptr)
@@ -382,6 +382,8 @@ public:
          
         if (_paramText != "")
             selection.lbl.paramText = _paramText;
+
+        selection.lbl.guiType = _guiType;
     }
     void resized() { selection.setBounds(80, 0, 70, 25); }
 
@@ -422,7 +424,7 @@ public:
     MoveLabel LblName{ 0,51,70,18, "",juce::Colours::slategrey,this,handler };
 
     chKnobClassicBeta(int x, int y, int w, int h, juce::String lblText, juce::Component* parent, Params*& _params, pngHandler& handler, Drvr& _drvr, 
-        int* _index,  juce::String _paramText="",float _paramVal=1.0 ,int guiType = guiType::_float)
+        int* _index,  juce::String _paramText="", int _guiType = guiType::_float)
         :  moveChildComp(x, y, w, h), paramedBeta(_params), handled(handler, parent, this), drvred(_drvr) {
         LblName.text = lblText;
         LblName.repaint();
@@ -437,7 +439,7 @@ public:
         }
         
         GuiClass = 1;
-        sldr.guiType = guiType;
+        sldr.guiType = _guiType;
         if (_paramText != "")
             sldr.paramText = _paramText;
 
