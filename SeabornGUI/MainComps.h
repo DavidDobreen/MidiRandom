@@ -10,7 +10,6 @@
 
 #pragma once
 #include "Panels.h"
-#include "params.h"
 #include "GuiDriver.h"
 
 
@@ -100,38 +99,7 @@ public:
     ~BottomPanel(){}
   
 };
-
-//class TextList :  public moveChildComp, public handled
-//{
-//public:
-//    class item : public moveChildComp, public handled
-//    {
-//    public:
-//        Params params;
-//        juce::String xLabel;
-//        juce::String yLabel;
-//        juce::String Title;
-//
-//        chBgComp frame{ "bottom pads name frame3.png",this ,handler };
-//        MoveLabel lbl{ 0,-1,dims[2],dims[3],"",juce::Colours::aqua,this,handler };
-//        item(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler)
-//            : moveChildComp(x, y, w, h), handled(handler, parent, this) {}
-//
-//    };
-//    Axes& axes;
-//
-//    chBgComp frame{ "small eq frame3.png",this ,handler };
-//    chBgComp bkgd{ "BLACK MAIN BG2.png",this ,handler };
-//
-//    juce::OwnedArray<item> items;
-//    TextList::item* selectedItem = nullptr;
-//
-//    BottomPanel& bottomPanel;
-//    TextList(int x, int y, int w, int h, Axes& _axes, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler);
-//        
-//    void resized();
-//   
-//};
+ 
 
 enum ListTypes { axes = 1, chart, text ,annot};
 class ItemList : public juce::ChangeListener, public moveChildComp, public handled
@@ -220,7 +188,11 @@ public:
                 if (selected != nullptr){ 
                     *selected = index;
                     cliked.sendSynchronousChangeMessage();}}              
-            void mouseEnter(const juce::MouseEvent& event) override;            
+            void mouseEnter(const juce::MouseEvent& event) {
+                sendSynchronousChangeMessage();
+                textColor = juce::Colours::aqua;
+                repaint();
+            };
         };
         
         chBgComp frame{ "bottom pads name frame3.png",this ,handler };
@@ -233,7 +205,6 @@ public:
     };
     Axes& axes;
     
-
     chBgComp bkgd{ "BLACK MAIN BG2.png",this ,handler };
     mouseArea area{ 0,0,dims[2],dims[3],this,handler };
     juce::OwnedArray<ChartList::item> items;

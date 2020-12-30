@@ -375,3 +375,32 @@ void chLabelSmall::paramRefresh()
         lbl.lbl.setText(params->paramsArray[lbl.index]->stringText, juce::dontSendNotification);
     }
 }
+
+PopUpList::PopUpList(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler)
+    : moveChildComp(x, y, w, h), handled(handler, parent, this) {
+
+}
+
+void PopUpList::changeListenerCallback(juce::ChangeBroadcaster* source)
+{
+    if (source == &area)
+        setVisible(false);
+    else
+        for (auto& i : items)
+        {
+            i->lbl.textColor = juce::Colours::slategrey;
+            i->lbl.repaint();
+        }
+}
+
+void PopUpList::addItem(juce::String text)
+{
+    PopUpList::item* item = new PopUpList::item(0, items.size() * 18, dims[2], 18, this, handler);
+    item->lbl.text = text;
+    item->lbl.index = items.size();
+    item->lbl.selected = &SelectedPopup;
+    item->lbl.addChangeListener(this);
+    item->area.toFront(false);
+    items.add(item);
+    SelectedPopup = items.size() - 1;
+}

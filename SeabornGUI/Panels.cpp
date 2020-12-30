@@ -393,7 +393,7 @@ ReplotPanel::ReplotPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Com
    
 
     addChLabel(new chLabel(408, 57, 150, 25, "data", this, itemParams, handler, drvr, &index, "", guiType::_string));
-    addChLabel(new chLabel(408, 87, 150, 25, "hue", this, itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+    addChLabelPopup(new chLabelPopup(408, 87, 150, 25, "hue", paramComps.getFirst(),popup, this, itemParams, handler, drvr, &index, "", guiType::_stringQuots));
     addChLabel(new chLabel(408, 117, 150, 25, "size", this, itemParams, handler, drvr, &index, "", guiType::_stringQuots));
     addChLabel(new chLabel(408, 147, 150, 25, "style", this, itemParams, handler, drvr, &index, "", guiType::_stringQuots));
 
@@ -465,6 +465,9 @@ void ChartPanel::refresh(){
         case 11: {
             static_cast<chLabelSmall*>(c)->paramRefresh();
             break; }
+        case 12: {
+            static_cast<chLabelPopup*>(c)->paramRefresh();
+            break; }
         default:
             break;}
     }                        
@@ -480,6 +483,11 @@ void ChartPanel::addChLabelSmall(chLabelSmall* _chLabel) {
     paramComps.add(&_chLabel->lblName);
     paramComps.add(&_chLabel->lbl);}
 
+void ChartPanel::addChLabelPopup(chLabelPopup* _chLabel) {
+    guiComps.add(std::move(_chLabel));
+    paramComps.add(&_chLabel->lblName);
+    paramComps.add(&_chLabel->lbl);}
+ 
 void ChartPanel::addChKnob(chKnobClassicBeta* _chKnob){
     guiComps.add(std::move(_chKnob));
     paramComps.add(&_chKnob->sldr);}

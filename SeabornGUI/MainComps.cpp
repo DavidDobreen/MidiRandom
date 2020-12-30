@@ -142,10 +142,7 @@ void ChartList::addItem(juce::String text){
     items.add(item);
     SelectedChart = items.size() - 1;}
 
-void ChartList::item::itemArea::mouseEnter(const juce::MouseEvent& event){   
-    sendSynchronousChangeMessage();
-    textColor = juce::Colours::aqua;
-    repaint();}
+
 
 void LeftPanel::addAxes()
 {

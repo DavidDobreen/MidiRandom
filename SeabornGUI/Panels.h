@@ -22,6 +22,8 @@ public:
     bool ShowYinput = true;
     juce::String pltstr1;
 
+    PopUpList popup{ 0, 0, 76, 100, this, handler };
+
     CompBox LeftBox{ 108,26,260,135,3,this,itemParams, handler ,drvr };
     CompBox RightBox{ 598,26,260,135,4,this,itemParams, handler ,drvr };
 
@@ -32,7 +34,8 @@ public:
     void refresh();
     void addChLabel(chLabel* _chLabel);
     void addChLabelSmall(chLabelSmall* _chLabel);
-    void addChKnob(chKnobClassicBeta* _chKnob);
+    void addChLabelPopup(chLabelPopup* _chLabel);
+    void addChKnob(chKnobClassicBeta* _chKnob);   
     void addToggleButton(moveChButton* _btn);
     void addToggleButtonAndLabel(chToggleButtonAndLabel* _btn);
     void addSelectionBox(SelectionBox* _selections);
@@ -253,6 +256,8 @@ public:
 class AnnotPanel : public ChartPanel
 {
 public:
+    
+       
     AnnotPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
     ~AnnotPanel() {}
 };

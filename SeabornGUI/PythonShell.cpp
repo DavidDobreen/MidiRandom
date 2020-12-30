@@ -11,14 +11,20 @@
 #include "PythonShell.h"
 
 PythonShell::PythonShell(LeftPanel& _lefPanel, BottomPanel& _bottomPanel, ChartArea& chart) : lefPanel(_lefPanel), bottomPanel(_bottomPanel), chartArea(chart)
-{
+{   
+    
+
     Py_SetPythonHome(L"C:\\Python37");
     Py_Initialize();
     PyRun_SimpleString("import matplotlib");
     PyRun_SimpleString("import matplotlib.pyplot as plt");
     PyRun_SimpleString("import numpy as np");
+    PyRun_SimpleString("import pandas as pd");
     PyRun_SimpleString("matplotlib.use('Agg')");
 
+    pName = PyUnicode_FromString((char*)"guifuncs");
+    pModule = PyImport_Import(pName);
+    pDict = PyModule_GetDict(pModule);
     //PyRun_SimpleString("import seaborn as sns");
     //PyRun_SimpleString("tips = sns.load_dataset('tips')");
 }
@@ -28,8 +34,47 @@ PythonShell::~PythonShell()
     Py_Finalize();
 }
 
+juce::String PythonShell::RunPyFunc(juce::String funcName, juce::String funcArg)
+{
+    PyObject* pFunc,* pValue, * presult;
+    char* my_result = 0;
+    
+    pFunc = PyDict_GetItemString(pDict, funcName.toUTF8());
+      
+    if (PyCallable_Check(pFunc))
+    {         
+        pValue = Py_BuildValue("(s)", "df");
+        PyErr_Print();         
+        presult = PyObject_CallObject(pFunc, pValue);
+        PyErr_Print();
+        if (PyUnicode_Check(presult)) {
+            PyObject* temp_bytes = PyUnicode_AsEncodedString(presult, "UTF-8", "strict");
+            if (temp_bytes != NULL) {
+                my_result = PyBytes_AS_STRING(temp_bytes); // Borrowed pointer
+                my_result = strdup(my_result);
+                Py_DECREF(temp_bytes);
+            }
+            else {
+                // TODO: Handle encoding error.
+            }
+             
+        }
+    }
+    else
+    {
+        PyErr_Print();
+    }
+
+    Py_DECREF(pValue);
+    Py_DECREF(pModule);
+    Py_DECREF(pName);
+     
+    return my_result;
+}
+
 void PythonShell::Matplot()
 {
+
     chartArea.shell.editor.clear();
     chartArea.shell.editor.setCaretPosition(0);     
     chartArea.shell.editor.insertTextAtCaret("fig = plt.figure()\n");

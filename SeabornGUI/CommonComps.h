@@ -247,7 +247,7 @@ public:
     labelTextBox lbl{ 60,0,90,18,lblName,this,params,handler,drvr};
 
     chLabel(int x, int y, int w, int h, juce::String name, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr, 
-        int* _index,  juce::String _paramText = "", int guiType = guiType::_stringQuots );
+        int* _index,  juce::String _paramText = "", int _guiType = guiType::_stringQuots );
     ~chLabel(){}
     void changeListenerCallback(juce::ChangeBroadcaster* source);
     void paramRefresh() override;
@@ -297,6 +297,8 @@ public:
     void changeListenerCallback(juce::ChangeBroadcaster* source);
     void paramRefresh() override;
 };
+
+
 
 class colorsComponent : public moveChildComp, public paramedBeta, public handled, public drvred
 {
@@ -797,4 +799,119 @@ public:
     ~FourFloats(){}
 
     void changeListenerCallback(juce::ChangeBroadcaster* source);
+};
+
+
+class PopUpList : public juce::ChangeListener, public moveChildComp, public handled
+{
+public:
+    class mouseArea : public juce::ChangeBroadcaster, public moveChildComp, public handled
+    {
+    public:
+        mouseArea(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler)
+            :moveChildComp(x, y, w, h), handled(handler, parent, this) {}
+        ~mouseArea() {}
+        void mouseExit(const juce::MouseEvent& event) { sendSynchronousChangeMessage(); }
+    };
+
+    class item : public moveChildComp, public handled
+    {
+    public:
+
+        class itemArea : public MoveLabel
+        {
+        public:
+            juce::ChangeBroadcaster cliked;
+            int index;
+            int* selected;
+
+            itemArea(int x, int y, int w, int h, juce::String _text, juce::Colour color, juce::Component* parent, pngHandler& handler)
+                : MoveLabel(x, y, w, h, _text, color, parent, handler) {}
+            ~itemArea() { cliked.removeAllChangeListeners(); }
+
+            void mouseDown(const juce::MouseEvent& event) {
+                if (selected != nullptr) {
+                    *selected = index;
+                    cliked.sendSynchronousChangeMessage();
+                }
+            }
+            void mouseEnter(const juce::MouseEvent& event) {
+                sendSynchronousChangeMessage();
+                textColor = juce::Colours::aqua;
+                repaint();
+
+            }
+        };
+
+        chBgComp frame{ "bottom pads name frame3.png",this ,handler };
+        itemArea lbl{ 0,-1,dims[2],dims[3],"",juce::Colours::slategrey,this,handler };
+
+        item(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler)
+            : moveChildComp(x, y, w, h), handled(handler, parent, this) {}
+
+
+    };
+
+    chBgComp bkgd{ "BLACK MAIN BG2.png",this ,handler };
+    mouseArea area{ 0,0,dims[2],dims[3],this,handler };
+    juce::OwnedArray<PopUpList::item> items;
+    int SelectedPopup;
+
+    PopUpList(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler);
+
+    void changeListenerCallback(juce::ChangeBroadcaster* source);
+    void addItem(juce::String text);
+    void resized(){
+    int count = 0;
+        for (auto& i : items)
+        {
+            i->lbl.index = count;
+            i->dims[1] = 9 + 18 * count;
+            i->setBounds(i->dims[0], i->dims[1], i->dims[2], i->dims[3]);
+            count++;
+        }
+
+
+        int y = 26;
+        if (items.size())
+            y = items.getLast()->getY() + 19;
+
+   
+        }
+};
+
+
+class chLabelPopup : public chLabel
+{
+public:
+    paramedBeta* data;
+    PopUpList& popUpList;
+
+    chLabelPopup(int x, int y, int w, int h, juce::String name, paramedBeta*  _data, PopUpList& _popUp, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr,
+        int* _index, juce::String _paramText = "", int _guiType = guiType::_stringQuots)
+        :chLabel(x, y, w, h, name, parent, params, handler, drvr, _index, _paramText, guiType), data(_data), popUpList(_popUp){
+ 
+        lbl.lbl.onEditorShow = [&] {
+            sendSynchronousChangeMessage();
+             
+            popUpList.setBounds(popUpList.getBoundsInParent().withX(getX()));
+            handler.InitGUI();
+            popUpList.setVisible(true); };
+
+        lblName.text = name;
+        addAndMakeVisible(lbl);
+        lblName.addChangeListener(this);
+        lblName.fontHight = 15;
+        lbl.lbl.setEditable(true);
+       
+        GuiClass = 12;  
+        lbl.guiType = _guiType;  
+        lblName.guiType = guiType::_bool;   
+
+        //if (name != "" && _paramText == "")
+        //    lbl.paramText = name;
+        //else if (name != "" && _paramText != "")
+        //    lbl.paramText = _paramText;
+    }
+    ~chLabelPopup() {}
 };
