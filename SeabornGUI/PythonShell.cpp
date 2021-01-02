@@ -194,6 +194,10 @@ void PythonShell::Matplot()
             lefPanel.axes.yValues.targetLineListItemVals = &i->yValues;
             lefPanel.axes.ShowYinput = bottomPanel.CHpanels[i->ChartType]->ShowYinput;
             juce::String ChartParams = i->params.MakePieKwargs();
+            if (bottomPanel.CHpanels[i->ChartType]->SNS_DIST_STYLE)
+                lefPanel.axes.sns_dist_style = true;
+            else
+                lefPanel.axes.sns_dist_style = false;
             chartArea.shell.editor.insertTextAtCaret(pltstr1+lefPanel.axes.makeArgs()+ ChartParams+");\n");
 
             for (auto& f : i->params.functions)

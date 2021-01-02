@@ -81,13 +81,16 @@ public:
             juce::String cols2 = cols.substring(cols.indexOf("[") + 1, cols.indexOf("]"));
             std::vector<juce::String> words;
             int index = 0;
-            int index2 = 0;
+            int index2 = cols2.indexOf(index, ",");
             while (index2 >= 0)
             {
                 index2 = cols2.indexOf(index, ",");
                 words.push_back(cols2.substring(index + 1, index2 - 1));
                 index = index2 + 1;
-            }
+                index2 = cols2.indexOf(index, ",");
+            }  
+           
+            words.push_back(cols2.substring(index + 1, cols2.length() - 1));
 
             pnl->popup.items.clear();
             pnl->handler.compRszr.clear();

@@ -38,20 +38,51 @@ void MainTabsPanel::changeListenerCallback(juce::ChangeBroadcaster* source)
     }
 }
 
-Axes::input::input(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : moveChildComp(x, y, w, h), handled(handler, parent, this)
+Axes::input::input(int x, int y, int w, int h, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler) 
+  : bottomPanel(_bottomPanel), moveChildComp(x, y, w, h), handled(handler, parent, this)
 {
     lbl.setEditable(true);
     addAndMakeVisible(lbl);
+    lbl.onEditorShow = [&] {
+        auto pnl = dynamic_cast<ChartPanel*>(bottomPanel.ActivePanel);
+        if (pnl != nullptr)
+        {
+            if (pnl->SNS_DIST_STYLE)
+                pnl->popup.removeAllChangeListeners();
+                pnl->popup.addChangeListener(this);
+                pnl->popup.setBounds(pnl->popup.getBoundsInParent().withX(getX()).withHeight(pnl->popup.items.size() * 18));
+                getParentComponent()->getParentComponent()->addAndMakeVisible(pnl->popup);
+                pnl->popup.toFront(true);
+         }
+         };
+
     lbl.onTextChange = [&] {
         if (targetLineListItemVals != nullptr)
             *targetLineListItemVals = lbl.getText(); };
+
+
 }
 
-Axes::Axes(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : moveChildComp(x, y, w, h), handled(handler, parent, this){}
+Axes::Axes(int x, int y, int w, int h, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler)
+    : bottomPanel(_bottomPanel), moveChildComp(x, y, w, h), handled(handler, parent, this){}
 
 juce::String Axes::makeArgs()
 {   
-    //plotParams.clear();
+    if (sns_dist_style)
+    {
+        if (ShowYinput)
+            if (*xValues.targetLineListItemVals != "" && *yValues.targetLineListItemVals == "")
+                return "x='" + *xValues.targetLineListItemVals + "'";
+            else if (*xValues.targetLineListItemVals == "" && *yValues.targetLineListItemVals != "")
+                return "y='" + *yValues.targetLineListItemVals + "'";
+            else if (*xValues.targetLineListItemVals != "" && *yValues.targetLineListItemVals != "")
+                return "x='" + *xValues.targetLineListItemVals + "',y='" + *yValues.targetLineListItemVals + "'";
+            else
+                return "";
+        else
+            return "x='" + *xValues.targetLineListItemVals+"'";
+    }
+    else
     if (ShowYinput)
         return "(" + *xValues.targetLineListItemVals + "),(" + *yValues.targetLineListItemVals + ")";
     else
@@ -160,12 +191,12 @@ void LeftPanel::addAxes()
     Fig.axes.add(ax);
   
     ax->plotList.addItem("line", ListTypes::chart);
-    ax->textList.addItem("xlabel", ListTypes::text);
-    ax->textList.addItem("ylabel", ListTypes::text);
-    ax->textList.addItem("title", ListTypes::text);
-    ax->textList.addItem("xticks", ListTypes::text);
-    ax->textList.addItem("yticks", ListTypes::text);
-    ax->textList.addItem("legend", ListTypes::text);
+    //ax->textList.addItem("xlabel", ListTypes::text);
+    //ax->textList.addItem("ylabel", ListTypes::text);
+    //ax->textList.addItem("title", ListTypes::text);
+    //ax->textList.addItem("xticks", ListTypes::text);
+    //ax->textList.addItem("yticks", ListTypes::text);
+    //ax->textList.addItem("legend", ListTypes::text);
     handler.InitGUI();
   
 }
@@ -301,7 +332,7 @@ void LeftPanel::changeListenerCallback(juce::ChangeBroadcaster* source)
         Fig.axes[selected_axes]->plotList.items.getLast()->lbl.sendSynchronousChangeMessage();
 
         // remove below?
-        bottomPanel.ActivePanel = bottomPanel.CHpanels[chartList.SelectedChart];
+        //bottomPanel.ActivePanel = bottomPanel.CHpanels[chartList.SelectedChart];
          
         chartList.setVisible(false);
         /*chartName.lbl.text = chartList.items[chartList.SelectedChart]->lbl.text;
@@ -457,7 +488,7 @@ void ItemList::changeListenerCallback(juce::ChangeBroadcaster* source)
             bottomPanel.ActivePanel->setVisible(true);
             bottomPanel.ActivePanel->itemParams = &selectedItem->params;
             bottomPanel.ActivePanel->refresh();
-            //refrsh axes values if this is a new chart
+            //refresh axes values if this is a new chart
             if (bottomPanel.ActivePanelKind == ListTypes::chart) {
                 axes.xValues.targetLineListItemVals = &selectedItem->xValues;
                 axes.yValues.targetLineListItemVals = &selectedItem->yValues;
@@ -546,7 +577,11 @@ ItemList::item::item(int x, int y, int w, int h, juce::Array<paramedBeta*>* _par
             params.paramsArray.add(new paramDictstart((*_paramComps)[i]->paramText));
             break;
         }
-
+        case (guiType::_dictStartAlwaysOn):
+        {
+            params.paramsArray.add(new paramDictstart((*_paramComps)[i]->paramText,true));
+            break;
+        }
         case (guiType::_dictEnd):
         {
             params.paramsArray.add(new paramDictEnd((*_paramComps)[i]->paramText));

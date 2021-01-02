@@ -107,11 +107,13 @@ public:
 class paramDictstart : public paramedType
 {
 public:  
+    bool alwaysOn = false;
     paramDictstart(juce::String _param) : paramedType(_param) {}
+    paramDictstart(juce::String _param, bool _alwaysOn) : paramedType(_param) { alwaysOn = _alwaysOn; }
     ~paramDictstart() {}
 
     void makeKwarg(juce::String& args) {
-        if (param != "" && boolVal) args += "," + param + "=dict(";
+        if (param != "" && (boolVal || alwaysOn)) args += "," + param + "=dict(";
     }
 };
 class paramDictEnd : public paramedType
@@ -128,7 +130,13 @@ public:
             {
                 auto newString = args.replace("(,", "(");
                 args = newString + param;
-            }                       
+                
+            }       
+            else
+            {
+                if (args.getLastCharacter() == '(')
+                    args += ')';
+            }
         }        
     }
 };
@@ -206,7 +214,7 @@ public:
 };
 
 enum guiType {
-    _float = 1,_string, _stringQuots,_stringArray,_bool,_list,_dictStart,_dictEnd,_function, _functionWithQuotes,_functionFloat,_functionList
+    _float = 1,_string, _stringQuots,_stringArray,_bool,_list,_dictStart, _dictStartAlwaysOn,_dictEnd,_function, _functionWithQuotes,_functionFloat,_functionList
 };
 class paramedBeta
 {    

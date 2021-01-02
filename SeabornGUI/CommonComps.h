@@ -801,7 +801,6 @@ public:
     void changeListenerCallback(juce::ChangeBroadcaster* source);
 };
 
-
 class PopUpList : public juce::ChangeBroadcaster, public juce::ChangeListener, public moveChildComp, public handled
 {
 public:
@@ -872,7 +871,6 @@ public:
     }
 };
 
-
 class chLabelPopup : public chLabel
 {
 public:
@@ -884,17 +882,16 @@ public:
         int* _index, juce::String _paramText = "", int _guiType = guiType::_stringQuots)
         :chLabel(x, y, w, h, name, parent, params, handler, drvr, _index, _paramText, guiType), data(_data), popUpList(_popUp){
         
-        lbl.lbl.onEditorShow = [&] {
-            //handler.compRszr.clear();
-            //handler.bkgdRszr.clear();
+        lbl.lbl.onEditorShow = [&] {          
             sendSynchronousChangeMessage(); 
             popUpList.removeAllChangeListeners();
-            popUpList.addChangeListener(this);
+            popUpList.addChangeListener(this);            
+             
+            getParentComponent()->addAndMakeVisible(&popUpList);
+            popUpList.setBounds(popUpList.getBoundsInParent().withX(getX()).withHeight(popUpList.items.size() * 18));
             
-            popUpList.setBounds(popUpList.getBoundsInParent().withX(getX()).withHeight(popUpList.items.size()*18));
-            //popUpList.resized();
-            //handler.InitGUI();
-            popUpList.setVisible(true);
+
+            //popUpList.setVisible(true);
             popUpList.toFront(true); };
 
         lblName.text = name;
@@ -906,13 +903,9 @@ public:
         GuiClass = 12;  
         lbl.guiType = _guiType;  
         lblName.guiType = guiType::_bool;   
-
-        //if (name != "" && _paramText == "")
-        //    lbl.paramText = name;
-        //else if (name != "" && _paramText != "")
-        //    lbl.paramText = _paramText;
     }
     ~chLabelPopup() {}
 
     void changeListenerCallback(juce::ChangeBroadcaster* source);
 };
+

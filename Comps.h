@@ -237,8 +237,10 @@ public:
 	}
 	void renderTriggerButton(rOnOffRect* rect, juce::String& pngOn, juce::String& pngOff)
 	{
-		rect->OnImage = juce::PNGImageFormat::loadFrom(PNGdir.getChildFile(pngOn));
-		rect->OffImage = juce::PNGImageFormat::loadFrom(PNGdir.getChildFile(pngOff));
+		//rect->OnImage = juce::PNGImageFormat::loadFrom(PNGdir.getChildFile(pngOn));
+		rect->OnImage = juce::ImageCache::getFromFile(PNGdir.getChildFile(pngOn));
+		//rect->OffImage = juce::PNGImageFormat::loadFrom(PNGdir.getChildFile(pngOff));
+		rect->OffImage = juce::ImageCache::getFromFile(PNGdir.getChildFile(pngOff));
 		rect->CurrentImage = rect->OffImage;
 	}
 
@@ -277,7 +279,8 @@ public:
 		for (auto& c : bkgdRszr)
 		{
 			c.first->addAndMakeVisible(*c.second);
-			c.second->BackGround = juce::PNGImageFormat::loadFrom(PNGdir.getChildFile(c.second->imageFile));
+			//c.second->BackGround = juce::PNGImageFormat::loadFrom(PNGdir.getChildFile(c.second->imageFile));
+			c.second->BackGround = juce::ImageCache::getFromFile(PNGdir.getChildFile(c.second->imageFile));
 			c.second->setBounds(c.first->getLocalBounds());
 			c.second->toBack();
 		}

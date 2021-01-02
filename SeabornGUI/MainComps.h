@@ -25,36 +25,7 @@ public:
     void changeListenerCallback(juce::ChangeBroadcaster* source);
 };
 
-class Axes :public moveChildComp, public handled
-{
-public:
-    class input : public moveChildComp, public handled
-    {
-    public:
-        std::vector<juce::String> plotParams;
 
-        chBgComp bkgd{ "master fx black strip2.png",this ,handler };
-        juce::Label lbl;
-        juce::String* targetLineListItemVals = nullptr;
-        input(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler);
-        void resized() { lbl.setBounds(getLocalBounds()); }
-        void refresh() { if (targetLineListItemVals != nullptr) lbl.setText(*targetLineListItemVals, juce::dontSendNotification); }
-    };
-
-    bool ShowYinput = true;
-     
-
-    input xValues{ 25,0,228,17,this,handler };
-    input yValues{ 25,25,228,17,this,handler };
-
-    Axes(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler);
-
-    juce::String makeArgs();
-    void refresh() {
-        xValues.refresh();
-        yValues.refresh();
-    };
-};
 
 class BottomPanel : public childComp,  public handled, public drvred
 {
@@ -81,7 +52,7 @@ public:
     
        AXpanels.add(new AxesPanel(0, 0, dims[2], dims[3], true, this, handler, drvr));
 
-       CHpanels.add(new Line2DPanel(0, 0, dims[2], dims[3], true, this, handler, drvr));        
+       /*CHpanels.add(new Line2DPanel(0, 0, dims[2], dims[3], true, this, handler, drvr));        
        CHpanels.add(new HistPanel(0, 0, dims[2], dims[3], false, this, handler, drvr));       
        CHpanels.add(new BarsPanel(0, 0, dims[2], dims[3], true, this, handler, drvr));    
        CHpanels.add(new PiePanel(0, 0, dims[2], dims[3], false, this, handler, drvr));       
@@ -89,19 +60,63 @@ public:
        CHpanels.add(new PolarPanel(0, 0, dims[2], dims[3], true, this, handler, drvr)); 
        CHpanels.add(new ReplotPanel(0, 0, dims[2], dims[3], true, this, handler, drvr));
        CHpanels.add(new SeabornScatterPanel(0, 0, dims[2], dims[3], true, this, handler, drvr));
-       CHpanels.add(new SeabornLinePanel(0, 0, dims[2], dims[3], true, this, handler, drvr));
+       CHpanels.add(new SeabornLinePanel(0, 0, dims[2], dims[3], true, this, handler, drvr));*/
+       CHpanels.add(new SeabornDistPanel(0, 0, dims[2], dims[3], true, this, handler, drvr));
+       CHpanels.add(new SeabornHistPanel(0, 0, dims[2], dims[3], true, this, handler, drvr));
 
-       TXpanels.add(new TextPanel(0, 0, dims[2], dims[3], "xlabel", this, handler, drvr));
+       /*TXpanels.add(new TextPanel(0, 0, dims[2], dims[3], "xlabel", this, handler, drvr));
        TXpanels.add(new TextPanel(0, 0, dims[2], dims[3], "ylabel", this, handler, drvr));
        TXpanels.add(new TextPanel(0, 0, dims[2], dims[3], "title", this, handler, drvr));
        TXpanels.add(new TextPanel(0, 0, dims[2], dims[3], "xticks", this, handler, drvr));
        TXpanels.add(new TextPanel(0, 0, dims[2], dims[3], "yticks", this, handler, drvr));
-       TXpanels.add(new LegendPanel(0, 0, dims[2], dims[3], "legend", this, handler, drvr));
+       TXpanels.add(new LegendPanel(0, 0, dims[2], dims[3], "legend", this, handler, drvr))*/;
     }
     ~BottomPanel(){}
   
 };
- 
+
+class Axes :  public moveChildComp, public handled
+{
+public:
+    class input : public juce::ChangeListener, public moveChildComp, public handled
+    {
+    public:
+        //std::vector<juce::String> plotParams;
+        BottomPanel& bottomPanel;
+         
+        chBgComp bkgd{ "master fx black strip2.png",this ,handler };
+        juce::Label lbl;
+        juce::String* targetLineListItemVals = nullptr;
+        input(int x, int y, int w, int h, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler);
+        void resized() { lbl.setBounds(getLocalBounds()); }
+        void refresh() { if (targetLineListItemVals != nullptr) lbl.setText(*targetLineListItemVals, juce::dontSendNotification); }
+        void changeListenerCallback(juce::ChangeBroadcaster* source) {
+            auto popup = dynamic_cast<PopUpList*>(source);
+            if (popup != nullptr)
+            {
+                lbl.setText(popup->items[popup->SelectedPopup]->lbl.text, juce::sendNotificationSync);
+                popup->setVisible(false);               
+            }  
+            
+        }
+    };
+
+    BottomPanel& bottomPanel;
+
+    bool ShowYinput = true;
+    bool sns_dist_style = false;
+
+    input xValues{ 25,0,228,17,bottomPanel, this,handler };
+    input yValues{ 25,25,228,17,bottomPanel,this,handler };
+
+    Axes(int x, int y, int w, int h, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler);
+
+    juce::String makeArgs();
+    void refresh() {
+        xValues.refresh();
+        yValues.refresh();
+    };
+};
 
 enum ListTypes { axes = 1, chart, text ,annot};
 class ItemList : public juce::ChangeListener, public moveChildComp, public handled
@@ -277,7 +292,7 @@ class LeftPanel : public juce::ChangeListener, public childComp, public handled,
 public:
     chBgComp bkgd{ "MASTER GRAY PANEL2.png",this,handler };
     BottomPanel& bottomPanel;        
-    Axes axes{ 0,49,dims[2],45,this,handler };      
+    Axes axes{ 0,49,dims[2],45,bottomPanel, this,handler };
     //ChartList::item chartName{ 102, 21, 76, 18, this, handler };
     int selected_axes = 0;
 
@@ -290,7 +305,8 @@ public:
         //chartName.lbl.addChangeListener(this);
         //chartName.lbl.index = -1;
 
-        chartList.addItem("Line");
+
+        /*chartList.addItem("Line");
         chartList.addItem("Hist");
         chartList.addItem("Bars");
         chartList.addItem("Pie");
@@ -298,7 +314,9 @@ public:
         chartList.addItem("Polar");
         chartList.addItem("s.RelPlot");
         chartList.addItem("S.Scatter");
-        chartList.addItem("S.Line");
+        chartList.addItem("S.Line");*/
+        chartList.addItem("S.Dist");
+        chartList.addItem("S.Hist");
         for (auto& i : chartList.items)
             i->lbl.cliked.addChangeListener(this);
 

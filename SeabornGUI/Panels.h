@@ -20,6 +20,7 @@ public:
     juce::Array<paramedBeta*> paramComps;
     int index = 0;
     bool ShowYinput = true;
+    bool SNS_DIST_STYLE = false;
     juce::String pltstr1;
 
     PopUpList popup{ 0, 0, 76, 100, this, handler };
@@ -295,6 +296,30 @@ class SeabornLinePanel : public juce::ChangeListener, public ChartPanel
 public:
     SeabornLinePanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
     ~SeabornLinePanel() {}
+
+    void changeListenerCallback(juce::ChangeBroadcaster* source)
+    {
+        sendSynchronousChangeMessage();
+    }
+};
+
+class SeabornDistPanel : public juce::ChangeListener, public ChartPanel
+{
+public:
+    SeabornDistPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    ~SeabornDistPanel() {}
+
+    void changeListenerCallback(juce::ChangeBroadcaster* source)
+    {
+        sendSynchronousChangeMessage();
+    }
+};
+
+class SeabornHistPanel : public juce::ChangeListener, public ChartPanel
+{
+public:
+    SeabornHistPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    ~SeabornHistPanel() {}
 
     void changeListenerCallback(juce::ChangeBroadcaster* source)
     {

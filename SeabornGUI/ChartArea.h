@@ -14,8 +14,9 @@
 class MainChart : public childComp, public handled 
 {
 public:   
-    juce::ImageComponent bkgd; 
     juce::Viewport ChartViewPort;
+    juce::ImageComponent bkgd; 
+   
     MainChart(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : childComp(x, y, w, h), handled(handler, parent, this){
         //addAndMakeVisible(bkgd);
         addAndMakeVisible(ChartViewPort);

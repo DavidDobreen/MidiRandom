@@ -390,7 +390,7 @@ ReplotPanel::ReplotPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Com
     : ChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
 
     pltstr1 = "sns.relplot(";
-   
+    SNS_DIST_STYLE = true;
 
     addChLabel(new chLabel(408, 57, 150, 25, "data", this, itemParams, handler, drvr, &index, "", guiType::_string));
     static_cast<chLabel*>(guiComps.getLast())->addChangeListener(this);
@@ -421,6 +421,7 @@ ReplotPanel::ReplotPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Com
 SeabornScatterPanel::SeabornScatterPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
     : ChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
     pltstr1 = "sns.scatterplot(";
+    SNS_DIST_STYLE = true;
 
     addChLabel(new chLabel(408, 57, 150, 25, "data", this, itemParams, handler, drvr, &index, "", guiType::_string));
     static_cast<chLabel*>(guiComps.getLast())->addChangeListener(this);
@@ -451,6 +452,7 @@ SeabornScatterPanel::SeabornScatterPanel(int x, int y, int w, int h, bool _ShowY
 SeabornLinePanel::SeabornLinePanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
     : ChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
     pltstr1 = "sns.lineplot(";
+    SNS_DIST_STYLE = true;
 
     addChLabel(new chLabel(408, 57, 150, 25, "data", this, itemParams, handler, drvr, &index, "", guiType::_string));
     static_cast<chLabel*>(guiComps.getLast())->addChangeListener(this);
@@ -476,6 +478,84 @@ SeabornLinePanel::SeabornLinePanel(int x, int y, int w, int h, bool _ShowYinput,
 
 
     addSlider(new AlphaSlider(892, 5, 38, 178, this, itemParams, handler, drvr, &index, "alpha"));
+}
+
+SeabornDistPanel::SeabornDistPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : ChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
+    pltstr1 = "sns.displot(";
+    SNS_DIST_STYLE = true;
+
+    addChLabel(new chLabel(408, 57, 150, 25, "data", this, itemParams, handler, drvr, &index, "", guiType::_string));
+    static_cast<chLabel*>(guiComps.getLast())->addChangeListener(this);
+
+    addChLabelPopup(new chLabelPopup(408, 87, 150, 25, "hue", paramComps.getFirst(), popup, this, itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+
+    addChLabelPopup(new chLabelPopup(21, 17, 150, 25, "row", paramComps.getFirst(), popup, LeftBox.conts[0], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+    addChLabelPopup(new chLabelPopup(21, 47, 150, 25, "col", paramComps.getFirst(), popup, LeftBox.conts[0], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+
+    addChLabelSmall(new chLabelSmall(21, 17, 150, 25, "col_wrap", LeftBox.conts[1], itemParams, handler, drvr, &index, "", guiType::_string));
+    addChLabelSmall(new chLabelSmall(21, 41, 150, 25, "height", LeftBox.conts[1], itemParams, handler, drvr, &index, "", guiType::_string));
+    addChKnob(new chKnobClassicBeta(121, 17, 70, 70, "aspect", LeftBox.conts[1], itemParams, handler, drvr, &index, "aspect"));
+    //change location!
+    addSelectionBox(new SelectionBox(21, 17, { "hist", "kde", "ecdf" }, RightBox.conts[3], itemParams, handler, drvr, &index, "kind"));
+    addToggleButtonAndLabel(new chToggleButtonAndLabel(730, 160, 85, 25, "rug", this, itemParams, handler, drvr, &index, "rug"));
+    addToggleButtonAndLabel(new chToggleButtonAndLabel(630, 160, 85, 25, "log", this, itemParams, handler, drvr, &index, "log_scale"));
+    addToggleButtonAndLabel(new chToggleButtonAndLabel(530, 160, 85, 25, "legend", this, itemParams, handler, drvr, &index, "legend"));
+
+    addChLabel(new chLabel(21, 17, 150, 25, "palette", RightBox.conts[1], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+
+    addSlider(new AlphaSlider(892, 5, 38, 178, this, itemParams, handler, drvr, &index, "alpha"));
+}
+
+SeabornHistPanel::SeabornHistPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : ChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
+    pltstr1 = "sns.histplot(";
+    SNS_DIST_STYLE = true;
+
+    addChLabel(new chLabel(408, 57, 150, 25, "data", this, itemParams, handler, drvr, &index, "", guiType::_string));
+    static_cast<chLabel*>(guiComps.getLast())->addChangeListener(this);
+
+    addChLabelSmall(new chLabelSmall(408, 87, 150, 25, "bins", this, itemParams, handler, drvr, &index, "", guiType::_string));
+    addChLabelPopup(new chLabelPopup(408, 117, 150, 25, "hue", paramComps.getFirst(), popup, this, itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+
+
+
+    addToggleButtonAndLabel(new chToggleButtonAndLabel(130, 160, 85, 25, "legend", this, itemParams, handler, drvr, &index, "legend"));
+    addToggleButtonAndLabel(new chToggleButtonAndLabel(230, 160, 85, 25, "cumulative", this, itemParams, handler, drvr, &index, "cumulative"));
+    addToggleButtonAndLabel(new chToggleButtonAndLabel(330, 160, 85, 25, "fill", this, itemParams, handler, drvr, &index, "fill"));
+    addToggleButtonAndLabel(new chToggleButtonAndLabel(430, 160, 85, 25, "log", this, itemParams, handler, drvr, &index, "log_scale"));
+    addToggleButtonAndLabel(new chToggleButtonAndLabel(530, 160, 85, 25, "kde", this, itemParams, handler, drvr, &index, "kde"));
+    addToggleButtonAndLabel(new chToggleButtonAndLabel(630, 160, 85, 25, "norm", this, itemParams, handler, drvr, &index, "common_norm"));
+    addToggleButtonAndLabel(new chToggleButtonAndLabel(730, 160, 85, 25, "discrete", this, itemParams, handler, drvr, &index, "discrete"));
+
+
+    addChKnob(new chKnobClassicBeta(121, 17, 70, 70, "shrink", LeftBox.conts[0], itemParams, handler, drvr, &index, "shrink"));
+
+    addSelectionBox(new SelectionBox(21, 17, { "bars", "step", "poly" }, LeftBox.conts[1], itemParams, handler, drvr, &index, "element"));
+    addSelectionBox(new SelectionBox(21, 17, { "count", "frequency", "density", "probability" }, LeftBox.conts[2], itemParams, handler, drvr, &index, "stat"));
+    addSelectionBox(new SelectionBox(121, 17, { "layer", "dodge", "stack", "fill" }, LeftBox.conts[2], itemParams, handler, drvr, &index, "multiple"));
+
+    //colorbar dict start
+    //testing: hidden toggle button for cbar. see if it works
+    addToggleButton(new moveChButton(6, 119, 15, 15, "fx on botton2.png", "fx off botton2.png", &RightBox, itemParams, handler, drvr, &index, "cbar", guiType::_bool));
+    addToggleButton(new moveChButton(0, 0, 0, 0, "fx on botton2.png", "fx off botton2.png", &RightBox, itemParams, handler, drvr, &index, "cbar_kws", guiType::_dictStartAlwaysOn)); 
+   
+    addChKnob(new chKnobClassicBeta(21, 17, 70, 70, "fraction", RightBox.conts[0], itemParams, handler, drvr, &index, "fraction"));
+    addChKnob(new chKnobClassicBeta(91, 17, 70, 70, "shrink", RightBox.conts[0], itemParams, handler, drvr, &index, "shrink"));
+    addChKnob(new chKnobClassicBeta(161, 17, 70, 70, "aspect", RightBox.conts[0], itemParams, handler, drvr, &index, "aspect"));
+    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 10000, 100);
+    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setValue(2000, juce::dontSendNotification);
+     
+    addChKnob(new chKnobClassicBeta(21, 17, 70, 70, "pad", RightBox.conts[1], itemParams, handler, drvr, &index, "pad"));
+
+    paramComps.add(new paramedBeta(itemParams));
+    paramComps.getLast()->guiType = guiType::_dictEnd;
+    paramComps.getLast()->paramText = ")";
+    // arrow dict end
+
+
+    
+
 }
 
 
