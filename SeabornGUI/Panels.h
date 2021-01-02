@@ -12,7 +12,7 @@
 #include "CommonComps.h"
 #include "params.h"
 
-class ChartPanel : public moveChildComp, public handled, public drvred
+class ChartPanel : public moveChildComp, public handled, public drvrShellNotifer
 {
 public:
     Params* itemParams;
@@ -267,9 +267,37 @@ public:
 Seaborn
 */
 
-class ReplotPanel : public ChartPanel
+class ReplotPanel : public juce::ChangeListener, public ChartPanel
 {
 public:
     ReplotPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
     ~ReplotPanel() {}
+
+    void changeListenerCallback(juce::ChangeBroadcaster* source)
+    {
+        sendSynchronousChangeMessage();
+    }
+};
+
+class SeabornScatterPanel : public juce::ChangeListener, public ChartPanel
+{
+public:
+    SeabornScatterPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    ~SeabornScatterPanel() {}
+
+    void changeListenerCallback(juce::ChangeBroadcaster* source)
+    {
+        sendSynchronousChangeMessage();
+    }
+};
+class SeabornLinePanel : public juce::ChangeListener, public ChartPanel
+{
+public:
+    SeabornLinePanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    ~SeabornLinePanel() {}
+
+    void changeListenerCallback(juce::ChangeBroadcaster* source)
+    {
+        sendSynchronousChangeMessage();
+    }
 };

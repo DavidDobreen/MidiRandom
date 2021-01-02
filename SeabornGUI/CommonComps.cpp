@@ -383,14 +383,20 @@ PopUpList::PopUpList(int x, int y, int w, int h, juce::Component* parent, pngHan
 
 void PopUpList::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
-    if (source == &area)
-        setVisible(false);
-    else
-        for (auto& i : items)
+    
+        if (dynamic_cast<PopUpList::item::itemArea*>(source) != nullptr)
         {
-            i->lbl.textColor = juce::Colours::slategrey;
-            i->lbl.repaint();
+            for (auto& i : items)
+            {
+                i->lbl.textColor = juce::Colours::slategrey;
+                i->lbl.repaint();
+            }
         }
+
+        else
+        {
+            sendSynchronousChangeMessage();//listenr: chLabelPopUp
+        }       
 }
 
 void PopUpList::addItem(juce::String text)
@@ -400,7 +406,28 @@ void PopUpList::addItem(juce::String text)
     item->lbl.index = items.size();
     item->lbl.selected = &SelectedPopup;
     item->lbl.addChangeListener(this);
+    item->lbl.cliked.addChangeListener(this);
     item->area.toFront(false);
     items.add(item);
     SelectedPopup = items.size() - 1;
+}
+
+void chLabelPopup::changeListenerCallback(juce::ChangeBroadcaster* source)
+{
+    PopUpList* popup = dynamic_cast<PopUpList*>(source);
+    if (popup != nullptr)
+    {
+        lbl.lbl.setText(popUpList.items[popup->SelectedPopup]->lbl.text,juce::dontSendNotification);
+        lbl.update(lbl.lbl.getText());
+        popup->setVisible(false);
+    }
+    else
+    {
+        lblName.IsOn = !lblName.IsOn;
+        lblName.update(lblName.IsOn);
+        lblName.repaint();
+        replot = true;
+        sendSynchronousChangeMessage();
+        replot = false;
+    }  
 }

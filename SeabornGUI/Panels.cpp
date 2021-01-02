@@ -393,12 +393,13 @@ ReplotPanel::ReplotPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Com
    
 
     addChLabel(new chLabel(408, 57, 150, 25, "data", this, itemParams, handler, drvr, &index, "", guiType::_string));
+    static_cast<chLabel*>(guiComps.getLast())->addChangeListener(this);
     addChLabelPopup(new chLabelPopup(408, 87, 150, 25, "hue", paramComps.getFirst(),popup, this, itemParams, handler, drvr, &index, "", guiType::_stringQuots));
-    addChLabel(new chLabel(408, 117, 150, 25, "size", this, itemParams, handler, drvr, &index, "", guiType::_stringQuots));
-    addChLabel(new chLabel(408, 147, 150, 25, "style", this, itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+    addChLabelPopup(new chLabelPopup(408, 117, 150, 25, "size", paramComps.getFirst(), popup,this, itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+    addChLabelPopup(new chLabelPopup(408, 147, 150, 25, "style", paramComps.getFirst(), popup,this, itemParams, handler, drvr, &index, "", guiType::_stringQuots));
 
-    addChLabel(new chLabel(21, 17, 150, 25, "row", LeftBox.conts[0], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
-    addChLabel(new chLabel(21, 47, 150, 25, "col", LeftBox.conts[0], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+    addChLabelPopup(new chLabelPopup(21, 17, 150, 25, "row", paramComps.getFirst(), popup,LeftBox.conts[0], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+    addChLabelPopup(new chLabelPopup(21, 47, 150, 25, "col", paramComps.getFirst(), popup,LeftBox.conts[0], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
     addChLabelSmall(new chLabelSmall(221, 47, 150, 25, "col_wrap", LeftBox.conts[0], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
 
     addChLabel(new chLabel(21, 17, 150, 25, "row_order", LeftBox.conts[1], itemParams, handler, drvr, &index, "", guiType::_stringArray));
@@ -417,10 +418,70 @@ ReplotPanel::ReplotPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Com
 
 }
 
+SeabornScatterPanel::SeabornScatterPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : ChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
+    pltstr1 = "sns.scatterplot(";
+
+    addChLabel(new chLabel(408, 57, 150, 25, "data", this, itemParams, handler, drvr, &index, "", guiType::_string));
+    static_cast<chLabel*>(guiComps.getLast())->addChangeListener(this);
+    addChLabelPopup(new chLabelPopup(408, 87, 150, 25, "hue", paramComps.getFirst(), popup, this, itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+    addChLabelPopup(new chLabelPopup(408, 117, 150, 25, "size", paramComps.getFirst(), popup, this, itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+    addChLabelPopup(new chLabelPopup(408, 147, 150, 25, "style", paramComps.getFirst(), popup, this, itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+
+
+    addChLabel(new chLabel(21, 47, 150, 25, "hue_order", RightBox.conts[0], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+    addChLabel(new chLabel(21, 77, 150, 25, "hue_norm", RightBox.conts[0], itemParams, handler, drvr, &index, "", guiType::_stringArray));
+
+    addChLabel(new chLabel(21, 17, 150, 25, "sizes", LeftBox.conts[2], itemParams, handler, drvr, &index, "", guiType::_stringArray));
+    addChLabel(new chLabel(21, 47, 150, 25, "size_order", LeftBox.conts[2], itemParams, handler, drvr, &index, "", guiType::_stringArray));
+    addChLabel(new chLabel(21, 47, 150, 25, "size_norm", LeftBox.conts[2], itemParams, handler, drvr, &index, "", guiType::_stringArray));
+
+    addChLabel(new chLabel(21, 17, 150, 25, "palette", RightBox.conts[1], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+    addChLabel(new chLabel(21, 47, 150, 25, "estimator", RightBox.conts[1], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+
+    addChLabelPopup(new chLabelPopup(21, 17, 150, 25, "units", paramComps.getFirst(), popup, RightBox.conts[2], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+    addChLabel(new chLabel(21, 47, 150, 25, "style_order", RightBox.conts[2], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+
+    addSelectionBox(new SelectionBox(21, 17, { "False", "auto", "brief","full" }, RightBox.conts[3], itemParams, handler, drvr, &index, "legend"));
+
+
+    addSlider(new AlphaSlider(892, 5, 38, 178, this, itemParams, handler, drvr, &index, "alpha"));
+}
+
+SeabornLinePanel::SeabornLinePanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : ChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
+    pltstr1 = "sns.lineplot(";
+
+    addChLabel(new chLabel(408, 57, 150, 25, "data", this, itemParams, handler, drvr, &index, "", guiType::_string));
+    static_cast<chLabel*>(guiComps.getLast())->addChangeListener(this);
+    addChLabelPopup(new chLabelPopup(408, 87, 150, 25, "hue", paramComps.getFirst(), popup, this, itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+    addChLabelPopup(new chLabelPopup(408, 117, 150, 25, "size", paramComps.getFirst(), popup, this, itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+    addChLabelPopup(new chLabelPopup(408, 147, 150, 25, "style", paramComps.getFirst(), popup, this, itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+
+
+    addChLabel(new chLabel(21, 47, 150, 25, "hue_order", RightBox.conts[0], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+    addChLabel(new chLabel(21, 77, 150, 25, "hue_norm", RightBox.conts[0], itemParams, handler, drvr, &index, "", guiType::_stringArray));
+
+    addChLabel(new chLabel(21, 17, 150, 25, "sizes", LeftBox.conts[2], itemParams, handler, drvr, &index, "", guiType::_stringArray));
+    addChLabel(new chLabel(21, 47, 150, 25, "size_order", LeftBox.conts[2], itemParams, handler, drvr, &index, "", guiType::_stringArray));
+    addChLabel(new chLabel(21, 47, 150, 25, "size_norm", LeftBox.conts[2], itemParams, handler, drvr, &index, "", guiType::_stringArray));
+
+    addChLabel(new chLabel(21, 17, 150, 25, "palette", RightBox.conts[1], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+    addChLabel(new chLabel(21, 47, 150, 25, "estimator", RightBox.conts[1], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+
+    addChLabelPopup(new chLabelPopup(21, 17, 150, 25, "units", paramComps.getFirst(), popup, RightBox.conts[2], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+    addChLabel(new chLabel(21, 47, 150, 25, "style_order", RightBox.conts[2], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+
+    addSelectionBox(new SelectionBox(21, 17, { "False", "auto", "brief","full" }, RightBox.conts[3], itemParams, handler, drvr, &index, "legend"));
+
+
+    addSlider(new AlphaSlider(892, 5, 38, 178, this, itemParams, handler, drvr, &index, "alpha"));
+}
+
 
 
 ChartPanel::ChartPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
-    : ShowYinput(_ShowYinput), moveChildComp(x, y, w, h), handled(handler, parent, this), drvred(_drvr){}
+    : ShowYinput(_ShowYinput), moveChildComp(x, y, w, h), handled(handler, parent, this), drvrShellNotifer(_drvr){}
 
 void ChartPanel::init()
 {

@@ -42,26 +42,63 @@ public:
     ~PythonShell();
 
     void changeListenerCallback(juce::ChangeBroadcaster* source) {   
+       // auto lbl = dynamic_cast<chLabelPopup*>(source);
         auto lbl = dynamic_cast<chLabelPopup*>(source);
         if (lbl != nullptr)
         {
-            juce::String cols = RunPyFunc("GetColumnsNames", "df");
-            juce::String cols2 = cols.substring(cols.indexOf("[")+1, cols.indexOf("]"));
+            /*if (lbl->replot)
+            {
+                Matplot();
+                RunShell();
+            }
+            else
+            {
+                juce::String cols = RunPyFunc("GetColumnsNames",lbl->lbl.lbl.getText());
+                juce::String cols2 = cols.substring(cols.indexOf("[") + 1, cols.indexOf("]"));
+                std::vector<juce::String> words;
+                int index = 0;
+                int index2 = 0;
+                while (index2 >= 0)
+                {
+                    index2 = cols2.indexOf(index, ",");
+                    words.push_back(cols2.substring(index + 1, index2 - 1));
+                    index = index2 + 1;
+                }
+
+                lbl->popUpList.items.clear();
+                for (auto& w : words)
+                    lbl->popUpList.addItem(w.replaceFirstOccurrenceOf("'", ""));
+            }
+           
+            return;*/
+        }
+
+        auto pnl = dynamic_cast<ChartPanel*>(source);
+        if (pnl != nullptr)
+        {
+          //  RunPyFunc("LoadDataSet", pnl->itemParams->paramsArray[1]->stringText);
+            juce::String cols = RunPyFunc("GetColumnsNames", pnl->itemParams->paramsArray[1]->stringText);
+            juce::String cols2 = cols.substring(cols.indexOf("[") + 1, cols.indexOf("]"));
             std::vector<juce::String> words;
             int index = 0;
             int index2 = 0;
             while (index2 >= 0)
             {
                 index2 = cols2.indexOf(index, ",");
-                words.push_back(cols2.substring(index+1, index2-1));
-                index = index2+1;
+                words.push_back(cols2.substring(index + 1, index2 - 1));
+                index = index2 + 1;
             }
 
-            
+            pnl->popup.items.clear();
+            pnl->handler.compRszr.clear();
+            pnl->handler.bkgdRszr.clear();
             for (auto& w : words)
-                lbl->popUpList.addItem(w.replaceFirstOccurrenceOf("'", ""));
+                pnl->popup.addItem(w.replaceFirstOccurrenceOf("'", ""));
+            pnl->popup.resized();
+            pnl->handler.InitGUI();
             return;
         }
+             
 
         Matplot();   
         RunShell();

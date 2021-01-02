@@ -802,7 +802,7 @@ public:
 };
 
 
-class PopUpList : public juce::ChangeListener, public moveChildComp, public handled
+class PopUpList : public juce::ChangeBroadcaster, public juce::ChangeListener, public moveChildComp, public handled
 {
 public:
     class mouseArea : public juce::ChangeBroadcaster, public moveChildComp, public handled
@@ -836,10 +836,10 @@ public:
                 }
             }
             void mouseEnter(const juce::MouseEvent& event) {
+                
                 sendSynchronousChangeMessage();
                 textColor = juce::Colours::aqua;
                 repaint();
-
             }
         };
 
@@ -848,8 +848,6 @@ public:
 
         item(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler)
             : moveChildComp(x, y, w, h), handled(handler, parent, this) {}
-
-
     };
 
     chBgComp bkgd{ "BLACK MAIN BG2.png",this ,handler };
@@ -858,26 +856,20 @@ public:
     int SelectedPopup;
 
     PopUpList(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler);
+    ~PopUpList() { removeAllChangeListeners(); }
 
     void changeListenerCallback(juce::ChangeBroadcaster* source);
     void addItem(juce::String text);
-    void resized(){
-    int count = 0;
+    void resized() {
+        int count = 0;
         for (auto& i : items)
         {
             i->lbl.index = count;
-            i->dims[1] = 9 + 18 * count;
+            i->dims[1] = 18 * count;
             i->setBounds(i->dims[0], i->dims[1], i->dims[2], i->dims[3]);
             count++;
         }
-
-
-        int y = 26;
-        if (items.size())
-            y = items.getLast()->getY() + 19;
-
-   
-        }
+    }
 };
 
 
@@ -886,17 +878,24 @@ class chLabelPopup : public chLabel
 public:
     paramedBeta* data;
     PopUpList& popUpList;
+    bool replot = false;
 
     chLabelPopup(int x, int y, int w, int h, juce::String name, paramedBeta*  _data, PopUpList& _popUp, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr,
         int* _index, juce::String _paramText = "", int _guiType = guiType::_stringQuots)
         :chLabel(x, y, w, h, name, parent, params, handler, drvr, _index, _paramText, guiType), data(_data), popUpList(_popUp){
- 
+        
         lbl.lbl.onEditorShow = [&] {
-            sendSynchronousChangeMessage();
-             
-            popUpList.setBounds(popUpList.getBoundsInParent().withX(getX()));
-            handler.InitGUI();
-            popUpList.setVisible(true); };
+            //handler.compRszr.clear();
+            //handler.bkgdRszr.clear();
+            sendSynchronousChangeMessage(); 
+            popUpList.removeAllChangeListeners();
+            popUpList.addChangeListener(this);
+            
+            popUpList.setBounds(popUpList.getBoundsInParent().withX(getX()).withHeight(popUpList.items.size()*18));
+            //popUpList.resized();
+            //handler.InitGUI();
+            popUpList.setVisible(true);
+            popUpList.toFront(true); };
 
         lblName.text = name;
         addAndMakeVisible(lbl);
@@ -914,4 +913,6 @@ public:
         //    lbl.paramText = _paramText;
     }
     ~chLabelPopup() {}
+
+    void changeListenerCallback(juce::ChangeBroadcaster* source);
 };

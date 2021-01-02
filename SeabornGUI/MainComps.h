@@ -88,6 +88,8 @@ public:
        CHpanels.add(new ScatterPanel(0, 0, dims[2], dims[3], true, this, handler, drvr));      
        CHpanels.add(new PolarPanel(0, 0, dims[2], dims[3], true, this, handler, drvr)); 
        CHpanels.add(new ReplotPanel(0, 0, dims[2], dims[3], true, this, handler, drvr));
+       CHpanels.add(new SeabornScatterPanel(0, 0, dims[2], dims[3], true, this, handler, drvr));
+       CHpanels.add(new SeabornLinePanel(0, 0, dims[2], dims[3], true, this, handler, drvr));
 
        TXpanels.add(new TextPanel(0, 0, dims[2], dims[3], "xlabel", this, handler, drvr));
        TXpanels.add(new TextPanel(0, 0, dims[2], dims[3], "ylabel", this, handler, drvr));
@@ -279,7 +281,7 @@ public:
     //ChartList::item chartName{ 102, 21, 76, 18, this, handler };
     int selected_axes = 0;
 
-    ChartList chartList{ 98,48,84,140,axes, bottomPanel,this,handler };
+    ChartList chartList{ 98,48,84,240,axes, bottomPanel,this,handler };
     ItemList axesList{ 30,113,93,236,axes, bottomPanel,this,handler,selected_axes };
     
     fig Fig{ axes,bottomPanel,this,handler };
@@ -294,7 +296,9 @@ public:
         chartList.addItem("Pie");
         chartList.addItem("Scatter");
         chartList.addItem("Polar");
-        chartList.addItem("RelPlot");
+        chartList.addItem("s.RelPlot");
+        chartList.addItem("S.Scatter");
+        chartList.addItem("S.Line");
         for (auto& i : chartList.items)
             i->lbl.cliked.addChangeListener(this);
 
