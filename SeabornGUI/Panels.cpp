@@ -10,7 +10,7 @@
 
 #include "Panels.h"
 
-Line2DPanel::Line2DPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent,   pngHandler& handler, Drvr& _drvr)
+Line2DPanel::Line2DPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
     : ChartPanel(x, y, w, h, _ShowYinput, parent,handler,_drvr)
 {
     pltstr1 = juce::String("line, = ax.plot(");
@@ -19,56 +19,17 @@ Line2DPanel::Line2DPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Com
     addColorsComponent(new colorsComponent(408, 57, 175, 25, "color",this, itemParams, handler, drvr, &index, "line.set_color",guiType::_functionWithQuotes));
     addChLabel(new chLabel(408, 87, 150, 25, "label", this, itemParams, handler, drvr, &index, "line.set_label",guiType::_functionWithQuotes));
        
-    addChKnob(new chKnobClassicBeta(121, 17, 70, 70, "width", LeftBox.conts[1], itemParams, handler, drvr, &index, "line.set_linewidth", guiType::_functionFloat));
-    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 1000, 1);
-    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setValue(100, juce::dontSendNotification);
-    addSelectionBox(new SelectionBox(10, 10, { "solid", "dashed", "dashdot","dotted" }, LeftBox.conts[1], itemParams, handler, drvr, &index, "line.set_linestyle", guiType::_functionList));
-    addSelectionBox(new SelectionBox(0, 0, { "default", "steps", "steps-pre","steps-mid","steps-post" }, LeftBox.conts[2], itemParams, handler, drvr, &index, "line.set_drawstyle", guiType::_functionList));
+    LeftBox.setVisible(false);
+    RightBox.setVisible(false);
+    auto line = new Line2dArgsCompBox(108, 26, 260, 135, &guiComps, &paramComps, this, itemParams, handler, drvr, index);
+    CompBoxes.add(std::move(line));
+    lbls.add(line->compBox.lbls[0]);
+    auto markers = new MarkersArgsCompBox(598, 26, 260, 135, &guiComps, &paramComps, this, itemParams, handler, drvr, index);
+    CompBoxes.add(std::move(markers));
+    lbls.add(markers->compBox.lbls[0]);
 
-    addToggleButton(new moveChButton(6, 119, 15, 15, "fx on botton2.png", "fx off botton2.png", &RightBox, itemParams, handler, drvr, &index));
-    addMarkers(new markers(10, 10, 250, 100, RightBox.conts[0], itemParams, handler, drvr, &index, "line.set_marker",guiType::_function)); 
-    addColorsComponent(new colorsComponent(21, 17, 171, 25, "face",RightBox.conts[2], itemParams, handler, drvr, &index, "line.set_markerfacecolor",guiType::_functionWithQuotes));
-    addColorsComponent(new colorsComponent(21, 57, 171, 25, "edge",RightBox.conts[2], itemParams, handler, drvr, &index, "line.set_markeredgecolor", guiType::_functionWithQuotes));
-    addChKnob(new chKnobClassicBeta(21, 17, 70, 70, "size", RightBox.conts[1], itemParams, handler, drvr, &index, "line.set_markersize", guiType::_functionFloat));
-    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 5000, 10);
-    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setValue(100, juce::dontSendNotification);
-    addChKnob(new chKnobClassicBeta(121, 17, 70, 70, "edge", RightBox.conts[1], itemParams, handler, drvr, &index, "line.set_markeredgewidth", guiType::_functionFloat));
-    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 2000, 10);
-    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setValue(100, juce::dontSendNotification);
-    addSelectionBox(new SelectionBox(21, 14, { "none", "full", "left","right","bottom" ,"top" }, RightBox.conts[3], itemParams, handler, drvr, &index, "line.set_fillstyle", guiType::_functionList));
     
-}
 
-Line2DPanel::MarkersBox::MarkersBox(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr)
-    : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvred(_drvr) {
-
-    MarkerKindLbl.addChangeListener(this);
-    MarkerSizeLbl.addChangeListener(this);
-    MarkerEdgeLbl.addChangeListener(this);
-    MarkerFileLbl.addChangeListener(this);
-   
-    //markerfacecolor.name.text = "color";
-}
-
-void Line2DPanel::MarkersBox::changeListenerCallback(juce::ChangeBroadcaster* source)
-{
-    MarkerKindLbl.IsOn = false; MarkerKindLbl.repaint();
-    MarkerSizeLbl.IsOn = false; MarkerSizeLbl.repaint();
-    MarkerEdgeLbl.IsOn = false; MarkerEdgeLbl.repaint();
-    MarkerFileLbl.IsOn = false; MarkerFileLbl.repaint();
-
-    markersCont1.setVisible(false);
-    markersCont2.setVisible(false);
-    markersCont3.setVisible(false);
-    markersCont4.setVisible(false);
-
-    fxLabel* lbl = dynamic_cast<fxLabel*>(source);
-    if (lbl != nullptr)
-    {
-        lbl->IsOn = true;
-        lbl->repaint();
-        lbl->comp->setVisible(true);
-    }
 }
 
 TextPanel::TextPanel(int x, int y, int w, int h, juce::String paramText, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
@@ -145,42 +106,20 @@ AxesPanel::AxesPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Compone
     
 }
 
-Line2DPanel::LineStyleBox::LineStyleBox(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr)
-    : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvred(_drvr) {
-
-    lineLbl1.addChangeListener(this);
-    lineLbl2.addChangeListener(this);
-    lineLbl3.addChangeListener(this);
-     
-   
-}
-
-void Line2DPanel::LineStyleBox::changeListenerCallback(juce::ChangeBroadcaster* source)
-{
-    lineLbl1.IsOn = false; lineLbl1.repaint();
-    lineLbl2.IsOn = false; lineLbl2.repaint();
-    lineLbl3.IsOn = false; lineLbl3.repaint();
-    
-    lineCont1.setVisible(false);
-    lineCont2.setVisible(false);
-    lineCont3.setVisible(false);
-    
-    fxLabel* lbl = dynamic_cast<fxLabel*>(source);
-    if (lbl != nullptr)
-    {
-        lbl->IsOn = true;
-        lbl->repaint();
-        lbl->comp->setVisible(true);
-    }
-}
- 
 HistPanel::HistPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
     : ChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
     pltstr1 = "n,bins,patches = ax.hist(";
 
     addSlider(new AlphaSlider(892, 5, 38, 178, this, itemParams, handler, drvr, &index, "alpha", guiType::_float));
 
-    addColorsComponent(new colorsComponent(409, 57, 175, 25, "color",this, itemParams, handler, drvr, &index, "color"));
+    auto binsf = new BinsFront(409, 57, 300, 250, &guiComps, &paramComps, this, itemParams, handler, drvr, index);
+    CompBoxes.add(std::move(binsf));
+     
+    auto bins = new BinsArgsCompBox(108, 26, 260, 135, &guiComps, &paramComps, this, itemParams, handler, drvr, index);
+    CompBoxes.add(std::move(bins));
+    lbls.add(bins->compBox.lbls[0]);
+
+    /*addColorsComponent(new colorsComponent(409, 57, 175, 25, "color",this, itemParams, handler, drvr, &index, "color"));
     addColorsComponent(new colorsComponent(21, 17, 175, 25, "edge",RightBox.conts[0], itemParams, handler, drvr, &index, "edgecolor"));
 
     addChLabel(new chLabel(408, 87, 150, 25, "label", this, itemParams, handler, drvr, &index, "hist.set_label",guiType::_stringQuots));
@@ -205,7 +144,7 @@ HistPanel::HistPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Compone
     addToggleButtonAndLabel(new chToggleButtonAndLabel(21, 21, 85, 25, "log", RightBox.conts[1], itemParams, handler, drvr, &index, "log"));
     addToggleButtonAndLabel(new chToggleButtonAndLabel(71, 21, 85, 25, "stacked", RightBox.conts[1], itemParams, handler, drvr, &index, "stacked"));
 
-    addSelectionBox(new SelectionBox(21, 21, { "solid", "dashed", "dashdot", "dotted" }, RightBox.conts[2], itemParams, handler, drvr, &index, "linestyle"));
+    addSelectionBox(new SelectionBox(21, 21, { "solid", "dashed", "dashdot", "dotted" }, RightBox.conts[2], itemParams, handler, drvr, &index, "linestyle"));*/
 
     
     /////////////////////////////     
@@ -387,10 +326,10 @@ AnnotPanel::AnnotPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Compo
 }
 
 ReplotPanel::ReplotPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
-    : ChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
+    : SeabornChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
 
     pltstr1 = "sns.relplot(";
-    SNS_DIST_STYLE = true;
+    
 
     addChLabel(new chLabel(408, 57, 150, 25, "data", this, itemParams, handler, drvr, &index, "", guiType::_string));
     static_cast<chLabel*>(guiComps.getLast())->addChangeListener(this);
@@ -419,10 +358,9 @@ ReplotPanel::ReplotPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Com
 }
 
 SeabornScatterPanel::SeabornScatterPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
-    : ChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
+    : SeabornChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
     pltstr1 = "sns.scatterplot(";
-    SNS_DIST_STYLE = true;
-
+    
     addChLabel(new chLabel(408, 57, 150, 25, "data", this, itemParams, handler, drvr, &index, "", guiType::_string));
     static_cast<chLabel*>(guiComps.getLast())->addChangeListener(this);
     addChLabelPopup(new chLabelPopup(408, 87, 150, 25, "hue", paramComps.getFirst(), popup, this, itemParams, handler, drvr, &index, "", guiType::_stringQuots));
@@ -445,15 +383,13 @@ SeabornScatterPanel::SeabornScatterPanel(int x, int y, int w, int h, bool _ShowY
 
     addSelectionBox(new SelectionBox(21, 17, { "False", "auto", "brief","full" }, RightBox.conts[3], itemParams, handler, drvr, &index, "legend"));
 
-
     addSlider(new AlphaSlider(892, 5, 38, 178, this, itemParams, handler, drvr, &index, "alpha"));
 }
 
 SeabornLinePanel::SeabornLinePanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
-    : ChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
+    : SeabornChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
     pltstr1 = "sns.lineplot(";
-    SNS_DIST_STYLE = true;
-
+     
     addChLabel(new chLabel(408, 57, 150, 25, "data", this, itemParams, handler, drvr, &index, "", guiType::_string));
     static_cast<chLabel*>(guiComps.getLast())->addChangeListener(this);
     addChLabelPopup(new chLabelPopup(408, 87, 150, 25, "hue", paramComps.getFirst(), popup, this, itemParams, handler, drvr, &index, "", guiType::_stringQuots));
@@ -481,10 +417,9 @@ SeabornLinePanel::SeabornLinePanel(int x, int y, int w, int h, bool _ShowYinput,
 }
 
 SeabornDistPanel::SeabornDistPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
-    : ChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
+    : SeabornChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
     pltstr1 = "sns.displot(";
-    SNS_DIST_STYLE = true;
-
+     
     addChLabel(new chLabel(408, 57, 150, 25, "data", this, itemParams, handler, drvr, &index, "", guiType::_string));
     static_cast<chLabel*>(guiComps.getLast())->addChangeListener(this);
 
@@ -508,17 +443,14 @@ SeabornDistPanel::SeabornDistPanel(int x, int y, int w, int h, bool _ShowYinput,
 }
 
 SeabornHistPanel::SeabornHistPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
-    : ChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
+    : SeabornChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
     pltstr1 = "sns.histplot(";
-    SNS_DIST_STYLE = true;
-
+    
     addChLabel(new chLabel(408, 57, 150, 25, "data", this, itemParams, handler, drvr, &index, "", guiType::_string));
     static_cast<chLabel*>(guiComps.getLast())->addChangeListener(this);
 
     addChLabelSmall(new chLabelSmall(408, 87, 150, 25, "bins", this, itemParams, handler, drvr, &index, "", guiType::_string));
     addChLabelPopup(new chLabelPopup(408, 117, 150, 25, "hue", paramComps.getFirst(), popup, this, itemParams, handler, drvr, &index, "", guiType::_stringQuots));
-
-
 
     addToggleButtonAndLabel(new chToggleButtonAndLabel(130, 160, 85, 25, "legend", this, itemParams, handler, drvr, &index, "legend"));
     addToggleButtonAndLabel(new chToggleButtonAndLabel(230, 160, 85, 25, "cumulative", this, itemParams, handler, drvr, &index, "cumulative"));
@@ -548,20 +480,166 @@ SeabornHistPanel::SeabornHistPanel(int x, int y, int w, int h, bool _ShowYinput,
      
     addChKnob(new chKnobClassicBeta(21, 17, 70, 70, "pad", RightBox.conts[1], itemParams, handler, drvr, &index, "pad"));
 
-    paramComps.add(new paramedBeta(itemParams));
+     
+   
+    auto dummyBtn = new moveChButton(0, 0, 0, 0, "fx on botton2.png", "fx off botton2.png", &RightBox, itemParams, handler, drvr, &index, "cbar", guiType::_bool);
+    guiComps.add(std::move(dummyBtn));//dummy comp
+    paramComps.add(dummyBtn);
+    paramComps.getLast()->guiType = guiType::_dictEnd;
+    paramComps.getLast()->paramText = ")";
+    // arrow dict end
+}
+     
+SeabornKDEPanel::SeabornKDEPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : SeabornChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
+    pltstr1 = "sns.kdeplot(";
+
+    addChLabel(new chLabel(408, 57, 150, 25, "data", this, itemParams, handler, drvr, &index, "", guiType::_string));
+    static_cast<chLabel*>(guiComps.getLast())->addChangeListener(this);
+
+    addChLabelPopup(new chLabelPopup(408, 87, 150, 25, "hue", paramComps.getFirst(), popup, this, itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+
+    addToggleButtonAndLabel(new chToggleButtonAndLabel(530, 160, 85, 25, "fill", this, itemParams, handler, drvr, &index, "fill"));
+    addToggleButtonAndLabel(new chToggleButtonAndLabel(230, 160, 85, 25, "cumulative", this, itemParams, handler, drvr, &index, "cumulative"));
+    addToggleButtonAndLabel(new chToggleButtonAndLabel(630, 160, 85, 25, "norm", this, itemParams, handler, drvr, &index, "common_norm"));
+    addToggleButtonAndLabel(new chToggleButtonAndLabel(730, 160, 85, 25, "common grid", this, itemParams, handler, drvr, &index, "common_grid"));
+    addToggleButtonAndLabel(new chToggleButtonAndLabel(430, 160, 85, 25, "log", this, itemParams, handler, drvr, &index, "log_scale"));
+
+    addChLabelSmall(new chLabelSmall(408, 117, 150, 25, "gridsize", this, itemParams, handler, drvr, &index, "", guiType::_string));
+
+    addChKnob(new chKnobClassicBeta(21, 17, 70, 70, "width", LeftBox.conts[0], itemParams, handler, drvr, &index, "linewidth"));
+    addChKnob(new chKnobClassicBeta(121, 17, 70, 70, "thresh", LeftBox.conts[0], itemParams, handler, drvr, &index, "thresh"));
+    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 500, 1);
+    addChLabelSmall(new chLabelSmall(121, 17, 150, 25, "cut", LeftBox.conts[0], itemParams, handler, drvr, &index, "", guiType::_string));
+    addSelectionBox(new SelectionBox(121, 17, { "layer", "stack", "fill" }, LeftBox.conts[2], itemParams, handler, drvr, &index, "multiple"));
+
+
+
+    addChLabel(new chLabel(21, 17, 150, 25, "palette", RightBox.conts[1], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+    addChLabel(new chLabel(21, 47, 150, 25, "cmap", RightBox.conts[1], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+    addChLabel(new chLabel(21, 17, 150, 25, "levels", RightBox.conts[2], itemParams, handler, drvr, &index, "", guiType::_string));
+    
+    //colorbar dict start
+    //testing: hidden toggle button for cbar. see if it works
+    addToggleButton(new moveChButton(6, 119, 15, 15, "fx on botton2.png", "fx off botton2.png", &RightBox, itemParams, handler, drvr, &index, "cbar", guiType::_bool));
+    addToggleButton(new moveChButton(0, 0, 0, 0, "fx on botton2.png", "fx off botton2.png", &RightBox, itemParams, handler, drvr, &index, "cbar_kws", guiType::_dictStartAlwaysOn));
+
+    addChKnob(new chKnobClassicBeta(21, 17, 70, 70, "fraction", RightBox.conts[0], itemParams, handler, drvr, &index, "fraction"));
+    addChKnob(new chKnobClassicBeta(91, 17, 70, 70, "shrink", RightBox.conts[0], itemParams, handler, drvr, &index, "shrink"));
+    addChKnob(new chKnobClassicBeta(161, 17, 70, 70, "aspect", RightBox.conts[0], itemParams, handler, drvr, &index, "aspect"));
+    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 10000, 100);
+    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setValue(2000, juce::dontSendNotification);
+
+    addChKnob(new chKnobClassicBeta(21, 17, 70, 70, "pad", RightBox.conts[2], itemParams, handler, drvr, &index, "pad"));
+
+    auto dummyBtn = new moveChButton(0, 0, 0, 0, "fx on botton2.png", "fx off botton2.png", &RightBox, itemParams, handler, drvr, &index, "cbar", guiType::_bool);
+    guiComps.add(std::move(dummyBtn));//dummy comp
+    paramComps.add(dummyBtn);
     paramComps.getLast()->guiType = guiType::_dictEnd;
     paramComps.getLast()->paramText = ")";
     // arrow dict end
 
+    addSlider(new AlphaSlider(892, 5, 38, 178, this, itemParams, handler, drvr, &index, "alpha"));
+}
 
-    
+SeabornECDFPanel::SeabornECDFPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : SeabornChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
+    pltstr1 = "sns.ecdfplot(";
 
+    addChLabel(new chLabel(408, 57, 150, 25, "data", this, itemParams, handler, drvr, &index, "", guiType::_string));
+    static_cast<chLabel*>(guiComps.getLast())->addChangeListener(this);
+    addChLabelPopup(new chLabelPopup(408, 87, 150, 25, "hue", paramComps.getFirst(), popup, this, itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+
+    addSelectionBox(new SelectionBox(121, 17, { "proportion", "count" }, LeftBox.conts[0], itemParams, handler, drvr, &index, "stat"));
+
+    addToggleButtonAndLabel(new chToggleButtonAndLabel(230, 160, 85, 25, "complementary", this, itemParams, handler, drvr, &index, "complementary"));
+    addChLabel(new chLabel(21, 17, 150, 25, "palette", RightBox.conts[1], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+    addToggleButtonAndLabel(new chToggleButtonAndLabel(430, 160, 85, 25, "log", this, itemParams, handler, drvr, &index, "log_scale"));
+}
+
+SeabornRugPanel::SeabornRugPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : SeabornChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
+}
+
+SeabornCatPanel::SeabornCatPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : SeabornChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
+    pltstr1 = "sns.erugplot(";
+
+    addChLabel(new chLabel(408, 57, 150, 25, "data", this, itemParams, handler, drvr, &index, "", guiType::_string));
+    static_cast<chLabel*>(guiComps.getLast())->addChangeListener(this);
+    addChLabelPopup(new chLabelPopup(408, 87, 150, 25, "hue", paramComps.getFirst(), popup, this, itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+
+    addChLabel(new chLabel(21, 17, 150, 25, "palette", RightBox.conts[1], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+
+    addToggleButtonAndLabel(new chToggleButtonAndLabel(430, 160, 85, 25, "expand_margins", this, itemParams, handler, drvr, &index, "expand_margins"));
+
+}
+
+SeabornStripPanel::SeabornStripPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : SeabornChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
+    pltstr1 = "sns.catplot(";
+
+    addChLabel(new chLabel(408, 57, 150, 25, "data", this, itemParams, handler, drvr, &index, "", guiType::_string));
+    static_cast<chLabel*>(guiComps.getLast())->addChangeListener(this);
+    addChLabelPopup(new chLabelPopup(408, 87, 150, 25, "hue", paramComps.getFirst(), popup, this, itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+    addChLabelPopup(new chLabelPopup(408, 117, 150, 25, "row", paramComps.getFirst(), popup, this, itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+    addChLabelPopup(new chLabelPopup(408, 147, 150, 25, "col", paramComps.getFirst(), popup, this, itemParams, handler, drvr, &index, "", guiType::_stringQuots));
+    addChLabelSmall(new chLabelSmall(13, 57, 93, 15, "ncol", LeftBox.conts[1], itemParams, handler, drvr, &index, "", guiType::_string));
+
+}
+
+SeabornSwarmPanel::SeabornSwarmPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : SeabornChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
+}
+
+SeabornBoxPanel::SeabornBoxPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : SeabornChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
+}
+
+SeabornViolinPanel::SeabornViolinPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : SeabornChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
+}
+
+SeabornBoxenPanel::SeabornBoxenPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : SeabornChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
+}
+
+SeabornPointPanel::SeabornPointPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : SeabornChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
+}
+
+SeabornBarPanel::SeabornBarPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : SeabornChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
+}
+
+SeabornCountPanel::SeabornCountPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : SeabornChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
+}
+
+SeabornLMPanel::SeabornLMPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : SeabornChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
+}
+
+SeabornRegresionPanel::SeabornRegresionPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : SeabornChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
+}
+
+SeabornHeatMapPanel::SeabornHeatMapPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : SeabornChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
+}
+
+SeabornClusterMapPanel::SeabornClusterMapPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : SeabornChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
+}
+
+SeabornJointPanel::SeabornJointPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : SeabornChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
 }
 
 
 
 ChartPanel::ChartPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
-    : ShowYinput(_ShowYinput), moveChildComp(x, y, w, h), handled(handler, parent, this), drvrShellNotifer(_drvr){}
+    : ShowYinput(_ShowYinput), moveChildComp(x, y, w, h), handled(handler, parent, this), drvrShellNotifer(_drvr) {}
 
 void ChartPanel::init()
 {
@@ -569,31 +647,36 @@ void ChartPanel::init()
         LeftBox.lbls[0]->sendSynchronousChangeMessage();
     if (RightBox.lbls.size())
         RightBox.lbls[0]->sendSynchronousChangeMessage();
+    for (auto& l : lbls)
+        l->sendSynchronousChangeMessage();
+    
+    
     setVisible(false);
 }
 
-void ChartPanel::refresh(){
-    for (auto& c: guiComps){
-        switch (c->GuiClass){
-        case 1:{
+void ChartPanel::refresh() {
+   
+    for (auto& c : guiComps) {
+        switch (c->GuiClass) {
+        case 1: {
             static_cast<chKnobClassicBeta*>(c)->paramRefresh();
-            break;}
+            break; }
         case 2:
-        case 3:{
-            static_cast<chLabel*>(c)->paramRefresh();            
-            break;}
-        case 4:{
+        case 3: {
+            static_cast<chLabel*>(c)->paramRefresh();
+            break; }
+        case 4: {
             static_cast<chToggleButtonAndLabel*>(c)->paramRefresh();
-            break;}
-        case 5:{
+            break; }
+        case 5: {
             static_cast<SelectionBox*>(c)->paramRefresh();
-            break;}
-        case 6:{
+            break; }
+        case 6: {
             static_cast<moveChButton*>(c)->paramRefresh();
-            break;}
-        case 7:{
+            break; }
+        case 7: {
             static_cast<colorsComponent*>(c)->paramRefresh();
-            break;}     
+            break; }
         case 8: {
             static_cast<AlphaSlider*>(c)->paramRefresh();
             break; }
@@ -610,53 +693,64 @@ void ChartPanel::refresh(){
             static_cast<chLabelPopup*>(c)->paramRefresh();
             break; }
         default:
-            break;}
-    }                        
+            break;
+        }
+    }
 }
 
-void ChartPanel::addChLabel(chLabel* _chLabel){    
-    guiComps.add(std::move(_chLabel));   
+void ChartPanel::addChLabel(chLabel* _chLabel) {
+    guiComps.add(std::move(_chLabel));
     paramComps.add(&_chLabel->lblName);
-    paramComps.add(&_chLabel->lbl);}
+    paramComps.add(&_chLabel->lbl);
+}
 
 void ChartPanel::addChLabelSmall(chLabelSmall* _chLabel) {
     guiComps.add(std::move(_chLabel));
     paramComps.add(&_chLabel->lblName);
-    paramComps.add(&_chLabel->lbl);}
+    paramComps.add(&_chLabel->lbl);
+}
 
 void ChartPanel::addChLabelPopup(chLabelPopup* _chLabel) {
     guiComps.add(std::move(_chLabel));
     paramComps.add(&_chLabel->lblName);
-    paramComps.add(&_chLabel->lbl);}
- 
-void ChartPanel::addChKnob(chKnobClassicBeta* _chKnob){
+    paramComps.add(&_chLabel->lbl);
+}
+
+void ChartPanel::addChKnob(chKnobClassicBeta* _chKnob) {
     guiComps.add(std::move(_chKnob));
-    paramComps.add(&_chKnob->sldr);}
+    paramComps.add(&_chKnob->sldr);
+}
 
-void ChartPanel::addToggleButton(moveChButton* _btn){
+void ChartPanel::addToggleButton(moveChButton* _btn) {
     guiComps.add(std::move(_btn));
-    paramComps.add(_btn);}
+    paramComps.add(_btn);
+}
 
-void ChartPanel::addToggleButtonAndLabel(chToggleButtonAndLabel* _btn){
+void ChartPanel::addToggleButtonAndLabel(chToggleButtonAndLabel* _btn) {
     guiComps.add(std::move(_btn));
-    paramComps.add(_btn);}
+    paramComps.add(_btn);
+}
 
-void ChartPanel::addSelectionBox(SelectionBox* _selections){
+void ChartPanel::addSelectionBox(SelectionBox* _selections) {
     guiComps.add(std::move(_selections));
-    paramComps.add(_selections);}
+    paramComps.add(_selections);
+}
 
-void ChartPanel::addMarkers(markers* _markers){
+void ChartPanel::addMarkers(markers* _markers) {
     guiComps.add(std::move(_markers));
-    paramComps.add(_markers);}
+    paramComps.add(_markers);
+}
 
-void ChartPanel::addColorsComponent(colorsComponent* _colors){
+void ChartPanel::addColorsComponent(colorsComponent* _colors) {
     guiComps.add(std::move(_colors));
     paramComps.add(&_colors->selection.lblName);
-    paramComps.add(&_colors->selection.lbl);}
+    paramComps.add(&_colors->selection.lbl);
+}
 
-void ChartPanel::addSlider(AlphaSlider* _slider){
+void ChartPanel::addSlider(AlphaSlider* _slider) {
     guiComps.add(std::move(_slider));
-    paramComps.add(&_slider->sldr);}
+    paramComps.add(&_slider->sldr);
+}
 
 void ChartPanel::addLegends(Legends* _legends) {
     guiComps.add(std::move(_legends));
@@ -670,5 +764,3 @@ void ChartPanel::addFourFloats(FourFloats* _floats)
     paramComps.add(&_floats->OnOff);
     paramComps.add(_floats);
 }
-     
-

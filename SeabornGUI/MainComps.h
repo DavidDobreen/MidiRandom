@@ -47,30 +47,8 @@ public:
     chBgComp bkgd{ "SAMPLE GRAY PANEL2.png",this,handler };
     namebox namebox{ 407,13,152,35,this,handler };
  
-    BottomPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
-         : childComp(x, y, w, h), handled(handler, parent, this), drvred(_drvr) {
-    
-       AXpanels.add(new AxesPanel(0, 0, dims[2], dims[3], true, this, handler, drvr));
-
-       /*CHpanels.add(new Line2DPanel(0, 0, dims[2], dims[3], true, this, handler, drvr));        
-       CHpanels.add(new HistPanel(0, 0, dims[2], dims[3], false, this, handler, drvr));       
-       CHpanels.add(new BarsPanel(0, 0, dims[2], dims[3], true, this, handler, drvr));    
-       CHpanels.add(new PiePanel(0, 0, dims[2], dims[3], false, this, handler, drvr));       
-       CHpanels.add(new ScatterPanel(0, 0, dims[2], dims[3], true, this, handler, drvr));      
-       CHpanels.add(new PolarPanel(0, 0, dims[2], dims[3], true, this, handler, drvr)); 
-       CHpanels.add(new ReplotPanel(0, 0, dims[2], dims[3], true, this, handler, drvr));
-       CHpanels.add(new SeabornScatterPanel(0, 0, dims[2], dims[3], true, this, handler, drvr));
-       CHpanels.add(new SeabornLinePanel(0, 0, dims[2], dims[3], true, this, handler, drvr));*/
-       CHpanels.add(new SeabornDistPanel(0, 0, dims[2], dims[3], true, this, handler, drvr));
-       CHpanels.add(new SeabornHistPanel(0, 0, dims[2], dims[3], true, this, handler, drvr));
-
-       /*TXpanels.add(new TextPanel(0, 0, dims[2], dims[3], "xlabel", this, handler, drvr));
-       TXpanels.add(new TextPanel(0, 0, dims[2], dims[3], "ylabel", this, handler, drvr));
-       TXpanels.add(new TextPanel(0, 0, dims[2], dims[3], "title", this, handler, drvr));
-       TXpanels.add(new TextPanel(0, 0, dims[2], dims[3], "xticks", this, handler, drvr));
-       TXpanels.add(new TextPanel(0, 0, dims[2], dims[3], "yticks", this, handler, drvr));
-       TXpanels.add(new LegendPanel(0, 0, dims[2], dims[3], "legend", this, handler, drvr))*/;
-    }
+    BottomPanel(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+        
     ~BottomPanel(){}
   
 };
@@ -300,30 +278,8 @@ public:
     ItemList axesList{ 30,113,93,236,axes, bottomPanel,this,handler,selected_axes };
     
     fig Fig{ axes,bottomPanel,this,handler };
-    LeftPanel(int x, int y, int w, int h, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler, Drvr& _drvr) 
-        : bottomPanel(_bottomPanel), childComp(x, y, w, h), handled(handler, parent, this) ,drvred(_drvr){
-        //chartName.lbl.addChangeListener(this);
-        //chartName.lbl.index = -1;
-
-
-        /*chartList.addItem("Line");
-        chartList.addItem("Hist");
-        chartList.addItem("Bars");
-        chartList.addItem("Pie");
-        chartList.addItem("Scatter");
-        chartList.addItem("Polar");
-        chartList.addItem("s.RelPlot");
-        chartList.addItem("S.Scatter");
-        chartList.addItem("S.Line");*/
-        chartList.addItem("S.Dist");
-        chartList.addItem("S.Hist");
-        for (auto& i : chartList.items)
-            i->lbl.cliked.addChangeListener(this);
-
-        axesList.Add.addChangeListener(this);
-        axesList.ledarea.mouseD.addChangeListener(this);
-        axesList.ledarea.mouseU.addChangeListener(this);
-    }
+    LeftPanel(int x, int y, int w, int h, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+       
     ~LeftPanel(){
        
     }

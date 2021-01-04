@@ -246,7 +246,7 @@ public:
     moveFxLabel lblName{ 0,0,30,18, "",DEFAULT_LABEL_COLORS,nullptr,this,params,handler };
     labelTextBox lbl{ 60,0,90,18,lblName,this,params,handler,drvr};
 
-    chLabel(int x, int y, int w, int h, juce::String name, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr, 
+    chLabel(int x, int y, int w, int h, juce::String name, juce::Component* parent, Params*& itemParams, pngHandler& handler, Drvr& drvr,
         int* _index,  juce::String _paramText = "", int _guiType = guiType::_stringQuots );
     ~chLabel(){}
     void changeListenerCallback(juce::ChangeBroadcaster* source);
@@ -297,8 +297,6 @@ public:
     void changeListenerCallback(juce::ChangeBroadcaster* source);
     void paramRefresh() override;
 };
-
-
 
 class colorsComponent : public moveChildComp, public paramedBeta, public handled, public drvred
 {
@@ -379,7 +377,7 @@ public:
         }       
         //selection.lblName.IsOn = true;
         selection.lblName.text = lblName;        
-        GuiClass = 8;                
+        GuiClass = 7;                
         selection.lblName.guiType = guiType::_bool;
          
         if (_paramText != "")
@@ -396,27 +394,6 @@ public:
 
     void paramRefresh(){ }
 };
-
-//class chKnobSelection : public childComp, public paramed, public handled, public drvred
-//{
-//public:
-//    updateSliderComp<int> vals{ "vals",0,100,1,0,3,39,41,this,paramSetter, handler,drvr };
-//    juce::OwnedArray<juce::Label> lbls;
-//    chKnobSelection(int x, int y, int w, int h, std::vector<juce::String> options, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr)
-//        : childComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this), drvred(_drvr) {
-//        vals.setRange(0, options.size() - 1, 1);
-//    }
-//};
-
-//class chKnobClassic : public moveChildComp, public paramed, public handled, public drvred
-//{
-//public:
-//    updateSliderComp<float> sldr{ "vals",0,100,1,15,15,39,41,this,paramSetter, handler,drvr };
-//    fxLabel LblName{ 14,60,70,30, "",juce::Colours::slategrey,juce::Colours::slategrey,nullptr,this,handler };
-//
-//    chKnobClassic(int x, int y, int w, int h, juce::Component* parent, ParamSetter& _paramSetter, pngHandler& handler, Drvr& _drvr, int _panel=0,int _param=0)
-//        : moveChildComp(x, y, w, h), paramed(_paramSetter), handled(handler, parent, this), drvred(_drvr) {}
-//};
 
 class chKnobClassicBeta : public moveChildComp,  public paramedBeta, public handled , public drvred
 {
@@ -762,6 +739,13 @@ public:
             lbls.getLast()->addChangeListener(this);
         }
     }
+
+    void resized() {
+        lbls[0]->sendSynchronousChangeMessage();
+        /*int size = conts.size();
+        for (int i = 0; i < conts.size(); i++)
+            lbls[i]->setBounds(50 + i * 200 / size, 0, 50, 20);*/
+    }
     void changeListenerCallback(juce::ChangeBroadcaster* source) {
         for (auto& l : lbls)
         {
@@ -909,3 +893,50 @@ public:
     void changeListenerCallback(juce::ChangeBroadcaster* source);
 };
 
+class CompBoxBase : public moveChildComp, public handled, public drvred
+{
+public:
+    int& panelIndex;
+    Params*& itemParams;
+    
+    juce::OwnedArray<moveChildComp>* guiComps;
+    juce::Array<paramedBeta*>* paramComps;
+
+    CompBoxBase(int x, int y, int w, int h, juce::OwnedArray<moveChildComp>* _guiComps, juce::Array<paramedBeta*>* _paramComps, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr, int& _index)
+        : moveChildComp(x, y, w, h), guiComps(_guiComps), paramComps(_paramComps), itemParams(params), handled(handler, parent, this), drvred(_drvr), panelIndex(_index) {}
+    ~CompBoxBase(){}
+};
+
+class Line2dArgsCompBox : public CompBoxBase 
+{
+public:
+    CompBox compBox{ 0,0,dims[2],dims[3],3,this,itemParams, handler ,drvr };
+
+    Line2dArgsCompBox(int x, int y, int w, int h, juce::OwnedArray<moveChildComp>* _guiComps, juce::Array<paramedBeta*>* _paramComps, juce::Component* parent, Params*& itemParams, pngHandler& handler, Drvr& _drvr, int& _index);
+    ~Line2dArgsCompBox(){}
+};
+
+class MarkersArgsCompBox : public CompBoxBase
+{
+public:
+    CompBox compBox{ 0,0,dims[2],dims[3],4,this,itemParams, handler ,drvr };
+
+    MarkersArgsCompBox(int x, int y, int w, int h, juce::OwnedArray<moveChildComp>* _guiComps, juce::Array<paramedBeta*>* _paramComps, juce::Component* parent, Params*& itemParams, pngHandler& handler, Drvr& _drvr, int& _index);
+    ~MarkersArgsCompBox() {}
+};
+
+class BinsArgsCompBox : public CompBoxBase
+{
+public:
+    CompBox compBox{ 0,0,dims[2],dims[3],4,this,itemParams, handler ,drvr };
+
+    BinsArgsCompBox(int x, int y, int w, int h, juce::OwnedArray<moveChildComp>* _guiComps, juce::Array<paramedBeta*>* _paramComps, juce::Component* parent, Params*& itemParams, pngHandler& handler, Drvr& _drvr, int& _index);
+    ~BinsArgsCompBox() {}
+};
+
+class BinsFront : public CompBoxBase
+{
+public:
+    BinsFront(int x, int y, int w, int h, juce::OwnedArray<moveChildComp>* _guiComps, juce::Array<paramedBeta*>* _paramComps, juce::Component* parent, Params*& itemParams, pngHandler& handler, Drvr& _drvr, int& _index);
+    ~BinsFront() {}
+};

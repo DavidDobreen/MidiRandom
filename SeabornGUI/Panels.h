@@ -25,6 +25,9 @@ public:
 
     PopUpList popup{ 0, 0, 76, 100, this, handler };
 
+    juce::OwnedArray<CompBoxBase> CompBoxes;
+    juce::Array<fxLabel*> lbls;
+
     CompBox LeftBox{ 108,26,260,135,3,this,itemParams, handler ,drvr };
     CompBox RightBox{ 598,26,260,135,4,this,itemParams, handler ,drvr };
 
@@ -45,6 +48,21 @@ public:
     void addSlider(AlphaSlider* _slider);
     void addLegends(Legends* _legends);
     void addFourFloats(FourFloats* _floats);
+};
+
+class SeabornChartPanel : public ChartPanel, public juce::ChangeListener
+{
+public:
+    SeabornChartPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr) :
+        ChartPanel(x,y,w,h,_ShowYinput, parent,handler,_drvr){
+        SNS_DIST_STYLE = true;
+    }
+    ~SeabornChartPanel(){}
+
+    void changeListenerCallback(juce::ChangeBroadcaster* source)
+    {
+        sendSynchronousChangeMessage();
+    }
 };
 
 class TextPanel :  public ChartPanel
@@ -126,102 +144,20 @@ public:
 class Line2DPanel : public ChartPanel
 {
 public:
-
-    class DashCapstyleKnob : public moveChildComp,  public handled
-    {
-    public:
-        MoveLabel none{ 31,53,45,20,"none",juce::Colours::slategrey,this,handler };
-        MoveLabel butt{ 22,18,45,20,"butt",juce::Colours::slategrey,this,handler };
-        MoveLabel round{ 87,15,45,20,"round",juce::Colours::slategrey,this,handler };
-        MoveLabel projecting{ 83,52,60,20,"projecting",juce::Colours::slategrey,this,handler };
-
-        SliderComp vals{ "vals",0,3,1,55,20,39,41,this,handler };
-        DashCapstyleKnob(int x, int y, int w, int h,  juce::Component* parent,  pngHandler& handler);
-    };
-
-    class DashJoinstyleKnob : public moveChildComp,  public handled
-    {
-    public:
-        MoveLabel none{ 31,53,45,20,"none",juce::Colours::slategrey,this,handler };
-        MoveLabel miter{ 22,18,45,20,"miter",juce::Colours::slategrey,this,handler };
-        MoveLabel round{ 87,15,45,20,"round",juce::Colours::slategrey,this,handler };
-        MoveLabel bevel{ 65,56,60,20,"bevel",juce::Colours::slategrey,this,handler };
-
-        SliderComp vals{ "vals",0,3,1,55,20,39,41,this,handler };
-        DashJoinstyleKnob(int x, int y, int w, int h, juce::Component* parent,  pngHandler& handler);
-    };
-
-    class MarkersBox : public juce::ChangeListener, public moveChildComp, public paramedBeta, public handled, public drvred
-    {
-    public:
-        chBgComp bkgd{ "wave fx bg and frame and on_off panell2.png",this,handler };
-
-        MoveContainer markersCont1{ 0,0,240,100,this,handler };         
-        MoveContainer markersCont2{ 0,0,240,100,this,handler };
-        MoveContainer markersCont3{ 0,0,240,100,this,handler };
-        MoveContainer markersCont4{ 0,0,240,100,this,handler };
-         
-        MoveContainer markersCompLabels{ 50,120,240,20,this,handler };
-        fxLabel MarkerKindLbl{ 0,0,50,20,"kind", DEFAULT_LABEL_COLORS ,&markersCont1,&markersCompLabels,handler };
-        fxLabel MarkerSizeLbl{ 50,0,50,20,"size", DEFAULT_LABEL_COLORS ,&markersCont2,&markersCompLabels,handler };
-        fxLabel MarkerEdgeLbl{ 100,0,50,20,"edge", DEFAULT_LABEL_COLORS ,&markersCont3,&markersCompLabels,handler };
-        fxLabel MarkerFileLbl{ 150,0,50,20,"fill", DEFAULT_LABEL_COLORS ,&markersCont4,&markersCompLabels,handler };
-
-        MarkersBox(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr);
-        void changeListenerCallback(juce::ChangeBroadcaster* source);
-    };
-
-    class LineStyleBox : public juce::ChangeListener, public moveChildComp, public paramedBeta, public handled, public drvred
-    {
-    public:
-
-
-        chBgComp bkgd{ "wave fx bg and frame and on_off panell2.png",this,handler };
-
-        MoveContainer lineCont1{ 0,0,240,100,this,handler };        
-        MoveContainer lineCont2{ 0,0,240,100,this,handler };
-        MoveContainer lineCont3{ 0,0,240,100,this,handler };
-              
-        MoveContainer lineCompLabels{ 50,120,240,20,this,handler };
-        fxLabel lineLbl1{ 0,0,50,20,"size", DEFAULT_LABEL_COLORS ,&lineCont1,&lineCompLabels,handler };
-        fxLabel lineLbl2{ 50,0,50,20,"style", DEFAULT_LABEL_COLORS ,&lineCont2,&lineCompLabels,handler };
-        fxLabel lineLbl3{ 100,0,50,20,"3", DEFAULT_LABEL_COLORS ,&lineCont3,&lineCompLabels,handler };
-        
-        LineStyleBox(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr);
-        void changeListenerCallback(juce::ChangeBroadcaster* source);
-    };
- 
-
-    ///*DashCapstyleKnob dashCapstyleKnob{ 10,30,0,0,this,paramSetter,handler };
-    //std::vector<juce::String>  CapStyleValues = { "'butt'", "'round'", "'projecting'" };
-    //DashJoinstyleKnob dashJoinstyleKnob{ 10,100,0,0,this,paramSetter,handler };
-    //std::vector<juce::String>  JoinStyleValues = { "'miter'", "'round'", "'bevel'" };*/
-
-    ///*DashCapstyleKnob solidCapstyleKnob{ 270,30,0,0,this,paramSetter,handler };
-    //DashJoinstyleKnob solidJoinstyleKnob{ 270,100,0,0,this,paramSetter,handler };*/
-
-    ////chLabel dashes{ 22,12,180,25,"dashes",this,params,handler,drvr};
-   
     Line2DPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent,  pngHandler& handler, Drvr& _drvr);
    ~Line2DPanel(){}
-
-     ;
-
 };
 
 class HistPanel : public ChartPanel
 {
 public:
-    
-
     HistPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
     ~HistPanel(){}  
 };
 
 class BarsPanel : public ChartPanel
 {
-public:
-      
+public:      
     BarsPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
     ~BarsPanel(){}   
 };
@@ -263,66 +199,159 @@ public:
     ~AnnotPanel() {}
 };
 
-
 /*
 Seaborn
 */
 
-class ReplotPanel : public juce::ChangeListener, public ChartPanel
+class ReplotPanel : public SeabornChartPanel
 {
 public:
     ReplotPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
     ~ReplotPanel() {}
-
-    void changeListenerCallback(juce::ChangeBroadcaster* source)
-    {
-        sendSynchronousChangeMessage();
-    }
 };
 
-class SeabornScatterPanel : public juce::ChangeListener, public ChartPanel
+class SeabornScatterPanel : public SeabornChartPanel
 {
 public:
     SeabornScatterPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
     ~SeabornScatterPanel() {}
-
-    void changeListenerCallback(juce::ChangeBroadcaster* source)
-    {
-        sendSynchronousChangeMessage();
-    }
 };
-class SeabornLinePanel : public juce::ChangeListener, public ChartPanel
+class SeabornLinePanel : public SeabornChartPanel
 {
 public:
     SeabornLinePanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
     ~SeabornLinePanel() {}
-
-    void changeListenerCallback(juce::ChangeBroadcaster* source)
-    {
-        sendSynchronousChangeMessage();
-    }
 };
 
-class SeabornDistPanel : public juce::ChangeListener, public ChartPanel
+class SeabornDistPanel : public SeabornChartPanel
 {
 public:
     SeabornDistPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
     ~SeabornDistPanel() {}
-
-    void changeListenerCallback(juce::ChangeBroadcaster* source)
-    {
-        sendSynchronousChangeMessage();
-    }
 };
 
-class SeabornHistPanel : public juce::ChangeListener, public ChartPanel
+class SeabornHistPanel : public SeabornChartPanel
 {
 public:
     SeabornHistPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
     ~SeabornHistPanel() {}
+};
 
-    void changeListenerCallback(juce::ChangeBroadcaster* source)
-    {
-        sendSynchronousChangeMessage();
-    }
+class SeabornKDEPanel : public SeabornChartPanel
+{
+public:
+    SeabornKDEPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    ~SeabornKDEPanel() {}
+};
+
+class SeabornECDFPanel : public SeabornChartPanel
+{
+public:
+    SeabornECDFPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    ~SeabornECDFPanel() {}
+};
+
+class SeabornRugPanel : public SeabornChartPanel
+{
+public:
+    SeabornRugPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    ~SeabornRugPanel() {}
+};
+
+class SeabornCatPanel : public SeabornChartPanel
+{
+public:
+    SeabornCatPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    ~SeabornCatPanel() {}
+};
+
+class SeabornStripPanel : public SeabornChartPanel
+{
+public:
+    SeabornStripPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    ~SeabornStripPanel() {}
+};
+
+class SeabornSwarmPanel : public SeabornChartPanel
+{
+public:
+    SeabornSwarmPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    ~SeabornSwarmPanel() {}
+};
+
+class SeabornBoxPanel : public SeabornChartPanel
+{
+public:
+    SeabornBoxPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    ~SeabornBoxPanel() {}
+};
+
+class SeabornViolinPanel : public SeabornChartPanel
+{
+public:
+    SeabornViolinPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    ~SeabornViolinPanel() {}
+};
+
+class SeabornBoxenPanel : public SeabornChartPanel
+{
+public:
+    SeabornBoxenPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    ~SeabornBoxenPanel() {}
+};
+
+class SeabornPointPanel : public SeabornChartPanel
+{
+public:
+    SeabornPointPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    ~SeabornPointPanel() {}
+};
+
+class SeabornBarPanel : public SeabornChartPanel
+{
+public:
+    SeabornBarPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    ~SeabornBarPanel() {}
+};
+
+class SeabornCountPanel : public SeabornChartPanel
+{
+public:
+    SeabornCountPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    ~SeabornCountPanel() {}
+};
+
+class SeabornLMPanel : public SeabornChartPanel
+{
+public:
+    SeabornLMPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    ~SeabornLMPanel() {}
+};
+
+class SeabornRegresionPanel : public SeabornChartPanel
+{
+public:
+    SeabornRegresionPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    ~SeabornRegresionPanel() {}
+};
+
+class SeabornHeatMapPanel : public SeabornChartPanel
+{
+public:
+    SeabornHeatMapPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    ~SeabornHeatMapPanel() {}
+};
+
+class SeabornClusterMapPanel : public SeabornChartPanel
+{
+public:
+    SeabornClusterMapPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    ~SeabornClusterMapPanel() {}
+};
+
+class SeabornJointPanel : public SeabornChartPanel
+{
+public:
+    SeabornJointPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    ~SeabornJointPanel() {}
 };
