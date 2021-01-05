@@ -433,8 +433,11 @@ void chLabelPopup::changeListenerCallback(juce::ChangeBroadcaster* source)
 }
 
 Line2dArgsCompBox::Line2dArgsCompBox(int x, int y, int w, int h, juce::OwnedArray<moveChildComp>* _guiComps, juce::Array<paramedBeta*>* _paramComps, juce::Component* parent, Params*& itemParams, pngHandler& handler, Drvr& _drvr, int& _index)
-    : CompBoxBase(x,y,w,h, _guiComps,_paramComps,parent, itemParams,handler, _drvr,_index)
-        {
+    : CompBoxBase(x,y,w,h, _guiComps,_paramComps,parent, itemParams,handler, _drvr,_index){
+    
+    auto btn = new moveChButton(6, 119, 15, 15, "fx off botton2.png", "fx on botton2.png", &compBox, itemParams, handler, drvr, &panelIndex, "visible", guiType::_boolFalse);
+    guiComps->add(std::move(btn));
+    paramComps->add(btn);
 
     compBox.lbls[0]->text = "style";
     auto knob = new chKnobClassicBeta(121, 17, 70, 70, "width", compBox.conts[0], itemParams, handler, drvr, &panelIndex, "line.set_linewidth", guiType::_functionFloat);
@@ -443,12 +446,12 @@ Line2dArgsCompBox::Line2dArgsCompBox(int x, int y, int w, int h, juce::OwnedArra
     knob->sldr.setValue(100, juce::dontSendNotification);
     paramComps->add(&knob->sldr);
 
-    auto sbox = new SelectionBox(10, 10, { "solid", "dashed", "dashdot","dotted" }, compBox.conts[0], itemParams, handler, drvr, &panelIndex, "line.set_linestyle", guiType::_functionList);
+    auto sbox = new SelectionBox(10, 10,73, { "solid", "dashed", "dashdot","dotted" }, compBox.conts[0], itemParams, handler, drvr, &panelIndex, "line.set_linestyle", guiType::_functionList);
     guiComps->add(std::move(sbox));
     paramComps->add(sbox);
 
     compBox.lbls[1]->text = "draw";
-    auto dbox = new SelectionBox(0, 0, { "default", "steps", "steps-pre","steps-mid","steps-post" }, compBox.conts[1], itemParams, handler, drvr, &panelIndex, "line.set_drawstyle", guiType::_functionList);
+    auto dbox = new SelectionBox(0, 0, 103,{ "default", "steps", "steps-pre","steps-mid","steps-post" }, compBox.conts[1], itemParams, handler, drvr, &panelIndex, "line.set_drawstyle", guiType::_functionList);
     guiComps->add(std::move(dbox));
     paramComps->add(dbox);
 
@@ -478,20 +481,20 @@ MarkersArgsCompBox::MarkersArgsCompBox(int x, int y, int w, int h, juce::OwnedAr
     paramComps->add(&mec->selection.lbl);
 
     compBox.lbls[2]->text = "sizes";
-    auto size = new chKnobClassicBeta(21, 17, 70, 70, "face", compBox.conts[2], itemParams, handler, drvr, &panelIndex, "line.set_markersize", guiType::_functionFloat);
+    auto size = new chKnobClassicBeta(48, 17, 70, 71, "face", compBox.conts[2], itemParams, handler, drvr, &panelIndex, "line.set_markersize", guiType::_functionFloat);
     size->sldr.setRange(0, 5000, 10);
     size->sldr.setValue(100, juce::dontSendNotification);
     guiComps->add(std::move(size));
     paramComps->add(&size->sldr);
 
-    auto edge = new chKnobClassicBeta(121, 17, 70, 70, "edge", compBox.conts[2], itemParams, handler, drvr, &panelIndex, "line.set_markeredgewidth", guiType::_functionFloat);
+    auto edge = new chKnobClassicBeta(142, 17, 70, 71, "edge", compBox.conts[2], itemParams, handler, drvr, &panelIndex, "line.set_markeredgewidth", guiType::_functionFloat);
     edge->sldr.setRange(0, 2000, 10);
     edge->sldr.setValue(100, juce::dontSendNotification);
     guiComps->add(std::move(edge));
     paramComps->add(&edge->sldr);
    
     compBox.lbls[3]->text = "fill";
-    auto sbox = new SelectionBox(21, 14, { "none", "full", "left","right","bottom" ,"top" }, compBox.conts[3], itemParams, handler, drvr, &panelIndex, "line.set_fillstyle", guiType::_functionList);
+    auto sbox = new SelectionBox(21, 14, 73,{ "none", "full", "left","right","bottom" ,"top" }, compBox.conts[3], itemParams, handler, drvr, &panelIndex, "line.set_fillstyle", guiType::_functionList);
     guiComps->add(std::move(sbox));
     paramComps->add(sbox);
      
@@ -500,60 +503,71 @@ MarkersArgsCompBox::MarkersArgsCompBox(int x, int y, int w, int h, juce::OwnedAr
 BinsArgsCompBox::BinsArgsCompBox(int x, int y, int w, int h, juce::OwnedArray<moveChildComp>* _guiComps, juce::Array<paramedBeta*>* _paramComps, juce::Component* parent, Params*& itemParams, pngHandler& handler, Drvr& _drvr, int& _index)
     : CompBoxBase(x, y, w, h, _guiComps, _paramComps, parent, itemParams, handler, _drvr, _index) {
 
-    compBox.lbls[0]->text = "width";
-    auto sbox = new SelectionBox(10, 10, { "solid", "dashed", "dashdot","dotted" }, compBox.conts[0], itemParams, handler, drvr, &panelIndex, "linestyle");
-    guiComps->add(std::move(sbox));
-    paramComps->add(sbox);
+    auto btn = new moveChButton(6, 119, 15, 15, "fx off botton2.png", "fx on botton2.png", &compBox, itemParams, handler, drvr, &panelIndex,"visible",guiType::_boolFalse);
+    guiComps->add(std::move(btn));
+    paramComps->add(btn);
 
-    auto wid = new chKnobClassicBeta(101, 17, 70, 70, "lineWidth", compBox.conts[0], itemParams, handler, drvr, &panelIndex, "lineWidth");
+    compBox.lbls[0]->text = "style";
+    auto wid = new chKnobClassicBeta(48, 17, 70, 71, "lineWidth", compBox.conts[0], itemParams, handler, drvr, &panelIndex, "lineWidth");
     guiComps->add(std::move(wid));
     wid->sldr.setRange(0, 500, 1);
     wid->sldr.setValue(1, juce::dontSendNotification);
     paramComps->add(&wid->sldr);
 
-    auto rwid = new chKnobClassicBeta(171, 17, 70, 70, "rwidth", compBox.conts[0], itemParams, handler, drvr, &panelIndex, "rwidth");
+    auto rwid = new chKnobClassicBeta(142, 17, 70, 71, "rwidth", compBox.conts[0], itemParams, handler, drvr, &panelIndex, "rwidth");
     guiComps->add(std::move(rwid));
     rwid->sldr.setRange(0, 500, 1);
     rwid->sldr.setValue(1, juce::dontSendNotification);
     paramComps->add(&rwid->sldr);
 
     compBox.lbls[1]->text = "type";
-    auto density = new chToggleButtonAndLabel(21, 17, 85, 25, "density", compBox.conts[1], itemParams, handler, drvr, &panelIndex, "density");
-    guiComps->add(std::move(density));
-    paramComps->add(density);
-
-    auto cumulative = new chToggleButtonAndLabel(21, 47, 85, 25, "cumulative", compBox.conts[1], itemParams, handler, drvr, &panelIndex, "cumulative");
-    guiComps->add(std::move(cumulative));
-    paramComps->add(cumulative);
+    auto sbox = new SelectionBox(10, 13, 73, { "solid", "dashed", "dashdot","dotted" }, compBox.conts[1], itemParams, handler, drvr, &panelIndex, "linestyle");
+    guiComps->add(std::move(sbox));
+    paramComps->add(sbox);
    
-    auto histtype = new SelectionBox(121, 17, { "bar", "barstacked", "step","stepfilled" }, compBox.conts[1], itemParams, handler, drvr, &panelIndex, "histtype");
+    auto histtype = new SelectionBox(121, 13, 100,{ "bar", "barstacked", "step","stepfilled" }, compBox.conts[1], itemParams, handler, drvr, &panelIndex, "histtype");
     guiComps->add(std::move(histtype));
     paramComps->add(histtype);
 
-    compBox.lbls[2]->text = "direction";
-    auto horizontal = new chToggleButtonAndLabel(21, 17, 85, 25, "horizontal", compBox.conts[2], itemParams, handler, drvr, &panelIndex, "horizontal");
-    guiComps->add(std::move(horizontal));
-    paramComps->add(horizontal);
-
-    auto align = new SelectionBox(121, 17, { "left", "mid", "right" }, compBox.conts[2], itemParams, handler, drvr, &panelIndex, "align");
-    guiComps->add(std::move(align));
-    paramComps->add(align);
-
-    compBox.lbls[3]->text = "appearance";
-    auto range = new chLabel(21, 17, 150, 25, "range", compBox.conts[3], itemParams, handler, drvr, &panelIndex, "", guiType::_stringArray);
+    compBox.lbls[2]->text = "appearance";
+    auto range = new chLabel(54, 17, 150, 25, "range", compBox.conts[2], itemParams, handler, drvr, &panelIndex, "", guiType::_stringArray);
     guiComps->add(std::move(range));
     paramComps->add(&range->lblName);
     paramComps->add(&range->lbl);
 
-    auto weights = new chLabel(21, 47, 150, 25, "weights", compBox.conts[3], itemParams, handler, drvr, &panelIndex, "", guiType::_stringArray);
+    auto weights = new chLabel(54, 47, 150, 25, "weights", compBox.conts[2], itemParams, handler, drvr, &panelIndex, "", guiType::_stringArray);
     guiComps->add(std::move(weights));
     paramComps->add(&weights->lblName);
     paramComps->add(&weights->lbl);
 
-    auto bottom = new chLabel(21, 77, 150, 25, "bottom", compBox.conts[3], itemParams, handler, drvr, &panelIndex, "", guiType::_stringArray);
+    auto bottom = new chLabel(54, 77, 150, 25, "bottom", compBox.conts[2], itemParams, handler, drvr, &panelIndex, "", guiType::_stringArray);
     guiComps->add(std::move(bottom));
     paramComps->add(&bottom->lblName);
-    paramComps->add(&bottom->lbl);      
+    paramComps->add(&bottom->lbl);   
+
+    auto align = new SelectionBox(0, 17, 73, { "left", "mid", "right" }, this, itemParams, handler, drvr, &panelIndex, "align");
+    guiComps->add(std::move(align));
+    paramComps->add(align);
+
+    auto cumulative = new chToggleButtonAndLabel(92, 134, 95, 25, "cumulative", this, itemParams, handler, drvr, &panelIndex, "cumulative");
+    guiComps->add(std::move(cumulative));
+    paramComps->add(cumulative);
+
+    auto horizontal = new chToggleButtonAndLabel(0, 134, 85, 25, "horizontal", this, itemParams, handler, drvr, &panelIndex, "horizontal");
+    guiComps->add(std::move(horizontal));
+    paramComps->add(horizontal);
+
+    auto log = new chToggleButtonAndLabel(217, 134, 42, 25, "log", this, itemParams, handler, drvr, &panelIndex, "log");
+    guiComps->add(std::move(log));
+    paramComps->add(log);
+
+    auto stacked = new chToggleButtonAndLabel(276, 134, 74, 25, "stacked", this, itemParams, handler, drvr, &panelIndex, "stacked");
+    guiComps->add(std::move(stacked));
+    paramComps->add(stacked);
+   
+    auto density = new chToggleButtonAndLabel(270, 134, 85, 25, "density", compBox.conts[1], itemParams, handler, drvr, &panelIndex, "density");
+    guiComps->add(std::move(density));
+    paramComps->add(density);
 }
 
 BinsFront::BinsFront(int x, int y, int w, int h, juce::OwnedArray<moveChildComp>* _guiComps, juce::Array<paramedBeta*>* _paramComps, juce::Component* parent, Params*& itemParams, pngHandler& handler, Drvr& _drvr, int& _index)
@@ -578,15 +592,98 @@ BinsFront::BinsFront(int x, int y, int w, int h, juce::OwnedArray<moveChildComp>
     guiComps->add(std::move(bins));
     paramComps->add(&bins->lblName);
     paramComps->add(&bins->lbl);
+}
+
+ErrBarArgsCompBox::ErrBarArgsCompBox(int x, int y, int w, int h, juce::OwnedArray<moveChildComp>* _guiComps, juce::Array<paramedBeta*>* _paramComps, juce::Component* parent, Params*& itemParams, pngHandler& handler, Drvr& _drvr, int& _index)
+    : CompBoxBase(x, y, w, h, _guiComps, _paramComps, parent, itemParams, handler, _drvr, _index) {
 
      
-    auto log = new chToggleButtonAndLabel(-20, 104, 85, 25, "log", this, itemParams, handler, drvr, &panelIndex, "log");
-    guiComps->add(std::move(log));
-    paramComps->add(log);
+    ////Line2dArgsCompBox
+    auto btn = new moveChButton(6, 119, 15, 15, "fx off botton2.png", "fx on botton2.png", &compBox, itemParams, handler, drvr, &panelIndex, "visible", guiType::_boolFalse);
+    guiComps->add(std::move(btn));
+    paramComps->add(btn);
 
-   
-    auto stacked = new chToggleButtonAndLabel(89, 104, 85, 25, "stacked", this, itemParams, handler, drvr, &panelIndex, "stacked");
-    guiComps->add(std::move(stacked));
-    paramComps->add(stacked);
+    compBox.lbls[0]->text = "style";
+    auto knob = new chKnobClassicBeta(121, 17, 70, 70, "width", compBox.conts[0], itemParams, handler, drvr, &panelIndex, "lw", guiType::_float);
+    guiComps->add(std::move(knob));
+    knob->sldr.setRange(0, 1000, 1);
+    knob->sldr.setValue(100, juce::dontSendNotification);
+    paramComps->add(&knob->sldr);
 
+    auto sbox = new SelectionBox(10, 10, 73, { "solid", "dashed", "dashdot","dotted" }, compBox.conts[0], itemParams, handler, drvr, &panelIndex, "ls", guiType::_list);
+    guiComps->add(std::move(sbox));
+    paramComps->add(sbox);
+
+    compBox.lbls[1]->text = "draw";
+    auto dbox = new SelectionBox(0, 0, 103, { "default", "steps", "steps-pre","steps-mid","steps-post" }, compBox.conts[1], itemParams, handler, drvr, &panelIndex, "ds", guiType::_list);
+    guiComps->add(std::move(dbox));
+    paramComps->add(dbox);
+    ////Line2dArgsCompBox
+
+
+    compBox.lbls[2]->text = "err";
+    auto wid = new chKnobClassicBeta(28, 17, 70, 71, "elineWidth", compBox.conts[2], itemParams, handler, drvr, &panelIndex, "elinewidth");
+    guiComps->add(std::move(wid));
+    wid->sldr.setRange(0, 500, 1);
+    wid->sldr.setValue(1, juce::dontSendNotification);
+    paramComps->add(&wid->sldr);
+
+    auto caps = new chKnobClassicBeta(98, 17, 70, 71, "capsize", compBox.conts[2], itemParams, handler, drvr, &panelIndex, "capsize");
+    guiComps->add(std::move(caps));
+    caps->sldr.setRange(0, 500, 1);
+    caps->sldr.setValue(1, juce::dontSendNotification);
+    paramComps->add(&caps->sldr);
+
+    auto capt = new chKnobClassicBeta(168, 17, 70, 71, "capthick", compBox.conts[2], itemParams, handler, drvr, &panelIndex, "capthick");
+    guiComps->add(std::move(capt));
+    capt->sldr.setRange(0, 500, 1);
+    capt->sldr.setValue(1, juce::dontSendNotification);
+    paramComps->add(&capt->sldr);
+
+
+    auto barsabove = new chToggleButtonAndLabel(95, 134, 80, 25, "barsabove", this, itemParams, handler, drvr, &panelIndex, "barsabove");
+    guiComps->add(std::move(barsabove));
+    paramComps->add(barsabove);
+  
+    auto every = new chLabelSmall(217, 140, 135, 15, "errorevery", this, itemParams, handler, drvr, &panelIndex, "errorevery", guiType::_string);
+    guiComps->add(std::move(every));
+    paramComps->add(&every->lblName);
+    paramComps->add(&every->lbl);
+
+    auto lolims = new chToggleButtonAndLabel(0, 0, 53, 25, "lolims", this, itemParams, handler, drvr, &panelIndex, "lolims");
+    guiComps->add(std::move(lolims));
+    paramComps->add(lolims);
+
+    auto uplims = new chToggleButtonAndLabel(0, 30, 53, 25, "uplims", this, itemParams, handler, drvr, &panelIndex, "uplims");
+    guiComps->add(std::move(uplims));
+    paramComps->add(uplims);
+
+    auto xlolims = new chToggleButtonAndLabel(0, 60, 54, 25, "xlolims", this, itemParams, handler, drvr, &panelIndex, "xlolims");
+    guiComps->add(std::move(xlolims));
+    paramComps->add(xlolims);
+
+    auto xuplims = new chToggleButtonAndLabel(0, 90, 54, 25, "xuplims", this, itemParams, handler, drvr, &panelIndex, "xuplims");
+    guiComps->add(std::move(xuplims));
+    paramComps->add(xuplims);
+
+    
+}
+
+ErrBarFront::ErrBarFront(int x, int y, int w, int h, juce::OwnedArray<moveChildComp>* _guiComps, juce::Array<paramedBeta*>* _paramComps, juce::Component* parent, Params*& itemParams, pngHandler& handler, Drvr& _drvr, int& _index)
+    : CompBoxBase(x, y, w, h, _guiComps, _paramComps, parent, itemParams, handler, _drvr, _index) {
+
+    auto xerr = new chLabel(0, 0, 150, 25, "xerr", this, itemParams, handler, drvr, &panelIndex, "", guiType::_stringArray);
+    guiComps->add(std::move(xerr));
+    paramComps->add(&xerr->lblName);
+    paramComps->add(&xerr->lbl);
+
+    auto yerr = new chLabel(0, 25, 150, 25, "yerr", this, itemParams, handler, drvr, &panelIndex, "", guiType::_stringArray);
+    guiComps->add(std::move(yerr));
+    paramComps->add(&yerr->lblName);
+    paramComps->add(&yerr->lbl);
+
+    auto ecolor = new colorsComponent(0, 50, 171, 25, "ecolor", this, itemParams, handler, drvr, &panelIndex, "ecolor");
+    guiComps->add(std::move(ecolor));
+    paramComps->add(&ecolor->selection.lblName);
+    paramComps->add(&ecolor->selection.lbl);
 }

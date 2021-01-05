@@ -69,11 +69,11 @@ TextPanel::TextPanel(int x, int y, int w, int h, juce::String paramText, juce::C
     addColorsComponent(new colorsComponent(21, 57, 175, 25, "background",RightBox.conts[0], itemParams, handler, drvr, &index, "text.set_backgroundcolor", guiType::_functionWithQuotes));
      
      
-    addSelectionBox(new SelectionBox(21, 14, { "serif", "sans-serif", "cursive","fantasy","monospace"   }, RightBox.conts[1], itemParams, handler, drvr, &index, "text.set_fontfamily",guiType::_functionList)); 
-    addSelectionBox(new SelectionBox(121, 14, { "normal", "italic", "oblique" }, RightBox.conts[1], itemParams, handler, drvr, &index, "text.set_fontstyle", guiType::_functionList));
+    addSelectionBox(new SelectionBox(21, 14,73, { "serif", "sans-serif", "cursive","fantasy","monospace"   }, RightBox.conts[1], itemParams, handler, drvr, &index, "text.set_fontfamily",guiType::_functionList)); 
+    addSelectionBox(new SelectionBox(121, 14,73, { "normal", "italic", "oblique" }, RightBox.conts[1], itemParams, handler, drvr, &index, "text.set_fontstyle", guiType::_functionList));
     
-    addSelectionBox(new SelectionBox(21, 14, { "left", "center", "right" }, RightBox.conts[2], itemParams, handler, drvr, &index, "text.set_horizontalalignment", guiType::_functionList));
-    addSelectionBox(new SelectionBox(121, 14, { "center", "top", "bottom","baseline","center_baseline" }, RightBox.conts[2], itemParams, handler, drvr, &index, "text.set_verticalalignment", guiType::_functionList));
+    addSelectionBox(new SelectionBox(21, 14,73, { "left", "center", "right" }, RightBox.conts[2], itemParams, handler, drvr, &index, "text.set_horizontalalignment", guiType::_functionList));
+    addSelectionBox(new SelectionBox(121, 14,73, { "center", "top", "bottom","baseline","center_baseline" }, RightBox.conts[2], itemParams, handler, drvr, &index, "text.set_verticalalignment", guiType::_functionList));
 
   
 
@@ -90,8 +90,8 @@ AxesPanel::AxesPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Compone
     addChLabel(new chLabel(408, 117, 150, 25, "ylim", this, itemParams, handler, drvr, &index,"ax.set_ylim", guiType::_function));
      
 
-    addSelectionBox(new SelectionBox(25, 26, { "both", "major", "minor" }, this, itemParams, handler, drvr, &index, "which"));
-    addSelectionBox(new SelectionBox(25, 100, { "both", "x", "y" }, this, itemParams, handler, drvr, &index, "axis"));
+    addSelectionBox(new SelectionBox(25, 26, 73,{ "both", "major", "minor" }, this, itemParams, handler, drvr, &index, "which"));
+    addSelectionBox(new SelectionBox(25, 100, 73,{ "both", "x", "y" }, this, itemParams, handler, drvr, &index, "axis"));
 
     addSlider(new AlphaSlider(892, 5, 38, 178, this, itemParams, handler, drvr, &index, "alpha"));
 
@@ -101,7 +101,7 @@ AxesPanel::AxesPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Compone
     static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 500, 1);
     static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setValue(100, juce::dontSendNotification);
 
-    addSelectionBox(new SelectionBox(21, 17, { "-", "--", "-.", ":", }, LeftBox.conts[1], itemParams, handler, drvr, &index, "linestyle"));
+    addSelectionBox(new SelectionBox(21, 17,73, { "-", "--", "-.", ":", }, LeftBox.conts[1], itemParams, handler, drvr, &index, "linestyle"));
 
     
 }
@@ -115,7 +115,7 @@ HistPanel::HistPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Compone
     auto binsf = new BinsFront(409, 57, 300, 250, &guiComps, &paramComps, this, itemParams, handler, drvr, index);
     CompBoxes.add(std::move(binsf));
      
-    auto bins = new BinsArgsCompBox(108, 26, 260, 135, &guiComps, &paramComps, this, itemParams, handler, drvr, index);
+    auto bins = new BinsArgsCompBox(18, 26, 350, 170, &guiComps, &paramComps, this, itemParams, handler, drvr, index);
     CompBoxes.add(std::move(bins));
     lbls.add(bins->compBox.lbls[0]);
 
@@ -182,7 +182,7 @@ BarsPanel::BarsPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Compone
     
      
 
-    addSelectionBox(new SelectionBox(21, 17,  { "solid", "dashed", "dashdot", "dotted" }, LeftBox.conts[0], itemParams, handler, drvr, &index, "linestyle"));
+    addSelectionBox(new SelectionBox(21, 17, 73, { "solid", "dashed", "dashdot", "dotted" }, LeftBox.conts[0], itemParams, handler, drvr, &index, "linestyle"));
      
     //SelectionBox barsHatch{ 882,-4,{ "none", "/", "|","-","+","x","o","O",".","*" },this, params,handler,drvr,enumParmas::barsHatch };*/
 }
@@ -201,7 +201,7 @@ PiePanel::PiePanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component
     addChKnob(new chKnobClassicBeta(11, 11, 70, 70, "radius", this, itemParams, handler, drvr, &index, "radius"));
  
     addToggleButtonAndLabel(new chToggleButtonAndLabel(609, 160, 85, 25, "shadow", this, itemParams, handler, drvr, &index, "shadow"));
-    addSelectionBox(new SelectionBox(102, 14, { "None", "True", "False" }, this, itemParams, handler, drvr, &index, "normalize"));
+    addSelectionBox(new SelectionBox(102, 14, 73,{ "None", "True", "False" }, this, itemParams, handler, drvr, &index, "normalize"));
 }
 
 ScatterPanel::ScatterPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
@@ -295,7 +295,7 @@ AnnotPanel::AnnotPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Compo
     addChLabel(new chLabel(408, 87, 150,25, "xy", this, itemParams, handler, drvr, &index, "",guiType::_stringArray));
     addChLabel(new chLabel(408, 117, 150, 25, "xytext", this, itemParams, handler, drvr, &index, "",guiType::_stringArray));
     addSlider(new AlphaSlider(892, 5, 38, 178, this, itemParams, handler, drvr, &index, "alpha"));
-    addSelectionBox(new SelectionBox(5, 5, { "data","figure points", "figure pixels", "figure fraction", "axes points","axes pixels","axes fraction","polar" }, LeftBox.conts[0], itemParams, handler, drvr, &index, "xycoords"));
+    addSelectionBox(new SelectionBox(5, 5, 73,{ "data","figure points", "figure pixels", "figure fraction", "axes points","axes pixels","axes fraction","polar" }, LeftBox.conts[0], itemParams, handler, drvr, &index, "xycoords"));
 
 
     //arraw dict start
@@ -381,7 +381,7 @@ SeabornScatterPanel::SeabornScatterPanel(int x, int y, int w, int h, bool _ShowY
     addChLabelPopup(new chLabelPopup(21, 17, 150, 25, "units", paramComps.getFirst(), popup, RightBox.conts[2], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
     addChLabel(new chLabel(21, 47, 150, 25, "style_order", RightBox.conts[2], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
 
-    addSelectionBox(new SelectionBox(21, 17, { "False", "auto", "brief","full" }, RightBox.conts[3], itemParams, handler, drvr, &index, "legend"));
+    addSelectionBox(new SelectionBox(21, 17, 73,{ "False", "auto", "brief","full" }, RightBox.conts[3], itemParams, handler, drvr, &index, "legend"));
 
     addSlider(new AlphaSlider(892, 5, 38, 178, this, itemParams, handler, drvr, &index, "alpha"));
 }
@@ -410,7 +410,7 @@ SeabornLinePanel::SeabornLinePanel(int x, int y, int w, int h, bool _ShowYinput,
     addChLabelPopup(new chLabelPopup(21, 17, 150, 25, "units", paramComps.getFirst(), popup, RightBox.conts[2], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
     addChLabel(new chLabel(21, 47, 150, 25, "style_order", RightBox.conts[2], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
 
-    addSelectionBox(new SelectionBox(21, 17, { "False", "auto", "brief","full" }, RightBox.conts[3], itemParams, handler, drvr, &index, "legend"));
+    addSelectionBox(new SelectionBox(21, 17, 73,{ "False", "auto", "brief","full" }, RightBox.conts[3], itemParams, handler, drvr, &index, "legend"));
 
 
     addSlider(new AlphaSlider(892, 5, 38, 178, this, itemParams, handler, drvr, &index, "alpha"));
@@ -432,7 +432,7 @@ SeabornDistPanel::SeabornDistPanel(int x, int y, int w, int h, bool _ShowYinput,
     addChLabelSmall(new chLabelSmall(21, 41, 150, 25, "height", LeftBox.conts[1], itemParams, handler, drvr, &index, "", guiType::_string));
     addChKnob(new chKnobClassicBeta(121, 17, 70, 70, "aspect", LeftBox.conts[1], itemParams, handler, drvr, &index, "aspect"));
     //change location!
-    addSelectionBox(new SelectionBox(21, 17, { "hist", "kde", "ecdf" }, RightBox.conts[3], itemParams, handler, drvr, &index, "kind"));
+    addSelectionBox(new SelectionBox(21, 17, 73,{ "hist", "kde", "ecdf" }, RightBox.conts[3], itemParams, handler, drvr, &index, "kind"));
     addToggleButtonAndLabel(new chToggleButtonAndLabel(730, 160, 85, 25, "rug", this, itemParams, handler, drvr, &index, "rug"));
     addToggleButtonAndLabel(new chToggleButtonAndLabel(630, 160, 85, 25, "log", this, itemParams, handler, drvr, &index, "log_scale"));
     addToggleButtonAndLabel(new chToggleButtonAndLabel(530, 160, 85, 25, "legend", this, itemParams, handler, drvr, &index, "legend"));
@@ -463,9 +463,9 @@ SeabornHistPanel::SeabornHistPanel(int x, int y, int w, int h, bool _ShowYinput,
 
     addChKnob(new chKnobClassicBeta(121, 17, 70, 70, "shrink", LeftBox.conts[0], itemParams, handler, drvr, &index, "shrink"));
 
-    addSelectionBox(new SelectionBox(21, 17, { "bars", "step", "poly" }, LeftBox.conts[1], itemParams, handler, drvr, &index, "element"));
-    addSelectionBox(new SelectionBox(21, 17, { "count", "frequency", "density", "probability" }, LeftBox.conts[2], itemParams, handler, drvr, &index, "stat"));
-    addSelectionBox(new SelectionBox(121, 17, { "layer", "dodge", "stack", "fill" }, LeftBox.conts[2], itemParams, handler, drvr, &index, "multiple"));
+    addSelectionBox(new SelectionBox(21, 17,73, { "bars", "step", "poly" }, LeftBox.conts[1], itemParams, handler, drvr, &index, "element"));
+    addSelectionBox(new SelectionBox(21, 17,73, { "count", "frequency", "density", "probability" }, LeftBox.conts[2], itemParams, handler, drvr, &index, "stat"));
+    addSelectionBox(new SelectionBox(121, 17, 73,{ "layer", "dodge", "stack", "fill" }, LeftBox.conts[2], itemParams, handler, drvr, &index, "multiple"));
 
     //colorbar dict start
     //testing: hidden toggle button for cbar. see if it works
@@ -511,7 +511,7 @@ SeabornKDEPanel::SeabornKDEPanel(int x, int y, int w, int h, bool _ShowYinput, j
     addChKnob(new chKnobClassicBeta(121, 17, 70, 70, "thresh", LeftBox.conts[0], itemParams, handler, drvr, &index, "thresh"));
     static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 500, 1);
     addChLabelSmall(new chLabelSmall(121, 17, 150, 25, "cut", LeftBox.conts[0], itemParams, handler, drvr, &index, "", guiType::_string));
-    addSelectionBox(new SelectionBox(121, 17, { "layer", "stack", "fill" }, LeftBox.conts[2], itemParams, handler, drvr, &index, "multiple"));
+    addSelectionBox(new SelectionBox(121, 17, 73,{ "layer", "stack", "fill" }, LeftBox.conts[2], itemParams, handler, drvr, &index, "multiple"));
 
 
 
@@ -550,7 +550,7 @@ SeabornECDFPanel::SeabornECDFPanel(int x, int y, int w, int h, bool _ShowYinput,
     static_cast<chLabel*>(guiComps.getLast())->addChangeListener(this);
     addChLabelPopup(new chLabelPopup(408, 87, 150, 25, "hue", paramComps.getFirst(), popup, this, itemParams, handler, drvr, &index, "", guiType::_stringQuots));
 
-    addSelectionBox(new SelectionBox(121, 17, { "proportion", "count" }, LeftBox.conts[0], itemParams, handler, drvr, &index, "stat"));
+    addSelectionBox(new SelectionBox(121, 17, 73,{ "proportion", "count" }, LeftBox.conts[0], itemParams, handler, drvr, &index, "stat"));
 
     addToggleButtonAndLabel(new chToggleButtonAndLabel(230, 160, 85, 25, "complementary", this, itemParams, handler, drvr, &index, "complementary"));
     addChLabel(new chLabel(21, 17, 150, 25, "palette", RightBox.conts[1], itemParams, handler, drvr, &index, "", guiType::_stringQuots));
@@ -650,8 +650,9 @@ void ChartPanel::init()
     for (auto& l : lbls)
         l->sendSynchronousChangeMessage();
     
-    
+    popup.setVisible(false);
     setVisible(false);
+    
 }
 
 void ChartPanel::refresh() {
@@ -763,4 +764,29 @@ void ChartPanel::addFourFloats(FourFloats* _floats)
     guiComps.add(std::move(_floats));
     paramComps.add(&_floats->OnOff);
     paramComps.add(_floats);
+}
+
+ErrorBarPanel::ErrorBarPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : ChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr)
+{
+    pltstr1 = juce::String("line,caps,bars = ax.errorbar(");
+    addSlider(new AlphaSlider(892, 5, 38, 178, this, itemParams, handler, drvr, &index, "alpha", guiType::_float));
+
+    addColorsComponent(new colorsComponent(408, 57, 175, 25, "color", this, itemParams, handler, drvr, &index, "color", guiType::_stringQuots));
+    addChLabel(new chLabel(408, 82, 150, 25, "label", this, itemParams, handler, drvr, &index, "label", guiType::_stringQuots));
+
+    LeftBox.setVisible(false);
+    RightBox.setVisible(false);
+
+    auto errf = new ErrBarFront(408, 107, 170, 100, &guiComps, &paramComps, this, itemParams, handler, drvr, index);
+    CompBoxes.add(std::move(errf));
+
+    auto args = new ErrBarArgsCompBox(18, 26, 350, 155, &guiComps, &paramComps, this, itemParams, handler, drvr, index);
+    CompBoxes.add(std::move(args));
+    lbls.add(args->compBox.lbls[0]);
+
+    auto markers = new MarkersArgsCompBox(598, 26, 260, 135, &guiComps, &paramComps, this, itemParams, handler, drvr, index);
+    CompBoxes.add(std::move(markers));
+    lbls.add(markers->compBox.lbls[0]);
+
 }

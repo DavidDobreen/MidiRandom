@@ -148,6 +148,13 @@ public:
    ~Line2DPanel(){}
 };
 
+class ErrorBarPanel : public ChartPanel
+{
+public:
+    ErrorBarPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
+    ~ErrorBarPanel() {}
+};
+
 class HistPanel : public ChartPanel
 {
 public:

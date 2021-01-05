@@ -182,6 +182,7 @@ LeftPanel::LeftPanel(int x, int y, int w, int h, BottomPanel& _bottomPanel, juce
 
 
     chartList.addItem("Line");
+    chartList.addItem("Errorbar");
     chartList.addItem("Hist");
     chartList.addItem("Bars");
     chartList.addItem("Pie");
@@ -576,6 +577,11 @@ ItemList::item::item(int x, int y, int w, int h, juce::Array<paramedBeta*>* _par
             params.paramsArray.add(new paramBool((*_paramComps)[i]->paramText));
             break;
         }
+        case (guiType::_boolFalse):
+        {
+            params.paramsArray.add(new paramBool((*_paramComps)[i]->paramText,false));
+            break;
+        }
 
         case (guiType::_string):
         {
@@ -659,6 +665,7 @@ BottomPanel::BottomPanel(int x, int y, int w, int h, juce::Component* parent, pn
     AXpanels.add(new AxesPanel(0, 0, dims[2], dims[3], true, this, handler, drvr));
 
     CHpanels.add(new Line2DPanel(0, 0, dims[2], dims[3], true, this, handler, drvr));
+    CHpanels.add(new ErrorBarPanel(0, 0, dims[2], dims[3], true, this, handler, drvr));
     CHpanels.add(new HistPanel(0, 0, dims[2], dims[3], false, this, handler, drvr));
     CHpanels.add(new BarsPanel(0, 0, dims[2], dims[3], true, this, handler, drvr));
     CHpanels.add(new PiePanel(0, 0, dims[2], dims[3], false, this, handler, drvr));

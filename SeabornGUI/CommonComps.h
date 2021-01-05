@@ -243,7 +243,7 @@ public:
     };
 
     juce::String text;   
-    moveFxLabel lblName{ 0,0,30,18, "",DEFAULT_LABEL_COLORS,nullptr,this,params,handler };
+    moveFxLabel lblName{ 0,0,60,18, "",DEFAULT_LABEL_COLORS,nullptr,this,params,handler };
     labelTextBox lbl{ 60,0,90,18,lblName,this,params,handler,drvr};
 
     chLabel(int x, int y, int w, int h, juce::String name, juce::Component* parent, Params*& itemParams, pngHandler& handler, Drvr& drvr,
@@ -288,8 +288,8 @@ public:
     };
 
     juce::String text;
-    moveFxLabel lblName{ 0,0,60,15, "",DEFAULT_LABEL_COLORS,nullptr,this,params,handler };
-    labelTextBox lbl{ 60,0,33,15,lblName,this,params,handler,drvr };
+    moveFxLabel lblName{ 0,0,90,15, "",DEFAULT_LABEL_COLORS,nullptr,this,params,handler };
+    labelTextBox lbl{ 90,0,33,15,lblName,this,params,handler,drvr };
 
     chLabelSmall(int x, int y, int w, int h, juce::String name, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr,
         int* _index, juce::String paramText = "", int guiType = guiType::_stringQuots);
@@ -399,8 +399,8 @@ class chKnobClassicBeta : public moveChildComp,  public paramedBeta, public hand
 {
 public:
     
-    updateSliderCompBeta sldr{ "vals",0,100,1,15,15,39,41,this, params,  handler,  drvr };
-    MoveLabel LblName{ 0,51,70,18, "",juce::Colours::slategrey,this,handler };
+    updateSliderCompBeta sldr{ "vals",0,100,1,(dims[2]-39)/2,(dims[2] - 39) / 2,39,41,this, params,  handler,  drvr };
+    MoveLabel LblName{ 0,51,dims[2],18, "",juce::Colours::slategrey,this,handler };
 
     chKnobClassicBeta(int x, int y, int w, int h, juce::String lblText, juce::Component* parent, Params*& _params, pngHandler& handler, Drvr& _drvr, 
         int* _index,  juce::String _paramText="", int _guiType = guiType::_float)
@@ -482,8 +482,8 @@ public:
 class chToggleButtonAndLabel : public juce::ChangeListener, public moveChildComp, public paramedBeta, public handled, public drvrShellNotifer
 {
 public:
-    MoveLabel lbl{ 0,0,60,25,"",juce::Colours::slategrey,this,handler };
-    chButton btn{ 65, 5, 10, 10,"led_red_on2.png","led_red_off2.png" ,this,handler };
+    MoveLabel lbl{ 0,0,dims[2]-10,25,"",juce::Colours::slategrey,this,handler };
+    chButton btn{ dims[2] - 10, 9, 10, 10,"led_red_on2.png","led_red_off2.png" ,this,handler };
     chToggleButtonAndLabel(int x, int y, int w, int h, juce::String text, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr, 
         int* _index,  juce::String _paramText = "",  int _guiType = guiType::_bool)
         : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvrShellNotifer(_drvr) {
@@ -637,8 +637,8 @@ public:
         juce::OwnedArray<chButton>& leds;
         paramedBeta* parentList;
 
-        selecion (int y,juce::String _text, paramedBeta* _parentList, juce::OwnedArray<chButton>& _leds , chButton* _led,juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr, int _index)
-            : moveChildComp(22,y,51,20),leds(_leds),led(_led),paramedBeta(params),handled(handler,parent,this), drvrShellNotifer(drvr){
+        selecion (int y,int w,juce::String _text, paramedBeta* _parentList, juce::OwnedArray<chButton>& _leds , chButton* _led,juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr, int _index)
+            : moveChildComp(22,y,w,20),leds(_leds),led(_led),paramedBeta(params),handled(handler,parent,this), drvrShellNotifer(drvr){
             text = _text;
             parentList = _parentList;
             
@@ -663,14 +663,14 @@ public:
     juce::OwnedArray<chButton> leds;
     juce::OwnedArray<childComp> ledsBlockers;
        
-    SelectionBox(int x, int y, std::vector<juce::String> vals, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr, 
+    SelectionBox(int x, int y, int w, std::vector<juce::String> vals, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr, 
         int* _index,  juce::String _paramText = "", int _guiType = guiType::_list ) :
-        moveChildComp(x, y, 73, vals.size() * 25), paramedBeta(params), handled(handler, parent, this), drvred(drvr)
+        moveChildComp(x, y, w, vals.size() * 25), paramedBeta(params), handled(handler, parent, this), drvred(drvr)
     {
         for (int i = 0; i < vals.size(); i++)
         {
             leds.add(new chButton{ 5, i * 20 + 5,10,10,"LED-ON_blue.png","LED_blue_off.png" ,this,handler });
-            options.add(new selecion{ i * 20,vals[i],this,leds,leds.getLast(), this,params, handler, drvr,index });
+            options.add(new selecion{ i * 20,dims[2]-10, vals[i],this,leds,leds.getLast(), this,params, handler, drvr,index });
             ledsBlockers.add(new moveChildComp{ 5,i * 20 + 5,10,10 });
             handler.compRszr_push(this, ledsBlockers.getLast());
 
@@ -928,7 +928,7 @@ public:
 class BinsArgsCompBox : public CompBoxBase
 {
 public:
-    CompBox compBox{ 0,0,dims[2],dims[3],4,this,itemParams, handler ,drvr };
+    CompBox compBox{ 90,0,260,135,3,this,itemParams, handler ,drvr };
 
     BinsArgsCompBox(int x, int y, int w, int h, juce::OwnedArray<moveChildComp>* _guiComps, juce::Array<paramedBeta*>* _paramComps, juce::Component* parent, Params*& itemParams, pngHandler& handler, Drvr& _drvr, int& _index);
     ~BinsArgsCompBox() {}
@@ -940,3 +940,21 @@ public:
     BinsFront(int x, int y, int w, int h, juce::OwnedArray<moveChildComp>* _guiComps, juce::Array<paramedBeta*>* _paramComps, juce::Component* parent, Params*& itemParams, pngHandler& handler, Drvr& _drvr, int& _index);
     ~BinsFront() {}
 };
+
+class ErrBarFront : public CompBoxBase
+{
+public:
+    ErrBarFront(int x, int y, int w, int h, juce::OwnedArray<moveChildComp>* _guiComps, juce::Array<paramedBeta*>* _paramComps, juce::Component* parent, Params*& itemParams, pngHandler& handler, Drvr& _drvr, int& _index);
+    ~ErrBarFront() {}
+};
+
+class ErrBarArgsCompBox : public CompBoxBase
+{
+    //extending 
+public:
+    CompBox compBox{ 90,0,260,135,3,this,itemParams, handler ,drvr };
+
+    ErrBarArgsCompBox(int x, int y, int w, int h, juce::OwnedArray<moveChildComp>* _guiComps, juce::Array<paramedBeta*>* _paramComps, juce::Component* parent, Params*& itemParams, pngHandler& handler, Drvr& _drvr, int& _index);
+    ~ErrBarArgsCompBox() {}
+};
+
