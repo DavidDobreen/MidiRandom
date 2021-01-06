@@ -588,6 +588,11 @@ ItemList::item::item(int x, int y, int w, int h, juce::Array<paramedBeta*>* _par
             params.paramsArray.add(new paramString((*_paramComps)[i]->paramText, params.paramsArray[i - 1]->boolVal));
             break;
         }
+        case (guiType::_stringOn):
+        {
+            params.paramsArray.add(new paramStringOn((*_paramComps)[i]->paramText));
+            break;
+        }
         case (guiType::_stringQuots):
         {
             params.paramsArray.add(new paramStringWithQuotes((*_paramComps)[i]->paramText, params.paramsArray[i - 1]->boolVal));

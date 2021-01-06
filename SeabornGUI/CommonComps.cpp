@@ -687,3 +687,57 @@ ErrBarFront::ErrBarFront(int x, int y, int w, int h, juce::OwnedArray<moveChildC
     paramComps->add(&ecolor->selection.lblName);
     paramComps->add(&ecolor->selection.lbl);
 }
+
+ScatterFront::ScatterFront(int x, int y, int w, int h, juce::OwnedArray<moveChildComp>* _guiComps, juce::Array<paramedBeta*>* _paramComps, juce::Component* parent, Params*& itemParams, pngHandler& handler, Drvr& _drvr, int& _index)
+    : CompBoxBase(x, y, w, h, _guiComps, _paramComps, parent, itemParams, handler, _drvr, _index) {
+
+    auto c = new chLabel(0, 0, 150, 25, "c", this, itemParams, handler, drvr, &panelIndex, "", guiType::_stringArray);
+    guiComps->add(std::move(c));
+    paramComps->add(&c->lblName);
+    paramComps->add(&c->lbl);
+
+    auto cmap = new chLabel(0, 25, 150, 25, "cmap", this, itemParams, handler, drvr, &panelIndex, "", guiType::_stringQuots);
+    guiComps->add(std::move(cmap));
+    paramComps->add(&cmap->lblName);
+    paramComps->add(&cmap->lbl);
+
+    auto lbl = new chLabel(0, 50, 150, 25, "label", this, itemParams, handler, drvr, &panelIndex, "", guiType::_stringQuots);
+    guiComps->add(std::move(lbl));
+    paramComps->add(&lbl->lblName);
+    paramComps->add(&lbl->lbl);
+
+    auto s = new chLabel(0, 75, 150, 25, "s", this, itemParams, handler, drvr, &panelIndex, "", guiType::_stringArray);
+    guiComps->add(std::move(s));
+    paramComps->add(&s->lblName);
+    paramComps->add(&s->lbl);
+
+    auto n = new chLabel(0, 100, 150, 25, "norm", this, itemParams, handler, drvr, &panelIndex, "", guiType::_stringArray);
+    guiComps->add(std::move(n));
+    paramComps->add(&n->lblName);
+    paramComps->add(&n->lbl);
+}
+
+ScatterMarkersCompBox::ScatterMarkersCompBox(int x, int y, int w, int h, juce::OwnedArray<moveChildComp>* _guiComps, juce::Array<paramedBeta*>* _paramComps, juce::Component* parent, Params*& itemParams, pngHandler& handler, Drvr& _drvr, int& _index)
+    : CompBoxBase(x, y, w, h, _guiComps, _paramComps, parent, itemParams, handler, _drvr, _index) {
+
+    auto btn = new moveChButton(6, 119, 15, 15, "fx off botton2.png", "fx on botton2.png", &compBox, itemParams, handler, drvr, &panelIndex, "visible", guiType::_boolFalse);
+    guiComps->add(std::move(btn));
+    paramComps->add(btn);
+
+    compBox.lbls[0]->text = "markers";
+
+    auto _markers = new markers(10, 10, 250, 100, compBox.conts[0], itemParams, handler, drvr, &panelIndex, "marker", guiType::_stringOn);
+    guiComps->add(std::move(_markers));
+    paramComps->add(_markers);
+
+    compBox.lbls[1]->text = "style";
+    auto lw = new chLabel(21, 17, 171, 25, "linewidths", compBox.conts[1], itemParams, handler, drvr, &panelIndex, "", guiType::_stringArray);
+    guiComps->add(std::move(lw));
+    paramComps->add(&lw->lblName);
+    paramComps->add(&lw->lbl);
+
+    auto ec = new chLabel(21, 57, 171, 25, "edgecolors", compBox.conts[1], itemParams, handler, drvr, &panelIndex, "", guiType::_stringArray);
+    guiComps->add(std::move(ec));
+    paramComps->add(&ec->lblName);
+    paramComps->add(&ec->lbl);
+}

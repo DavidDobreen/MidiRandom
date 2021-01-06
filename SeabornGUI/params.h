@@ -48,15 +48,25 @@ public:
 
 class paramString : public paramedType
 {
-public:  
-         
+public:          
     bool& myBool;
-     
-    paramString(juce::String _param,  bool&  _myBool) : paramedType(_param) , myBool(_myBool){}
+    
+    paramString(juce::String _param, bool& _myBool) : paramedType(_param), myBool(_myBool) { }
     ~paramString(){}
     void makeKwarg(juce::String& args) {          
             if (myBool && stringText != "") args += "," + param + "=" + stringText;  
     }    
+};
+
+class paramStringOn : public paramedType
+{
+public:
+ 
+    paramStringOn(juce::String _param) : paramedType(_param) { }
+    ~paramStringOn() {}
+    void makeKwarg(juce::String& args) {
+        if (stringText != "") args += "," + param + "=" + stringText;
+    }
 };
 
 class paramStringWithQuotes : public paramedType
@@ -223,7 +233,7 @@ public:
 };
 
 enum guiType {
-    _float = 1,_string, _stringQuots,_stringArray,_bool,_boolFalse,_list,_dictStart, _dictStartAlwaysOn,_dictEnd,_function, _functionWithQuotes,_functionFloat,_functionList
+    _float = 1,_string,_stringOn,_stringQuots,_stringArray,_bool,_boolFalse,_list,_dictStart, _dictStartAlwaysOn,_dictEnd,_function, _functionWithQuotes,_functionFloat,_functionList
 };
 class paramedBeta
 {    

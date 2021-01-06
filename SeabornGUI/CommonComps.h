@@ -925,6 +925,15 @@ public:
     ~MarkersArgsCompBox() {}
 };
 
+class ScatterMarkersCompBox : public CompBoxBase
+{
+public:
+    CompBox compBox{ 0,0,dims[2],dims[3],3,this,itemParams, handler ,drvr };
+
+    ScatterMarkersCompBox(int x, int y, int w, int h, juce::OwnedArray<moveChildComp>* _guiComps, juce::Array<paramedBeta*>* _paramComps, juce::Component* parent, Params*& itemParams, pngHandler& handler, Drvr& _drvr, int& _index);
+    ~ScatterMarkersCompBox() {}
+};
+
 class BinsArgsCompBox : public CompBoxBase
 {
 public:
@@ -958,3 +967,9 @@ public:
     ~ErrBarArgsCompBox() {}
 };
 
+class ScatterFront : public CompBoxBase
+{
+public:
+    ScatterFront(int x, int y, int w, int h, juce::OwnedArray<moveChildComp>* _guiComps, juce::Array<paramedBeta*>* _paramComps, juce::Component* parent, Params*& itemParams, pngHandler& handler, Drvr& _drvr, int& _index);
+    ~ScatterFront() {}
+};

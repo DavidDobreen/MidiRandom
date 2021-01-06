@@ -208,17 +208,17 @@ ScatterPanel::ScatterPanel(int x, int y, int w, int h, bool _ShowYinput, juce::C
     : ChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
     pltstr1 = "ax.scatter(";
 
-    addColorsComponent(new colorsComponent(409, 57, 175, 25, "color", this, itemParams, handler, drvr, &index, "c"));
-    addColorsComponent(new colorsComponent(409, 87, 175, 25, "edge", this, itemParams, handler, drvr, &index, "edgecolors"));
+    addSlider(new AlphaSlider(892, 5, 38, 178, this, itemParams, handler, drvr, &index, "alpha"));
 
-    
-    addChKnob(new chKnobClassicBeta(21, 17, 70, 70, "s", LeftBox.conts[0], itemParams, handler, drvr, &index, "s"));
-    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 100000, 1000);
-    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setValue(1000, juce::dontSendNotification);
+    LeftBox.setVisible(false);
+    RightBox.setVisible(false);
+    auto front = new ScatterFront(408, 57, 170, 200, &guiComps, &paramComps, this, itemParams, handler, drvr, index);
+    CompBoxes.add(std::move(front));
+ 
+    auto markers = new ScatterMarkersCompBox(598, 26, 260, 135, &guiComps, &paramComps, this, itemParams, handler, drvr, index);
+    CompBoxes.add(std::move(markers));
+    lbls.add(markers->compBox.lbls[0]);
 
-    addToggleButton(new moveChButton(6, 119, 15, 15, "fx on botton2.png", "fx off botton2.png", &RightBox, itemParams, handler, drvr, &index));
-    addMarkers(new markers(10, 10, 250, 100, RightBox.conts[0], itemParams, handler, drvr, &index, "marker"));
-    addChKnob(new chKnobClassicBeta(121, 17, 70, 70, "edge width", RightBox.conts[1], itemParams, handler, drvr, &index, "linewidths"));
 }
 
 PolarPanel::PolarPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
