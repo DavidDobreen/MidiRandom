@@ -973,3 +973,20 @@ public:
     ScatterFront(int x, int y, int w, int h, juce::OwnedArray<moveChildComp>* _guiComps, juce::Array<paramedBeta*>* _paramComps, juce::Component* parent, Params*& itemParams, pngHandler& handler, Drvr& _drvr, int& _index);
     ~ScatterFront() {}
 };
+
+class BarsArgsCompBox : public CompBoxBase
+{
+    //extending 
+public:
+    CompBox compBox{ 90,0,260,135,4,this,itemParams, handler ,drvr };
+
+    BarsArgsCompBox(int x, int y, int w, int h, juce::OwnedArray<moveChildComp>* _guiComps, juce::Array<paramedBeta*>* _paramComps, juce::Component* parent, Params*& itemParams, pngHandler& handler, Drvr& _drvr, int& _index);
+    ~BarsArgsCompBox() {}
+};
+
+class BarsFront : public CompBoxBase
+{
+public:
+    BarsFront(int x, int y, int w, int h, juce::OwnedArray<moveChildComp>* _guiComps, juce::Array<paramedBeta*>* _paramComps, juce::Component* parent, Params*& itemParams, pngHandler& handler, Drvr& _drvr, int& _index);
+    ~BarsFront() {}
+};

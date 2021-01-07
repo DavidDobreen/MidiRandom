@@ -118,71 +118,23 @@ HistPanel::HistPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Compone
     auto bins = new BinsArgsCompBox(18, 26, 350, 170, &guiComps, &paramComps, this, itemParams, handler, drvr, index);
     CompBoxes.add(std::move(bins));
     lbls.add(bins->compBox.lbls[0]);
-
-    /*addColorsComponent(new colorsComponent(409, 57, 175, 25, "color",this, itemParams, handler, drvr, &index, "color"));
-    addColorsComponent(new colorsComponent(21, 17, 175, 25, "edge",RightBox.conts[0], itemParams, handler, drvr, &index, "edgecolor"));
-
-    addChLabel(new chLabel(408, 87, 150, 25, "label", this, itemParams, handler, drvr, &index, "hist.set_label",guiType::_stringQuots));
-    addChLabel(new chLabel(408, 117, 150, 25, "bins", this, itemParams, handler, drvr, &index, "",guiType::_string));
-    addChLabel(new chLabel(408, 147, 150, 25, "range", this, itemParams, handler, drvr, &index, "",guiType::_stringArray));
-
-    addToggleButtonAndLabel(new chToggleButtonAndLabel(409, 160, 85, 25, "density", this, itemParams, handler, drvr, &index, "density"));
-    addToggleButtonAndLabel(new chToggleButtonAndLabel(509, 160, 85, 25, "cumulative", this, itemParams, handler, drvr, &index, "cumulative"));
-    addToggleButtonAndLabel(new chToggleButtonAndLabel(309, 160, 85, 25, "horizontal", this, itemParams, handler, drvr, &index, "horizontal"));
-
-    addSelectionBox(new SelectionBox(21, 17, { "bar", "barstacked", "step","stepfilled" }, LeftBox.conts[1], itemParams, handler, drvr, &index, "histtype"));
-    addSelectionBox(new SelectionBox(121, 17, { "left", "mid", "right" }, LeftBox.conts[1], itemParams, handler, drvr, &index, "align"));
-
-     
-    addChKnob(new chKnobClassicBeta(101, 17, 70, 70, "lineWidth", LeftBox.conts[0], itemParams, handler, drvr, &index, "lineWidth"));
-    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 500, 1);
-    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setValue(100, juce::dontSendNotification);
-    addChKnob(new chKnobClassicBeta(171, 17, 70, 70, "rwidth", LeftBox.conts[0], itemParams, handler, drvr, &index, "rwidth"));
-    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 500, 1);
-    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setValue(100, juce::dontSendNotification);
-
-    addToggleButtonAndLabel(new chToggleButtonAndLabel(21, 21, 85, 25, "log", RightBox.conts[1], itemParams, handler, drvr, &index, "log"));
-    addToggleButtonAndLabel(new chToggleButtonAndLabel(71, 21, 85, 25, "stacked", RightBox.conts[1], itemParams, handler, drvr, &index, "stacked"));
-
-    addSelectionBox(new SelectionBox(21, 21, { "solid", "dashed", "dashdot", "dotted" }, RightBox.conts[2], itemParams, handler, drvr, &index, "linestyle"));*/
-
-    
+   
     /////////////////////////////     
     //SelectionBox binsHatch{ 882,-4,{ "none", "/", "|","-","+","x","o","O",".","*" },this, params,handler,drvr,enumParmas::binsHatch };        
 }
 
 BarsPanel::BarsPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
   : ChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
-    pltstr1 = "ax.bar(";
+    pltstr1 = "bars = ax.bar(";
 
     addSlider(new AlphaSlider(892, 5, 38, 178, this, itemParams, handler, drvr, &index, "alpha"));
 
-    addColorsComponent(new colorsComponent(408, 57, 175, 25, "color",this, itemParams, handler, drvr, &index, "color"));
-    addColorsComponent(new colorsComponent(408, 82, 175, 25, "edge",this, itemParams, handler, drvr, &index, "edgecolor"));
-    addChLabel(new chLabel(408, 107, 150, 25, "label", this, itemParams, handler, drvr, &index, "",guiType::_stringQuots));
-    addColorsComponent(new colorsComponent(21, 17, 175, 25, "error",RightBox.conts[2], itemParams, handler, drvr, &index, "ecolor"));
+    auto barsf = new BarsFront(409, 57, 300, 250, &guiComps, &paramComps, this, itemParams, handler, drvr, index);
+    CompBoxes.add(std::move(barsf));
 
-    //addChLabel(new chLabel(409, 92, 150, 25, "X-cords", this, itemParams, handler, drvr, &index, guiType::_stringArray));
-    addChLabel(new chLabel(408, 137, 150, 25, "ticks", this, itemParams, handler, drvr, &index, "tick_label",guiType::_stringArray ));
-    addChLabel(new chLabel(21, 17, 150, 25, "xerr", RightBox.conts[0], itemParams, handler, drvr, &index, "",guiType::_stringArray));
-    addChLabel(new chLabel(21, 47, 150, 25, "yerrl", RightBox.conts[0], itemParams, handler, drvr, &index, "",guiType::_stringArray));
-    
-    addChKnob(new chKnobClassicBeta(21, 17, 70, 70, "capsize", LeftBox.conts[1], itemParams, handler, drvr, &index, "capsize"));
-     
-    addChLabel(new chLabel(21, 17, 150, 25, "width", LeftBox.conts[2], itemParams, handler, drvr, &index, "",guiType::_float));
-    addChLabel(new chLabel(21, 47, 150, 25, "bottom", LeftBox.conts[2], itemParams, handler, drvr, &index, "",guiType::_float));
-     
-    addToggleButtonAndLabel(new chToggleButtonAndLabel(709, 160, 85, 25, "align", this, itemParams, handler, drvr, &index, "align"));
-     
-    addChKnob(new chKnobClassicBeta(21, 17, 70, 70, "lineWidth", this, itemParams, handler, drvr, &index, "lineWidth"));
-    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 500, 1);
-    static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setValue(100, juce::dontSendNotification);
-
-    addToggleButtonAndLabel(new chToggleButtonAndLabel(609, 160, 85, 25, "log", this, itemParams, handler, drvr, &index, "log"));
-    
-     
-
-    addSelectionBox(new SelectionBox(21, 17, 73, { "solid", "dashed", "dashdot", "dotted" }, LeftBox.conts[0], itemParams, handler, drvr, &index, "linestyle"));
+    auto barsbox = new BarsArgsCompBox(18, 26, 350, 170, &guiComps, &paramComps, this, itemParams, handler, drvr, index);
+    CompBoxes.add(std::move(barsbox));
+    lbls.add(barsbox->compBox.lbls[0]);
      
     //SelectionBox barsHatch{ 882,-4,{ "none", "/", "|","-","+","x","o","O",".","*" },this, params,handler,drvr,enumParmas::barsHatch };*/
 }
