@@ -118,56 +118,57 @@ void marker::paint(juce::Graphics& g)
 {
     g.drawImage(img, getLocalBounds().toFloat().reduced(2));
     g.setColour(juce::Colours::slategrey);
-    g.drawRoundedRectangle(getLocalBounds().toFloat().reduced(2), 0.7f, 1.0f);
+    g.drawRoundedRectangle(getLocalBounds().toFloat().reduced(2), 0.7f, 1.0f);  
 }
 
 markers::markers(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr,
     int* _index, juce::String _paramText, int _guiType)
     : moveChildComp(x, y, w, h), paramedBeta(params), handled(handler, parent, this), drvrShellNotifer(_drvr)
 {
-    point.area.addChangeListener(this);
-    pixel.area.addChangeListener(this);
-    circle.area.addChangeListener(this);
-    triangle_down.area.addChangeListener(this);
-    triangle_up.area.addChangeListener(this);
-    triangle_left.area.addChangeListener(this);
-    triangle_right.area.addChangeListener(this);
-    tri_down.area.addChangeListener(this);
-    tri_up.area.addChangeListener(this);
-    tri_left.area.addChangeListener(this);
-    tri_right.area.addChangeListener(this);
-    octagon.area.addChangeListener(this);
-    square.area.addChangeListener(this);
-    pentagon.area.addChangeListener(this);
-    plus_filled.area.addChangeListener(this);
-    hexagon1.area.addChangeListener(this);
-    hexagon2.area.addChangeListener(this);
-    plus.area.addChangeListener(this);
-    X.area.addChangeListener(this);
-    diamond.area.addChangeListener(this);
-    thin_diamond.area.addChangeListener(this);
-    vline.area.addChangeListener(this);
-    hline.area.addChangeListener(this);
-    tickleft.area.addChangeListener(this);
-    tickright.area.addChangeListener(this);
-    tickup.area.addChangeListener(this);
-    tickdown.area.addChangeListener(this);
-    caretleft.area.addChangeListener(this);
-    caretright.area.addChangeListener(this);
-    caretup.area.addChangeListener(this);
-    caretdown.area.addChangeListener(this);
-    caretleft_centered_at_base.area.addChangeListener(this);
-    caretright_centered_at_base.area.addChangeListener(this);
-    caretup_centered_at_base.area.addChangeListener(this);
-    caretdown_centered_at_base.area.addChangeListener(this);
+    mrkrs.add(new marker(0, 0, 20, 20, "point", "'.'", this, handler));
+    mrkrs.add(new marker(20, 0, 20, 20, "pixel", "','", this, handler));
+    mrkrs.add(new marker(40, 0, 20, 20, "circle", "'o'", this, handler));
+    mrkrs.add(new marker(60, 0, 20, 20, "triangle_down", "'v'", this, handler));
+    mrkrs.add(new marker(80, 0, 20, 20, "triangle_up", "'^'", this, handler));
+    mrkrs.add(new marker(100, 0, 20, 20, "triangle_left", "'<'", this, handler));
+    mrkrs.add(new marker(120, 0, 20, 20, "triangle_right", "'>'", this, handler));
+    mrkrs.add(new marker(140, 0, 20, 20, "tri_down", "'1'", this, handler));
+    mrkrs.add(new marker(160, 0, 20, 20, "tri_up", "'2'", this, handler));
+    mrkrs.add(new marker(180, 0, 20, 20, "tri_left", "'3'", this, handler));
+    mrkrs.add(new marker(200, 0, 20, 20, "tri_right", "'4'", this, handler));
+    mrkrs.add(new marker(220, 0, 20, 20, "octagon", "'8'", this, handler));
+    mrkrs.add(new marker(0, 20, 20, 20, "square", "'s'", this, handler));
+    mrkrs.add(new marker(20, 20, 20, 20, "pentagon", "'p'", this, handler));
+    mrkrs.add(new marker(40, 20, 20, 20, "plus_filled", "'P'", this, handler));
+    mrkrs.add(new marker(60, 20, 20, 20, "hexagon1", "'h'", this, handler));
+    mrkrs.add(new marker(80, 20, 20, 20, "hexagon2", "'H'", this, handler));
+    mrkrs.add(new marker(100, 20, 20, 20, "star", "'+'", this, handler));
+    mrkrs.add(new marker(120, 20, 20, 20, "star", "'X'", this, handler));
+    mrkrs.add(new marker(140, 20, 20, 20, "diamond", "'D'", this, handler));
+    mrkrs.add(new marker(160, 20, 20, 20, "thin_diamond", "'d'", this, handler));
+    mrkrs.add(new marker(180, 20, 20, 20, "vline", "'|'", this, handler));
+    mrkrs.add(new marker(200, 20, 20, 20, "hline", "'_'", this, handler));
+    mrkrs.add(new marker(220, 20, 20, 20, "tickleft", "0", this, handler));
+    mrkrs.add(new marker(0, 40, 20, 20, "tickright", "1", this, handler));
+    mrkrs.add(new marker(20, 40, 20, 20, "tickup", "2", this, handler));
+    mrkrs.add(new marker(40, 40, 20, 20, "tickdown", "3", this, handler));
+    mrkrs.add(new marker(60, 40, 20, 20, "caretleft", "4", this, handler));
+    mrkrs.add(new marker(80, 40, 20, 20, "caretright", "5", this, handler));
+    mrkrs.add(new marker(100, 40, 20, 20, "caretup", "6", this, handler));
+    mrkrs.add(new marker(120, 40, 20, 20, "caretdown", "7", this, handler));
+    mrkrs.add(new marker(140, 40, 20, 20, "caretleft_centered_at_base", "8", this, handler));
+    mrkrs.add(new marker(160, 40, 20, 20, "caretright_centered_at_base", "9", this, handler));
+    mrkrs.add(new marker(180, 40, 20, 20, "caretup_centered_at_base", "10", this, handler));
+    mrkrs.add(new marker(200, 40, 20, 20, "caretdown_centered_at_base", "11", this, handler));
 
+    for (auto& m : mrkrs)
+        m->area.addChangeListener(this);
+  
     if (_index != nullptr)
     {
         index = *_index;
         (*_index)++;
     }
-
-    
 
     GuiClass = 5;
     guiType = _guiType;
@@ -178,6 +179,8 @@ markers::markers(int x, int y, int w, int h, juce::Component* parent, Params*& p
 
 void markers::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
+    for (auto& m : mrkrs) {m->area.selected = false; m->repaint();}
+ 
     code = static_cast<marker::markerArea*>(source)->code;  
     update(code);
     sendSynchronousChangeMessage();
@@ -300,7 +303,8 @@ AlphaSlider::AlphaSlider(int x, int y, int w, int h, juce::Component* parent, Pa
     if (_paramText != "")
         sldr.paramText = _paramText;
 
-    sldr.setValue(100);
+    
+    sldr.setValue(100, juce::dontSendNotification);
 }
 
 FourFloats::FourFloats(int x, int y, int w, int h, juce::Component* parent, Params*& _params, pngHandler& handler, Drvr& _drvr, int* _index, juce::String _paramText, int _guiType)
@@ -443,7 +447,8 @@ Line2dArgsCompBox::Line2dArgsCompBox(int x, int y, int w, int h, juce::OwnedArra
     auto knob = new chKnobClassicBeta(121, 17, 70, 70, "width", compBox.conts[0], itemParams, handler, drvr, &panelIndex, "line.set_linewidth", guiType::_functionFloat);
     guiComps->add( std::move(knob));
     knob->sldr.setRange(0, 1000, 1);
-    knob->sldr.setValue(100, juce::dontSendNotification);
+    knob->sldr.startFloatVal = 100;
+    //knob->sldr.setValue(100, juce::dontSendNotification);
     paramComps->add(&knob->sldr);
 
     auto sbox = new SelectionBox(10, 10,73, { "solid", "dashed", "dashdot","dotted" }, compBox.conts[0], itemParams, handler, drvr, &panelIndex, "line.set_linestyle", guiType::_functionList);
@@ -465,7 +470,7 @@ MarkersArgsCompBox::MarkersArgsCompBox(int x, int y, int w, int h, juce::OwnedAr
     paramComps->add(btn);
 
     compBox.lbls[0]->text = "markers";
-    auto _markers = new markers(10, 10, 250, 100, compBox.conts[0], itemParams, handler, drvr, &panelIndex, "line.set_marker", guiType::_function);
+    auto _markers = new markers(10, 10, 220, 100, compBox.conts[0], itemParams, handler, drvr, &panelIndex, "line.set_marker", guiType::_function);
     guiComps->add(std::move(_markers));
     paramComps->add(_markers);
 
@@ -479,17 +484,20 @@ MarkersArgsCompBox::MarkersArgsCompBox(int x, int y, int w, int h, juce::OwnedAr
     guiComps->add(std::move(mec));
     paramComps->add(&mec->selection.lblName);
     paramComps->add(&mec->selection.lbl);
+    mec->selection.lbl.startText = "black";
 
     compBox.lbls[2]->text = "sizes";
     auto size = new chKnobClassicBeta(48, 17, 70, 71, "face", compBox.conts[2], itemParams, handler, drvr, &panelIndex, "line.set_markersize", guiType::_functionFloat);
     size->sldr.setRange(0, 5000, 10);
-    size->sldr.setValue(100, juce::dontSendNotification);
+    size->sldr.startFloatVal = 750;
+    //size->sldr.setValue(100, juce::dontSendNotification);
     guiComps->add(std::move(size));
     paramComps->add(&size->sldr);
 
     auto edge = new chKnobClassicBeta(142, 17, 70, 71, "edge", compBox.conts[2], itemParams, handler, drvr, &panelIndex, "line.set_markeredgewidth", guiType::_functionFloat);
     edge->sldr.setRange(0, 2000, 10);
-    edge->sldr.setValue(100, juce::dontSendNotification);
+    edge->sldr.startFloatVal = 100;
+   // edge->sldr.setValue(100, juce::dontSendNotification);
     guiComps->add(std::move(edge));
     paramComps->add(&edge->sldr);
    
@@ -511,13 +519,15 @@ BinsArgsCompBox::BinsArgsCompBox(int x, int y, int w, int h, juce::OwnedArray<mo
     auto wid = new chKnobClassicBeta(48, 17, 70, 71, "lineWidth", compBox.conts[0], itemParams, handler, drvr, &panelIndex, "lineWidth");
     guiComps->add(std::move(wid));
     wid->sldr.setRange(0, 500, 1);
-    wid->sldr.setValue(1, juce::dontSendNotification);
+    wid->sldr.startFloatVal = 100;
+    //wid->sldr.setValue(1, juce::dontSendNotification);
     paramComps->add(&wid->sldr);
 
     auto rwid = new chKnobClassicBeta(142, 17, 70, 71, "rwidth", compBox.conts[0], itemParams, handler, drvr, &panelIndex, "rwidth");
     guiComps->add(std::move(rwid));
     rwid->sldr.setRange(0, 500, 1);
-    rwid->sldr.setValue(1, juce::dontSendNotification);
+    rwid->sldr.startFloatVal = 100;
+    //rwid->sldr.setValue(1, juce::dontSendNotification);
     paramComps->add(&rwid->sldr);
 
     compBox.lbls[1]->text = "type";
@@ -568,6 +578,11 @@ BinsArgsCompBox::BinsArgsCompBox(int x, int y, int w, int h, juce::OwnedArray<mo
     auto density = new chToggleButtonAndLabel(270, 134, 85, 25, "density", compBox.conts[1], itemParams, handler, drvr, &panelIndex, "density");
     guiComps->add(std::move(density));
     paramComps->add(density);
+
+    auto hatch = new chLabelSmall(3, 117, 80, 25, "hatch", this, itemParams, handler, drvr, &panelIndex, "", guiType::_stringQuots);
+    guiComps->add(std::move(hatch));
+    paramComps->add(&hatch->lblName);
+    paramComps->add(&hatch->lbl);
 }
 
 BinsFront::BinsFront(int x, int y, int w, int h, juce::OwnedArray<moveChildComp>* _guiComps, juce::Array<paramedBeta*>* _paramComps, juce::Component* parent, Params*& itemParams, pngHandler& handler, Drvr& _drvr, int& _index)
@@ -607,7 +622,8 @@ ErrBarArgsCompBox::ErrBarArgsCompBox(int x, int y, int w, int h, juce::OwnedArra
     auto knob = new chKnobClassicBeta(121, 17, 70, 70, "width", compBox.conts[0], itemParams, handler, drvr, &panelIndex, "lw", guiType::_float);
     guiComps->add(std::move(knob));
     knob->sldr.setRange(0, 1000, 1);
-    knob->sldr.setValue(100, juce::dontSendNotification);
+    knob->sldr.startFloatVal = 100;
+    //knob->sldr.setValue(100, juce::dontSendNotification);
     paramComps->add(&knob->sldr);
 
     auto sbox = new SelectionBox(10, 10, 73, { "solid", "dashed", "dashdot","dotted" }, compBox.conts[0], itemParams, handler, drvr, &panelIndex, "ls", guiType::_list);
@@ -625,19 +641,22 @@ ErrBarArgsCompBox::ErrBarArgsCompBox(int x, int y, int w, int h, juce::OwnedArra
     auto wid = new chKnobClassicBeta(28, 17, 70, 71, "elineWidth", compBox.conts[2], itemParams, handler, drvr, &panelIndex, "elinewidth");
     guiComps->add(std::move(wid));
     wid->sldr.setRange(0, 500, 1);
-    wid->sldr.setValue(1, juce::dontSendNotification);
+    wid->sldr.startFloatVal = 100;
+    //wid->sldr.setValue(1, juce::dontSendNotification);
     paramComps->add(&wid->sldr);
 
     auto caps = new chKnobClassicBeta(98, 17, 70, 71, "capsize", compBox.conts[2], itemParams, handler, drvr, &panelIndex, "capsize");
     guiComps->add(std::move(caps));
     caps->sldr.setRange(0, 500, 1);
-    caps->sldr.setValue(1, juce::dontSendNotification);
+    caps->sldr.startFloatVal = 100;
+    //caps->sldr.setValue(1, juce::dontSendNotification);
     paramComps->add(&caps->sldr);
 
     auto capt = new chKnobClassicBeta(168, 17, 70, 71, "capthick", compBox.conts[2], itemParams, handler, drvr, &panelIndex, "capthick");
     guiComps->add(std::move(capt));
     capt->sldr.setRange(0, 500, 1);
-    capt->sldr.setValue(1, juce::dontSendNotification);
+    capt->sldr.startFloatVal = 100;
+    //capt->sldr.setValue(1, juce::dontSendNotification);
     paramComps->add(&capt->sldr);
 
 
@@ -753,26 +772,32 @@ BarsArgsCompBox::BarsArgsCompBox(int x, int y, int w, int h, juce::OwnedArray<mo
     auto wid = new chKnobClassicBeta(48, 17, 70, 71, "EdgeWidth", compBox.conts[0], itemParams, handler, drvr, &panelIndex, "lineWidth");
     guiComps->add(std::move(wid));
     wid->sldr.setRange(0, 500, 1);
-    wid->sldr.setValue(1, juce::dontSendNotification);
+    wid->sldr.startFloatVal = 100;
+    //wid->sldr.setValue(1, juce::dontSendNotification);
     paramComps->add(&wid->sldr);
 
     auto rwid = new chKnobClassicBeta(142, 17, 70, 71, "BarWidth", compBox.conts[0], itemParams, handler, drvr, &panelIndex, "width");
     guiComps->add(std::move(rwid));
     rwid->sldr.setRange(0, 500, 1);
-    rwid->sldr.setValue(1, juce::dontSendNotification);
+    rwid->sldr.startFloatVal = 100;
+    //rwid->sldr.setValue(1, juce::dontSendNotification);
     paramComps->add(&rwid->sldr);
 
 
     compBox.lbls[1]->text = "type";
-    auto sbox = new SelectionBox(10, 13, 73, { "solid", "dashed", "dashdot","dotted" }, compBox.conts[1], itemParams, handler, drvr, &panelIndex, "linestyle");
+    auto sbox = new SelectionBox(10, 3, 73, { "solid", "dashed", "dashdot","dotted" }, compBox.conts[1], itemParams, handler, drvr, &panelIndex, "linestyle");
     guiComps->add(std::move(sbox));
     paramComps->add(sbox);
 
-    auto bottom = new chLabel(121, 47, 150, 25, "bottom", compBox.conts[1], itemParams, handler, drvr, &panelIndex, "", guiType::_stringArray);
+    auto bottom = new chLabel(87, 47, 150, 25, "bottom", compBox.conts[1], itemParams, handler, drvr, &panelIndex, "", guiType::_stringArray);
     guiComps->add(std::move(bottom));
     paramComps->add(&bottom->lblName);
     paramComps->add(&bottom->lbl);
 
+    auto hatch = new chLabelSmall(3, 117, 80, 25, "hatch", this, itemParams, handler, drvr, &panelIndex, "", guiType::_stringQuots);
+    guiComps->add(std::move(hatch));
+    paramComps->add(&hatch->lblName);
+    paramComps->add(&hatch->lbl);
  
     auto dummy = new moveChButton(0, 0, 0, 0, "", "", &compBox, itemParams, handler, drvr, &panelIndex, "error_kw", guiType::_dictStartAlwaysOn);
     guiComps->add(std::move(dummy));
@@ -782,19 +807,22 @@ BarsArgsCompBox::BarsArgsCompBox(int x, int y, int w, int h, juce::OwnedArray<mo
     auto ewid = new chKnobClassicBeta(28, 17, 70, 71, "elineWidth", compBox.conts[2], itemParams, handler, drvr, &panelIndex, "elinewidth");
     guiComps->add(std::move(ewid));
     ewid->sldr.setRange(0, 500, 1);
-    ewid->sldr.setValue(1, juce::dontSendNotification);
+    ewid->sldr.startFloatVal = 100;
+    //ewid->sldr.setValue(1, juce::dontSendNotification);
     paramComps->add(&ewid->sldr);
 
     auto caps = new chKnobClassicBeta(98, 17, 70, 71, "capsize", compBox.conts[2], itemParams, handler, drvr, &panelIndex, "capsize");
     guiComps->add(std::move(caps));
     caps->sldr.setRange(0, 500, 1);
-    caps->sldr.setValue(1, juce::dontSendNotification);
+    caps->sldr.startFloatVal = 100;
+    //caps->sldr.setValue(1, juce::dontSendNotification);
     paramComps->add(&caps->sldr);
 
     auto capt = new chKnobClassicBeta(168, 17, 70, 71, "capthick", compBox.conts[2], itemParams, handler, drvr, &panelIndex, "capthick");
     guiComps->add(std::move(capt));
     capt->sldr.setRange(0, 500, 1);
-    capt->sldr.setValue(1, juce::dontSendNotification);
+    capt->sldr.startFloatVal = 100;
+    //capt->sldr.setValue(1, juce::dontSendNotification);
     paramComps->add(&capt->sldr);
 
     auto every = new chLabelSmall(217, 140, 135, 15, "errorevery", this, itemParams, handler, drvr, &panelIndex, "errorevery", guiType::_string);
@@ -820,16 +848,15 @@ BarsArgsCompBox::BarsArgsCompBox(int x, int y, int w, int h, juce::OwnedArray<mo
 
 
     compBox.lbls[3]->text = "misc";
-    auto ecolor = new colorsComponent(71, 17, 171, 25, "ecolor", compBox.conts[3], itemParams, handler, drvr, &panelIndex, "ecolor");
+    auto ecolor = new colorsComponent(51, 07, 171, 25, "ecolor", compBox.conts[3], itemParams, handler, drvr, &panelIndex, "ecolor");
     guiComps->add(std::move(ecolor));
     paramComps->add(&ecolor->selection.lblName);
     paramComps->add(&ecolor->selection.lbl);
 
 
-    auto alpha = new chKnobClassicBeta(98, 42, 70, 71, "alpha", compBox.conts[3], itemParams, handler, drvr, &panelIndex, "alpha");
+    auto alpha = new chKnobClassicBeta(98, 32, 70, 71, "alpha", compBox.conts[3], itemParams, handler, drvr, &panelIndex, "alpha");
     guiComps->add(std::move(alpha));
-    alpha->sldr.setRange(0, 500, 1);
-    alpha->sldr.setValue(1, juce::dontSendNotification);
+    alpha->sldr.startFloatVal = 100;
     paramComps->add(&alpha->sldr);
 
     auto dummyBtn = new moveChButton(0, 0, 0, 0, "fx on botton2.png", "fx off botton2.png", this, itemParams, handler, drvr, &panelIndex, "cbar", guiType::_bool);
@@ -879,4 +906,66 @@ BarsFront::BarsFront(int x, int y, int w, int h, juce::OwnedArray<moveChildComp>
 
 
 
+}
+
+PieArgsCompBox::PieArgsCompBox(int x, int y, int w, int h, juce::OwnedArray<moveChildComp>* _guiComps, juce::Array<paramedBeta*>* _paramComps, juce::Component* parent, Params*& itemParams, pngHandler& handler, Drvr& _drvr, int& _index)
+    : CompBoxBase(x, y, w, h, _guiComps, _paramComps, parent, itemParams, handler, _drvr, _index) {
+
+
+
+    auto radius = new chKnobClassicBeta(28, 11, 70, 70, "radius", compBox.conts[0], itemParams, handler, drvr, &panelIndex, "radius");
+    guiComps->add(std::move(radius));
+    radius->sldr.setRange(0, 300, 1);
+    radius->sldr.startFloatVal = 100;
+    paramComps->add(&radius->sldr);
+
+    auto start = new chKnobClassicBeta(98, 11, 70, 70, "startangle", compBox.conts[0], itemParams, handler, drvr, &panelIndex, "startangle");
+    guiComps->add(std::move(start));
+    start->sldr.setRange(0, 36000, 10);    
+    paramComps->add(&radius->sldr);
+
+    
+    auto shadow = new chToggleButtonAndLabel(217, 0, 62, 25, "shadow", this, itemParams, handler, drvr, &panelIndex, "shadow");
+    guiComps->add(std::move(shadow));
+    paramComps->add(shadow);
+
+    auto countr = new chToggleButtonAndLabel(217, 0, 62, 25, "counter", this, itemParams, handler, drvr, &panelIndex, "counterclock",guiType::_boolFalse);
+    guiComps->add(std::move(countr));
+    paramComps->add(countr);
+
+    auto pct = new chLabelSmall(217, 140, 135, 15, "pctdistance", this, itemParams, handler, drvr, &panelIndex, "pctdistance", guiType::_string);
+    guiComps->add(std::move(pct));
+    paramComps->add(&pct->lblName);
+    paramComps->add(&pct->lbl);
+
+    auto lbl = new chLabelSmall(217, 140, 135, 15, "labeldistance", this, itemParams, handler, drvr, &panelIndex, "labeldistance", guiType::_string);
+    guiComps->add(std::move(lbl));
+    paramComps->add(&lbl->lblName);
+    paramComps->add(&lbl->lbl);
+
+}
+
+PieFront::PieFront(int x, int y, int w, int h, juce::OwnedArray<moveChildComp>* _guiComps, juce::Array<paramedBeta*>* _paramComps, juce::Component* parent, Params*& itemParams, pngHandler& handler, Drvr& _drvr, int& _index)
+    : CompBoxBase(x, y, w, h, _guiComps, _paramComps, parent, itemParams, handler, _drvr, _index) {
+
+    auto c = new chLabel(0, 0, 150, 25, "colors", this, itemParams, handler, drvr, &panelIndex, "", guiType::_stringArray);
+    guiComps->add(std::move(c));
+    paramComps->add(&c->lblName);
+    paramComps->add(&c->lbl);
+    auto lbls = new chLabel(0, 30, 150, 25, "labels", this, itemParams, handler, drvr, &panelIndex, "", guiType::_stringArray);
+    guiComps->add(std::move(lbls));
+    paramComps->add(&lbls->lblName);
+    paramComps->add(&lbls->lbl);
+    auto explode = new chLabel(0, 60, 150, 25, "explode", this, itemParams, handler, drvr, &panelIndex, "", guiType::_stringArray);
+    guiComps->add(std::move(explode));
+    paramComps->add(&explode->lblName);
+    paramComps->add(&explode->lbl);
+    auto pct = new chLabel(0, 60, 150, 25, "autopct", this, itemParams, handler, drvr, &panelIndex, "", guiType::_stringArray);
+    guiComps->add(std::move(pct));
+    paramComps->add(&pct->lblName);
+    paramComps->add(&pct->lbl);
+     
+
+    
+   
 }

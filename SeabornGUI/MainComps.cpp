@@ -311,6 +311,7 @@ void LeftPanel::changeListenerCallback(juce::ChangeBroadcaster* source)
 
        
         bottomPanel.ANpanels.getLast()->setVisible(true);
+        bottomPanel.ANpanels.getLast()->RightBox.lbls[0]->sendSynchronousChangeMessage();
 
         return;
     }
@@ -390,7 +391,7 @@ void ItemList::resized()
     }
        
        
-    int y = 26;
+    int y = 2;
     if (items.size())
         y = items.getLast()->getY()+19;
    
@@ -569,6 +570,7 @@ ItemList::item::item(int x, int y, int w, int h, juce::Array<paramedBeta*>* _par
         case (guiType::_float):
         {
             params.paramsArray.add(new paramNumber((*_paramComps)[i]->paramText));
+            params.paramsArray.getLast()->floatVal = (*_paramComps)[i]->startFloatVal;
             break;
         }
 
@@ -586,21 +588,25 @@ ItemList::item::item(int x, int y, int w, int h, juce::Array<paramedBeta*>* _par
         case (guiType::_string):
         {
             params.paramsArray.add(new paramString((*_paramComps)[i]->paramText, params.paramsArray[i - 1]->boolVal));
+            params.paramsArray.getLast()->stringText = (*_paramComps)[i]->startText;
             break;
         }
         case (guiType::_stringOn):
         {
             params.paramsArray.add(new paramStringOn((*_paramComps)[i]->paramText));
+            params.paramsArray.getLast()->stringText = (*_paramComps)[i]->startText;
             break;
         }
         case (guiType::_stringQuots):
         {
             params.paramsArray.add(new paramStringWithQuotes((*_paramComps)[i]->paramText, params.paramsArray[i - 1]->boolVal));
+            params.paramsArray.getLast()->stringText = (*_paramComps)[i]->startText;
             break;
         }
         case (guiType::_stringArray):
         {
             params.paramsArray.add(new paramStringArray((*_paramComps)[i]->paramText, params.paramsArray[i - 1]->boolVal));
+            params.paramsArray.getLast()->stringText = (*_paramComps)[i]->startText;
             break;
         }
        
@@ -630,16 +636,19 @@ ItemList::item::item(int x, int y, int w, int h, juce::Array<paramedBeta*>* _par
        
         {
             params.paramsArray.add(new paramFunction((*_paramComps)[i]->paramText, params.paramsArray[i - 1]->boolVal,params.functions));
+            params.paramsArray.getLast()->stringText = (*_paramComps)[i]->startText;
             break;
         }
         case (guiType::_functionWithQuotes):
         {
             params.paramsArray.add(new paramFunctionWithQuotes((*_paramComps)[i]->paramText, params.paramsArray[i - 1]->boolVal, params.functions));
+            params.paramsArray.getLast()->stringText = (*_paramComps)[i]->startText;
             break;
         }
         case (guiType::_functionFloat):
         {
             params.paramsArray.add(new paramFunctionFloat((*_paramComps)[i]->paramText, params.functions));
+            params.paramsArray.getLast()->floatVal = (*_paramComps)[i]->startFloatVal;
             break;
         }
         case (guiType::_functionList):

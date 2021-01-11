@@ -23,7 +23,9 @@ public:
     bool SNS_DIST_STYLE = false;
     juce::String pltstr1;
 
-    PopUpList popup{ 0, 0, 76, 100, this, handler };
+
+    //PopUpList popup{ 0, 0, 76, 100, this, handler };
+    PopUpList popup{ -200, 0, 76, 100, this, handler };
 
     juce::OwnedArray<CompBoxBase> CompBoxes;
     juce::Array<fxLabel*> lbls;
@@ -141,224 +143,57 @@ public:
     
 };
 
-class Line2DPanel : public ChartPanel
-{
-public:
-    Line2DPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent,  pngHandler& handler, Drvr& _drvr);
-   ~Line2DPanel(){}
-};
+#define CreatePanel(name) class name : public ChartPanel \
+                          {                                       \
+                            public:                               \
+                                name(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr); \
+                                ~name() {} \
+                          }; \
 
-class ErrorBarPanel : public ChartPanel
-{
-public:
-    ErrorBarPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~ErrorBarPanel() {}
-};
+#define CreateSeaborn(name) class name : public SeabornChartPanel \
+                          {                                       \
+                            public:                               \
+                                name(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr); \
+                                ~name() {} \
+                          }; \
+                     
 
-class HistPanel : public ChartPanel
-{
-public:
-    HistPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~HistPanel(){}  
-};
-
-class BarsPanel : public ChartPanel
-{
-public:      
-    BarsPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~BarsPanel(){}   
-};
-
-class PiePanel : public ChartPanel
-{
-public:
-    PiePanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~PiePanel(){ }   
-};
-
-class ScatterPanel : public ChartPanel
-{
-public:
-    ScatterPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~ScatterPanel() {}
-};
-
-class PolarPanel : public ChartPanel
-{
-public:
-    PolarPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~PolarPanel() {}
-};
-
-class LegendPanel : public ChartPanel
-{
-public:
-    LegendPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~LegendPanel() {}
-};
-
-class AnnotPanel : public ChartPanel
-{
-public:
-    
-       
-    AnnotPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~AnnotPanel() {}
-};
+CreatePanel(Line3dPanel)
+CreatePanel(Line2DPanel)
+CreatePanel(ErrorBarPanel)
+CreatePanel(HistPanel)
+CreatePanel(BarsPanel)
+CreatePanel(PiePanel)
+CreatePanel(ScatterPanel)
+CreatePanel(PolarPanel)
+CreatePanel(LegendPanel)
+CreatePanel(AnnotPanel)
+ 
 
 /*
 Seaborn
 */
 
-class ReplotPanel : public SeabornChartPanel
-{
-public:
-    ReplotPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~ReplotPanel() {}
-};
-
-class SeabornScatterPanel : public SeabornChartPanel
-{
-public:
-    SeabornScatterPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~SeabornScatterPanel() {}
-};
-class SeabornLinePanel : public SeabornChartPanel
-{
-public:
-    SeabornLinePanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~SeabornLinePanel() {}
-};
-
-class SeabornDistPanel : public SeabornChartPanel
-{
-public:
-    SeabornDistPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~SeabornDistPanel() {}
-};
-
-class SeabornHistPanel : public SeabornChartPanel
-{
-public:
-    SeabornHistPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~SeabornHistPanel() {}
-};
-
-class SeabornKDEPanel : public SeabornChartPanel
-{
-public:
-    SeabornKDEPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~SeabornKDEPanel() {}
-};
-
-class SeabornECDFPanel : public SeabornChartPanel
-{
-public:
-    SeabornECDFPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~SeabornECDFPanel() {}
-};
-
-class SeabornRugPanel : public SeabornChartPanel
-{
-public:
-    SeabornRugPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~SeabornRugPanel() {}
-};
-
-class SeabornCatPanel : public SeabornChartPanel
-{
-public:
-    SeabornCatPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~SeabornCatPanel() {}
-};
-
-class SeabornStripPanel : public SeabornChartPanel
-{
-public:
-    SeabornStripPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~SeabornStripPanel() {}
-};
-
-class SeabornSwarmPanel : public SeabornChartPanel
-{
-public:
-    SeabornSwarmPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~SeabornSwarmPanel() {}
-};
-
-class SeabornBoxPanel : public SeabornChartPanel
-{
-public:
-    SeabornBoxPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~SeabornBoxPanel() {}
-};
-
-class SeabornViolinPanel : public SeabornChartPanel
-{
-public:
-    SeabornViolinPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~SeabornViolinPanel() {}
-};
-
-class SeabornBoxenPanel : public SeabornChartPanel
-{
-public:
-    SeabornBoxenPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~SeabornBoxenPanel() {}
-};
-
-class SeabornPointPanel : public SeabornChartPanel
-{
-public:
-    SeabornPointPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~SeabornPointPanel() {}
-};
-
-class SeabornBarPanel : public SeabornChartPanel
-{
-public:
-    SeabornBarPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~SeabornBarPanel() {}
-};
-
-class SeabornCountPanel : public SeabornChartPanel
-{
-public:
-    SeabornCountPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~SeabornCountPanel() {}
-};
-
-class SeabornLMPanel : public SeabornChartPanel
-{
-public:
-    SeabornLMPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~SeabornLMPanel() {}
-};
-
-class SeabornRegresionPanel : public SeabornChartPanel
-{
-public:
-    SeabornRegresionPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~SeabornRegresionPanel() {}
-};
-
-class SeabornHeatMapPanel : public SeabornChartPanel
-{
-public:
-    SeabornHeatMapPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~SeabornHeatMapPanel() {}
-};
-
-class SeabornClusterMapPanel : public SeabornChartPanel
-{
-public:
-    SeabornClusterMapPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~SeabornClusterMapPanel() {}
-};
-
-class SeabornJointPanel : public SeabornChartPanel
-{
-public:
-    SeabornJointPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr);
-    ~SeabornJointPanel() {}
-};
+CreateSeaborn(ReplotPanel)
+CreateSeaborn(SeabornScatterPanel)
+CreateSeaborn(SeabornLinePanel)
+CreateSeaborn(SeabornDistPanel)
+CreateSeaborn(SeabornHistPanel)
+CreateSeaborn(SeabornKDEPanel)
+CreateSeaborn(SeabornECDFPanel)
+CreateSeaborn(SeabornRugPanel)
+CreateSeaborn(SeabornCatPanel)
+CreateSeaborn(SeabornStripPanel)
+CreateSeaborn(SeabornSwarmPanel)
+CreateSeaborn(SeabornBoxPanel)
+CreateSeaborn(SeabornViolinPanel)
+CreateSeaborn(SeabornBoxenPanel)
+CreateSeaborn(SeabornPointPanel)
+CreateSeaborn(SeabornBarPanel)
+CreateSeaborn(SeabornCountPanel)
+CreateSeaborn(SeabornLMPanel)
+CreateSeaborn(SeabornRegresionPanel)
+CreateSeaborn(SeabornHeatMapPanel)
+CreateSeaborn(SeabornClusterMapPanel)
+CreateSeaborn(SeabornJointPanel)
+ 

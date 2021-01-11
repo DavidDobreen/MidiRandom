@@ -84,8 +84,10 @@ public:
     bool ShowYinput = true;
     bool sns_dist_style = false;
 
-    input xValues{ 25,0,228,17,bottomPanel, this,handler };
-    input yValues{ 25,25,228,17,bottomPanel,this,handler };
+    MoveLabel xvals{ 30,0,55,18, "x values",juce::Colours::slategrey,this,handler };
+    input xValues{ 25,18,228,17,bottomPanel, this,handler };
+    MoveLabel yvals{ 30,35,55,18, "y values",juce::Colours::slategrey,this,handler };
+    input yValues{ 25,53,228,17,bottomPanel,this,handler };
 
     Axes(int x, int y, int w, int h, BottomPanel& _bottomPanel, juce::Component* parent, pngHandler& handler);
 
@@ -270,7 +272,7 @@ class LeftPanel : public juce::ChangeListener, public childComp, public handled,
 public:
     chBgComp bkgd{ "MASTER GRAY PANEL2.png",this,handler };
     BottomPanel& bottomPanel;        
-    Axes axes{ 0,49,dims[2],45,bottomPanel, this,handler };
+    Axes axes{ 0,25,dims[2],70,bottomPanel, this,handler };
     //ChartList::item chartName{ 102, 21, 76, 18, this, handler };
     int selected_axes = 0;
 

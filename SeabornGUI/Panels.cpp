@@ -10,11 +10,20 @@
 
 #include "Panels.h"
 
-Line2DPanel::Line2DPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
-    : ChartPanel(x, y, w, h, _ShowYinput, parent,handler,_drvr)
-{
+#define PanelContructor(name) name::name(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr) : ChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr) {
+
+Line3dPanel::Line3dPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+    : ChartPanel(x, y, w, h, _ShowYinput, parent, handler, _drvr)
+{}
+
+//Line2DPanel::Line2DPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
+//    : ChartPanel(x, y, w, h, _ShowYinput, parent,handler,_drvr)
+//{
+
+    PanelContructor(Line2DPanel)
     pltstr1 = juce::String("line, = ax.plot(");
     addSlider(new AlphaSlider(892, 5, 38, 178, this, itemParams, handler, drvr, &index, "line.set_alpha", guiType::_functionFloat));
+    
 
     addColorsComponent(new colorsComponent(408, 57, 175, 25, "color",this, itemParams, handler, drvr, &index, "line.set_color",guiType::_functionWithQuotes));
     addChLabel(new chLabel(408, 87, 150, 25, "label", this, itemParams, handler, drvr, &index, "line.set_label",guiType::_functionWithQuotes));
@@ -144,14 +153,6 @@ PiePanel::PiePanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component
 
     pltstr1 = "ax.pie(";
     
-    addChLabel(new chLabel(408, 57, 150, 25, "explode", this, itemParams, handler, drvr, &index, "",guiType::_stringArray));     
-    addChLabel(new chLabel(408, 87, 150, 25, "labels", this, itemParams, handler, drvr, &index, "",guiType::_stringArray));
-    addChLabel(new chLabel(408, 117, 150, 25, "colors", this, itemParams, handler, drvr, &index,"", guiType::_stringArray));
-    addChLabel(new chLabel(408, 147, 150, 25, "autopct", this, itemParams, handler, drvr, &index,"", guiType::_stringArray));
-     
-    addChKnob(new chKnobClassicBeta(235, 116, 70, 70, "pctdistance", this, itemParams, handler, drvr, &index, "pctdistance"));
-    addChKnob(new chKnobClassicBeta(11, 11, 70, 70, "radius", this, itemParams, handler, drvr, &index, "radius"));
- 
     addToggleButtonAndLabel(new chToggleButtonAndLabel(609, 160, 85, 25, "shadow", this, itemParams, handler, drvr, &index, "shadow"));
     addSelectionBox(new SelectionBox(102, 14, 73,{ "None", "True", "False" }, this, itemParams, handler, drvr, &index, "normalize"));
 }
@@ -197,7 +198,7 @@ LegendPanel::LegendPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Com
     addChKnob(new chKnobClassicBeta(21, 17, 70, 70, "fontsize", LeftBox.conts[0], itemParams, handler, drvr, &index, "fontsize"));
     static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 5000, 10);
     static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setValue(100, juce::dontSendNotification);     
-    addChKnob(new chKnobClassicBeta(121, 17, 70, 70, "title_fontsize", LeftBox.conts[0], itemParams, handler, drvr, &index, "fontsize"));
+    addChKnob(new chKnobClassicBeta(121, 17, 70, 70, "title size", LeftBox.conts[0], itemParams, handler, drvr, &index, "title_fontsize"));
     static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 5000, 10);
     static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setValue(100, juce::dontSendNotification);
 
@@ -215,7 +216,7 @@ LegendPanel::LegendPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Com
 
      
 
-    addLegends(new Legends(10, 10, 250, 100, RightBox.conts[0], itemParams, handler, drvr, &index));
+    addLegends(new Legends(2, 10, 260, 100, RightBox.conts[0], itemParams, handler, drvr, &index));
 
     addFourFloats(new FourFloats(10, 10, 250, 100, RightBox.conts[1], itemParams, handler, drvr, &index, "bbox_to_anchor"));
 
@@ -263,10 +264,10 @@ AnnotPanel::AnnotPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Compo
     addChKnob(new chKnobClassicBeta(21, 17, 70, 70, "width", RightBox.conts[2], itemParams, handler, drvr, &index, "width"));
     static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 2000, 1);
     static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setValue(200, juce::dontSendNotification);
-    addChKnob(new chKnobClassicBeta(91, 17, 70, 70, "headwidth", RightBox.conts[2], itemParams, handler, drvr, &index, "headwidth"));
+    addChKnob(new chKnobClassicBeta(91, 17, 70, 70, "head", RightBox.conts[2], itemParams, handler, drvr, &index, "headwidth"));
     static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 2000, 1);
     static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setValue(200, juce::dontSendNotification);
-    addChKnob(new chKnobClassicBeta(161, 17, 70, 70, "headlength", RightBox.conts[2], itemParams, handler, drvr, &index, "headlength"));
+    addChKnob(new chKnobClassicBeta(161, 17, 70, 70, "length", RightBox.conts[2], itemParams, handler, drvr, &index, "headlength"));
     static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setRange(0, 2000, 1);
     static_cast<chKnobClassicBeta*>(guiComps.getLast())->sldr.setValue(200, juce::dontSendNotification);
     addChKnob(new chKnobClassicBeta(21, 17, 70, 70, "shrink", RightBox.conts[3], itemParams, handler, drvr, &index, "shrink"));
@@ -275,6 +276,8 @@ AnnotPanel::AnnotPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Compo
     paramComps.getLast()->guiType = guiType::_dictEnd;
     paramComps.getLast()->paramText = ")";
     // arrow dict end
+
+     
 }
 
 ReplotPanel::ReplotPanel(int x, int y, int w, int h, bool _ShowYinput, juce::Component* parent, pngHandler& handler, Drvr& _drvr)
@@ -701,8 +704,11 @@ void ChartPanel::addColorsComponent(colorsComponent* _colors) {
 }
 
 void ChartPanel::addSlider(AlphaSlider* _slider) {
+    
     guiComps.add(std::move(_slider));
     paramComps.add(&_slider->sldr);
+    _slider->sldr.startFloatVal = 100;
+
 }
 
 void ChartPanel::addLegends(Legends* _legends) {

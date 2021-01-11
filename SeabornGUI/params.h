@@ -242,6 +242,9 @@ public:
     int index=-1;
     int guiType = 0;     
     juce::String paramText = "";
+
+    float startFloatVal = 1.0f;
+    juce::String startText = "";
     
     paramedBeta(Params*& _params) : params(_params){}
     ~paramedBeta() { params = nullptr;  }

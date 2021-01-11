@@ -14,6 +14,19 @@
 #include "GuiDriver.h"
 
 
+class chButtonHover : public chButton 
+{
+public:
+    chButtonHover(int x, int y, int w, int h, juce::String _onPng, juce::String _offPng, juce::Component* parent, pngHandler& Handler)
+        : chButton(x,y,w,h,_onPng,_offPng,parent,Handler){}
+    ~chButtonHover(){}
+    void mouseEnter(const juce::MouseEvent& event) override {
+        CurrentImage = OnImage;
+        repaint();
+    }
+private:
+};
+
 
 class updateSliderCompBeta : public SliderComp,  public paramedBeta, public drvrShellNotifer
 {
@@ -288,8 +301,8 @@ public:
     };
 
     juce::String text;
-    moveFxLabel lblName{ 0,0,90,15, "",DEFAULT_LABEL_COLORS,nullptr,this,params,handler };
-    labelTextBox lbl{ 90,0,33,15,lblName,this,params,handler,drvr };
+    moveFxLabel lblName{ 0,0,dims[2]-33,15, "",DEFAULT_LABEL_COLORS,nullptr,this,params,handler };
+    labelTextBox lbl{ dims[2] - 33,0,33,15,lblName,this,params,handler,drvr };
 
     chLabelSmall(int x, int y, int w, int h, juce::String name, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& drvr,
         int* _index, juce::String paramText = "", int guiType = guiType::_stringQuots);
@@ -392,7 +405,15 @@ public:
         area.WindowTitle = selection.lblName.text = text;
     }
 
-    void paramRefresh(){ }
+    void paramRefresh(){ 
+        if (selection.lbl.index >= 0)
+        {
+            selection.lblName.IsOn = params->paramsArray[selection.lblName.index]->boolVal;
+            selection.lblName.repaint();
+            selection.lbl.lbl.setText(params->paramsArray[selection.lbl.index]->stringText, juce::dontSendNotification);
+        }
+            
+    }
 };
 
 class chKnobClassicBeta : public moveChildComp,  public paramedBeta, public handled , public drvred
@@ -523,12 +544,22 @@ public:
 class marker : public childComp, public handled
 {
 public:
+    
+
     class markerArea : public juce::ChangeBroadcaster, public childComp, public handled
     {
     public:
+        bool selected = false;
         juce::String code;
         markerArea(int x, int y, int w, int h, juce::Component* parent, pngHandler& handler) : childComp(x, y, w, h), handled(handler, parent, this) { };
-        void mouseDown(const juce::MouseEvent& event) { sendChangeMessage(); }
+        void mouseDown(const juce::MouseEvent& event) { sendSynchronousChangeMessage(); selected = true; repaint(); }
+        void paint(juce::Graphics& g) {
+            if (selected)
+            {
+                g.setColour(juce::Colours::aqua);
+                g.drawRect(getLocalBounds());
+            }
+        }
     };
 
     markerArea area{ 0,0,dims[2],dims[3],this,handler };
@@ -546,6 +577,7 @@ public:
 
     bool active = false;
     juce::String code;
+     
     
     marker point{ 0,0,20,20,"point","'.'",this,handler };
     marker pixel{ 20,0,20,20,"pixel","','",this,handler };
@@ -582,6 +614,8 @@ public:
     marker caretright_centered_at_base{ 160,40,20,20,"caretright_centered_at_base","9",this,handler };
     marker caretup_centered_at_base{ 180,40,20,20,"caretup_centered_at_base","10",this,handler };
     marker caretdown_centered_at_base{ 200,40,20,20,"caretdown_centered_at_base","11",this,handler };
+
+    juce::OwnedArray<marker> mrkrs;
 
     markers(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler, Drvr& _drvr,
         int* _index, juce::String _paramText="", int _guiType=2);
@@ -620,7 +654,7 @@ public:
     paramedBeta alwaysOn{ params };
 
     Legends(int x, int y, int w, int h, juce::Component* parent, Params*& params, pngHandler& handler,Drvr& _drvr,
-        int* _index, juce::String _paramText = "loc", int _guiType = 3);
+        int* _index, juce::String _paramText = "loc", int _guiType = guiType::_stringQuots);
     ~Legends() {}
 
     void changeListenerCallback(juce::ChangeBroadcaster* source);
@@ -704,7 +738,7 @@ public:
         AlphaFaderComp(juce::String _name, int min, int max, int interval, int x, int y, int w, int h, juce::Component* parent, Params*& _params, pngHandler& Handler,Drvr& _drvr)
             : MySlider(_name, min, max, interval, 1, 2), handler(Handler), paramedBeta(_params), drvrShellNotifer(_drvr)
         {
-            dims[0] = x, dims[1] = y, dims[2] = w, dims[3] = h;
+            dims[0] = x, dims[1] = y, dims[2] = w, dims[3] = h;           
             handler.MySliders.push_back(std::make_pair(parent, this));
         }
         void stoppedDragging() {
@@ -720,6 +754,13 @@ public:
         int* _index, juce::String _paramText = "", int _guiType = guiType::_float);  
      
     ~AlphaSlider(){}
+
+    void paramRefresh() override
+    {               
+        if (sldr.index >= 0)
+            sldr.setValue(params->paramsArray[sldr.index]->floatVal, juce::dontSendNotification);
+        sldr.repaint();
+    }
 };
 
 class CompBox : public juce::ChangeListener, public moveChildComp,  public handled
@@ -959,7 +1000,6 @@ public:
 
 class ErrBarArgsCompBox : public CompBoxBase
 {
-    //extending 
 public:
     CompBox compBox{ 90,0,260,135,3,this,itemParams, handler ,drvr };
 
@@ -976,7 +1016,6 @@ public:
 
 class BarsArgsCompBox : public CompBoxBase
 {
-    //extending 
 public:
     CompBox compBox{ 90,0,260,135,4,this,itemParams, handler ,drvr };
 
@@ -989,4 +1028,20 @@ class BarsFront : public CompBoxBase
 public:
     BarsFront(int x, int y, int w, int h, juce::OwnedArray<moveChildComp>* _guiComps, juce::Array<paramedBeta*>* _paramComps, juce::Component* parent, Params*& itemParams, pngHandler& handler, Drvr& _drvr, int& _index);
     ~BarsFront() {}
+};
+
+class PieArgsCompBox : public CompBoxBase
+{
+public:
+    CompBox compBox{ 90,0,260,135,4,this,itemParams, handler ,drvr };
+
+    PieArgsCompBox(int x, int y, int w, int h, juce::OwnedArray<moveChildComp>* _guiComps, juce::Array<paramedBeta*>* _paramComps, juce::Component* parent, Params*& itemParams, pngHandler& handler, Drvr& _drvr, int& _index);
+    ~PieArgsCompBox() {}
+};
+
+class PieFront : public CompBoxBase
+{
+public:
+    PieFront(int x, int y, int w, int h, juce::OwnedArray<moveChildComp>* _guiComps, juce::Array<paramedBeta*>* _paramComps, juce::Component* parent, Params*& itemParams, pngHandler& handler, Drvr& _drvr, int& _index);
+    ~PieFront() {}
 };

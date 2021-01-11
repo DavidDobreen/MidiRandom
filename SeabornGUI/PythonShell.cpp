@@ -204,7 +204,7 @@ void PythonShell::Matplot()
                 chartArea.shell.editor.insertTextAtCaret(f + "\n");
         }
 
-       /* for (auto& i : lefPanel.Fig.axes[lefPanel.selected_axes]->textList.items)
+        for (auto& i : lefPanel.Fig.axes[lefPanel.selected_axes]->textList.items)
         {             
             juce::String pltstr1 = bottomPanel.TXpanels[i->index]->pltstr1;
             juce::String ChartParams = i->params.MakePieKwargs().substring(1);
@@ -222,7 +222,7 @@ void PythonShell::Matplot()
 
             for (auto& f : i->params.functions)
                 chartArea.shell.editor.insertTextAtCaret(f + "\n");
-        }*/
+        }
     }
              
     //PyRun_SimpleString("plt.savefig('output.png',transparent=True)");    

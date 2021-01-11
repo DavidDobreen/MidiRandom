@@ -55,8 +55,8 @@ public:
     ImageComp bkgd{ 0,0,dims[2],dims[3],png, this, handler };
     juce::String pngFrame = "Grid frame black2.png";
     ImageComp frame{ 0,0,dims[2],dims[3],pngFrame, this, handler };
-    MainChart chart{ 15, 15, 350, 576, this, handler };
-    ShellWindow shell{ 20, 20, dims[2]-50, dims[3]-55, this, handler };
+    MainChart chart{ 14, 15, 370, 580, this, handler };
+    ShellWindow shell{ 20, 70, dims[2]-50, dims[3]-105, this, handler };
 
 
 
